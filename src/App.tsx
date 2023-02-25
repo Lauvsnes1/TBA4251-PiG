@@ -1,8 +1,9 @@
 import React from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import BaseMap from './components/baseMap';
+import Sidebar from './components/sidebarMenu';
 import StrollyMap from './components/strollyMap';
-import "leaflet/dist/leaflet.css"
+
 
 // const Map = makeMap('root', center, zoom).then((map) => {
 //   console.log(map)
@@ -12,7 +13,12 @@ import "leaflet/dist/leaflet.css"
 
 function App() {
   return (
-    <div id="map" className='App'  ><StrollyMap/></div>
+    <div id="map" className='App'> 
+    <Sidebar/>
+    
+    
+    
+    </div>
       
   );
 }

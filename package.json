@@ -4,6 +4,10 @@
   "homepage": "http://lauvsnes1.github.io/TBA4251-PiG",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/icons-material": "^5.11.9",
+    "@mui/material": "^5.11.10",
     "@react-leaflet/core": "^2.1.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -17,6 +21,8 @@
     "leaflet": "^1.9.3",
     "mapbox-gl": "^2.13.0",
     "react": "^18.2.0",
+    "react-bootstrap-sidebar-menu": "^2.0.3",
+    "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.0",
     "react-map-gl": "^7.0.21",
@@ -52,6 +58,10 @@
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.1",
-    "gh-pages": "^5.0.0"
+    "@types/react-color": "^3.0.6",
+    "css-loader": "^6.7.3",
+    "gh-pages": "^5.0.0",
+    "prettier": "^2.8.4",
+    "ts-loader": "^9.4.2"
   }
 }
