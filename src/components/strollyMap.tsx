@@ -8,7 +8,6 @@ const accessToken: string|any = process.env["REACT_APP_MAPBOX_ACCESS_TOKEN"];
 mapboxgl.accessToken = accessToken;
 
 function StrollyMap() {
-    console.log("_________", process.env);
     const mapContainer = useRef<HTMLDivElement>(null);
     const [map, setMap] = useState(null);
     const [lng, setLng] = useState(10.421906);

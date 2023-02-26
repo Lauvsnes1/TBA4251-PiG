@@ -1,9 +1,7 @@
 import { LineString, Feature, Polygon, MultiPolygon } from 'geojson'
 
-//test
 
 export const mapStyleId: string = 'mapbox/streets-v11'
-export const mapAccessToken: string = 'pk.eyJ1IjoibGF1dnNuZXMxIiwiYSI6ImNsZWl4ZzQ3ZjA0ZzYzcm51em0wNmxvcTUifQ.9TpjxrT5CFvtDZzuP9QzQA'
 
 
 export const center: [number, number] = [2.355, 48.8555]
