@@ -13,6 +13,8 @@
 
 # private
 /src/helpers
+.env
+end.d.ts
 
 # misc
 .DS_Store
