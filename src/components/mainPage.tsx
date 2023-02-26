@@ -1,4 +1,4 @@
-import React, { useState,} from 'react';
+import React, { ElementType, useState,} from 'react';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -15,8 +15,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import ScienceIcon from '@mui/icons-material/Science';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import PaletteIcon from '@mui/icons-material/Palette';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
@@ -29,6 +30,17 @@ import ColorPicker from './colorPicker';
 import { AppBar, Main, DrawerHeader } from './styledComponents';
 
 const drawerWidth = 240;
+
+interface Tool {
+  name: string;
+  icon: ElementType;
+}
+
+const tools: Tool[] = [
+  {name: "Feature extracor", icon: ScienceIcon },
+  {name: "Buffer", icon: RemoveCircleIcon },
+  {name: "Intersect", icon: CloseFullscreenIcon }
+]
 
 
 export default function MainPage() {
@@ -110,13 +122,13 @@ export default function MainPage() {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem key={text} disablePadding>
+          {tools.map((element, index) => (
+            <ListItem key={element.name} disablePadding>
               <ListItemButton>
                 <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  <element.icon/>
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText primary={element.name} />
               </ListItemButton>
             </ListItem>
           ))}
