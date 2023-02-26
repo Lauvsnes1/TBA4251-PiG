@@ -2,10 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { mapAccessToken } from '../helpers/data'
 
-
-mapboxgl.accessToken =
-    'pk.eyJ1IjoibGF1dnNuZXMxIiwiYSI6ImNsZWl4ZzQ3ZjA0ZzYzcm51em0wNmxvcTUifQ.9TpjxrT5CFvtDZzuP9QzQA';
+mapboxgl.accessToken = mapAccessToken;
 
 function StrollyMap() {
     const mapContainer = useRef<HTMLDivElement>(null);
