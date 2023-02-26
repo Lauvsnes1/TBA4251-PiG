@@ -1,23 +1,13 @@
 import React from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import BaseMap from './components/baseMap';
-import Sidebar from './components/sidebarMenu';
+import MainPage from './components/mainPage';
 import StrollyMap from './components/strollyMap';
-
-
-// const Map = makeMap('root', center, zoom).then((map) => {
-//   console.log(map)
-// })
-
-
 
 function App() {
   return (
     <div id="root" className='App'> 
-    <Sidebar/>
-    
-    
-    
+    <MainPage/>
     </div>
       
   );
