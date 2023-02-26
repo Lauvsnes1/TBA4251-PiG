@@ -24,7 +24,7 @@ function StrollyMap() {
                 return;
             }
             const map = new mapboxgl.Map({
-                container: "map",
+                container: mapContainer.current,
                 style: 'mapbox://styles/mapbox/light-v10',
                 center: [lng, lat],
                 zoom: zoom,
