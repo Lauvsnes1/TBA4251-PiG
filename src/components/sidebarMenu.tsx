@@ -23,9 +23,11 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
+import Stack from '@mui/material/Stack';
 
 import StrollyMap from './strollyMap';
 import ColorPicker from './colorPicker';
+import Menu from './menu';
 
 const drawerWidth = 240;
 
@@ -135,8 +137,7 @@ export default function PersistentDrawerLeft() {
           </Typography>
         </Toolbar>
       </AppBar>
-      
-      <Drawer
+       <Drawer
         sx={{
           zIndex: 1,
           width: drawerWidth,
@@ -145,13 +146,10 @@ export default function PersistentDrawerLeft() {
             width: drawerWidth,
             boxSizing: 'border-box',
           },
-          
-        }}
-        
+        }}      
         variant="persistent"
         anchor="left"
-        open={open}
-        
+        open={open}        
       >
         <DrawerHeader style={{justifyContent: "space-between"}}>
         <Typography > Tools</Typography>
@@ -179,6 +177,7 @@ export default function PersistentDrawerLeft() {
         <Divider/> 
         <List>
           {['Layer1', 'Layer2', 'layer3'].map((text, index) => (
+            <Stack spacing={10} direction="row">
             <ListItem key={text} disablePadding >
               <ListItemButton >
                 <ListItemText primary={text} />
@@ -188,7 +187,7 @@ export default function PersistentDrawerLeft() {
                 </div>
                   <Popper id={"test"} open={openPop} anchorEl={anchorEl} transition style={{zIndex: 2}}>
                     {({ TransitionProps }) => (
-                      <Fade {...TransitionProps} timeout={350}>
+                      <Fade {...TransitionProps} timeout={250}>
                         <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper',  }}>
                           <ColorPicker handleCloseColorPicker={handleCloseColorPicker} setColor={setLayerColor}/>
                           <p>Chosen color is {color}</p>
@@ -200,11 +199,12 @@ export default function PersistentDrawerLeft() {
                 </ListItemIcon>
               </ListItemButton>
             </ListItem>
+            </Stack>
           ))}
         </List>
-      </Drawer>
-      <Main open={open}>
         <DrawerHeader />
+      </Drawer> 
+      <Main open={open}>
         <StrollyMap/>
       </Main>
     </Box>
