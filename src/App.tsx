@@ -13,7 +13,7 @@ import StrollyMap from './components/strollyMap';
 
 function App() {
   return (
-    <div id="root" className='App'> 
+    <div id="map" className='App'> 
     <Sidebar/>
     
     
