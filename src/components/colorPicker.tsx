@@ -2,13 +2,19 @@ import React, { useState } from 'react';
 import { CompactPicker } from 'react-color';
 import Button from '@mui/material/Button';
 
-function ColorPicker(/*show: boolean*/) {
+function ColorPicker(props: { handleCloseColorPicker: () => void; setColor: (chosen: string) => void}) {
     const [color, setColor] = useState<any | string>('#333');
     
 
-    // const handleClose = () => {
-    //   show= !show;
-    // }
+    const handleClose = () => {
+      props.handleCloseColorPicker()
+    }
+
+    const passColor = (chosen: string) => {
+      setColor(chosen)
+      props.setColor(chosen)
+
+    }
 
     return(
         
@@ -23,10 +29,10 @@ function ColorPicker(/*show: boolean*/) {
           ></div>
           {/* Compact picker from react-color and handling color on onChange event */}
           <CompactPicker
-          onChange={(target) => setColor(target.hex)}
+          onChange={(target) => passColor(target.hex)}
           color={color}
           />
-          <Button style={{marginTop: "5px"}} variant="outlined" {/*onClick={handleClose}*/}>Ok</Button>
+          <Button style={{marginTop: "5px"}} variant="outlined" onClick={handleClose}>Ok</Button>
         </div>
 
     );

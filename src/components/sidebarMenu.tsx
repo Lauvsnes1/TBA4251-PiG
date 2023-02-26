@@ -81,7 +81,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 export default function PersistentDrawerLeft() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [openPop, setOpenPop] = React.useState(false);
+  const [openPop, setOpenPop] = useState<boolean>(false);
 
   //Vill måtte brukes som en en property i lista med layers, men nå kun for demo
   const [isVisable, setIsVisable] = useState(true)
@@ -89,6 +89,9 @@ export default function PersistentDrawerLeft() {
   const [isPicker, setIsPicker] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
+  const setLayerColor = (color: string) => {
+    setColor(color)
+  }
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -107,8 +110,9 @@ export default function PersistentDrawerLeft() {
     setOpenPop((previousOpen) => !previousOpen);
   }
 
-  const handleClick = () => {
-    
+  const handleCloseColorPicker = () => {
+    setIsPicker(false)
+    setOpenPop((previousOpen) => !previousOpen);
     
   };
 
@@ -186,7 +190,8 @@ export default function PersistentDrawerLeft() {
                     {({ TransitionProps }) => (
                       <Fade {...TransitionProps} timeout={350}>
                         <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper',  }}>
-                          <ColorPicker/>
+                          <ColorPicker handleCloseColorPicker={handleCloseColorPicker} setColor={setLayerColor}/>
+                          <p>Chosen color is {color}</p>
                         </Box>
                       </Fade>
                     )}
