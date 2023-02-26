@@ -1,44 +1,77 @@
 import React, { useState, useEffect, useRef } from 'react';
-// eslint-disable-next-line import/no-webpack-loader-syntax
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { geoJSONList } from '../data/test_data';
 
-
-const accessToken: string|any = process.env["REACT_APP_MAPBOX_ACCESS_TOKEN"];
+const accessToken: string|any = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 mapboxgl.accessToken = accessToken;
 
+
+
 function StrollyMap() {
-    const mapContainer = useRef<HTMLDivElement>(null);
-    const [map, setMap] = useState(null);
-    const [lng, setLng] = useState(10.421906);
-    const [lat, setLat] = useState(63.446827);
-    const [zoom, setZoom] = useState(12);
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const [map, setMap] = useState<mapboxgl.Map | null>(null);
 
-    useEffect(() => {
-        const attachMap = (
-            //setMap: React.Dispatch<React.SetStateAction<any>>,
-            setMap: (value: any | null) => void,
-            mapContainer: React.RefObject<HTMLDivElement>,
-        ) => {
-            if (!mapContainer.current) {
-                return;
+  useEffect(() => {
+    if (!mapContainer.current) {
+      return;
+    }
+
+    const map = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/light-v10',
+      center: [10.421906, 63.446827],
+      zoom: 12
+    });
+
+    map.on('load', () => {
+      // The map style is now fully loaded
+      for(const item of geoJSONList){
+        const {type, data } = item
+      map.addSource('my-source', {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: [
+            {
+              type: 'Feature',
+              geometry: {
+                type: 'Point',
+                coordinates: [10.421906, 63.446827]
+              },
+              properties: {
+                title: 'My Marker',
+                description: 'This is my marker',
+              },
             }
-            const map = new mapboxgl.Map({
-                container: mapContainer.current,
-                style: 'mapbox://styles/mapbox/light-v10',
-                center: [lng, lat],
-                zoom: zoom,
-            });
-            setMap(map);
-        };
+          ]
+        }
+      });
 
-        !map && attachMap(setMap, mapContainer);
-    }, [map]);
+      map.addLayer({
+        id: 'my-layer',
+        type: 'circle',
+        source: 'my-source',
+        paint: {
+          'circle-radius': 6,
+          'circle-color': '#B42222'
+        }
+      });
+    }
 
-    return ( <div
-    ref={mapContainer}
-    className="map-container"
-    style={{
+      setMap(map);
+    });
+
+    return () => {
+      map.remove();
+    };
+  }, [mapContainer]);
+
+  return (
+    <div
+      ref={mapContainer}
+      className="map-container"
+      style={{
         position: 'absolute',
         top: '0',
         bottom: '0',
@@ -46,10 +79,10 @@ function StrollyMap() {
         height: '100vh',
         border: 3,
         borderRadius: 8,
-        borderColor: 'primary.main',
-    
-    }}/>)
-
-
+        borderColor: 'primary.main'
+      }}
+    />
+  );
 }
-export default StrollyMap
+
+export default StrollyMap;
