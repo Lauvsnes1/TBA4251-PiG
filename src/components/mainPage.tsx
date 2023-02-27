@@ -1,4 +1,4 @@
-import React, { ElementType, useState,} from 'react';
+import React, { ElementType, useState, useContext} from 'react';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -15,6 +15,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 import ScienceIcon from '@mui/icons-material/Science';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
@@ -24,35 +25,44 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
 import Stack from '@mui/material/Stack';
+import Modal from '@mui/material/Modal';
+
 
 import StrollyMap from './strollyMap';
 import ColorPicker from './colorPicker';
-import { AppBar, Main, DrawerHeader } from './styledComponents';
+import FileInput from './fileInput';
+import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
 
 const drawerWidth = 240;
 
 interface Tool {
   name: string;
   icon: ElementType;
+  handler: () => void;
 }
 
-const tools: Tool[] = [
-  {name: "Feature extracor", icon: ScienceIcon },
-  {name: "Buffer", icon: RemoveCircleIcon },
-  {name: "Intersect", icon: CloseFullscreenIcon }
-]
 
 
 export default function MainPage() {
   const theme = useTheme();
+  //const myContext = useContext(MyContext)
   const [open, setOpen] = React.useState(false);
   const [openPop, setOpenPop] = useState<boolean>(false);
+  const [modal, setModal] = useState<boolean>(false);
 
   //Vill måtte brukes som en en property i lista med layers, men nå kun for demo
   const [isVisable, setIsVisable] = useState(true)
   const [color, setColor] = useState("red")
   const [isPicker, setIsPicker] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+
+const tools: Tool[] = [
+  {name: "Load data", icon: FileUploadIcon, handler: () => showModal()}, 
+  {name: "Feature extracor", icon: ScienceIcon, handler: () => showModal()},
+  {name: "Buffer", icon: RemoveCircleIcon, handler:() => showModal() },
+  {name: "Intersect", icon: CloseFullscreenIcon, handler: () => showModal() }
+]
 
   const setLayerColor = (color: string) => {
     setColor(color)
@@ -80,6 +90,13 @@ export default function MainPage() {
     setOpenPop((previousOpen) => !previousOpen);
     
   };
+
+  const showModal = () => {
+    setModal(true)
+  }
+  const closeModal = () => {
+    setModal(false)
+  }
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -124,8 +141,8 @@ export default function MainPage() {
         <List>
           {tools.map((element, index) => (
             <ListItem key={element.name} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
+              <ListItemButton onClick={element.handler}>
+                <ListItemIcon >
                   <element.icon/>
                 </ListItemIcon>
                 <ListItemText primary={element.name} />
@@ -168,8 +185,21 @@ export default function MainPage() {
         <DrawerHeader />
       </Drawer> 
       <Main open={open}>
+      <Modal
+        open={modal}
+        onClose={() => setModal(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={modalStyle}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+          </Typography>
+          <FileInput handleCloseModal={closeModal} />
+        </Box>
+      </Modal>
         <StrollyMap/>
       </Main>
     </Box>
   );
 }
+
