@@ -1,4 +1,4 @@
-import React, { ElementType, useState,} from 'react';
+import React, { ElementType, useState, useContext} from 'react';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -15,6 +15,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 import ScienceIcon from '@mui/icons-material/Science';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
@@ -24,35 +25,53 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
 import Stack from '@mui/material/Stack';
+import Modal from '@mui/material/Modal';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import EditIcon from '@mui/icons-material/Edit';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 import StrollyMap from './strollyMap';
 import ColorPicker from './colorPicker';
-import { AppBar, Main, DrawerHeader } from './styledComponents';
+import FileInput from './fileInput';
+import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
+import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
+import DropDown from "./dropDown"
+import { FeatureCollection } from 'geojson';
 
 const drawerWidth = 240;
 
 interface Tool {
   name: string;
   icon: ElementType;
+  handler: () => void;
 }
 
-const tools: Tool[] = [
-  {name: "Feature extracor", icon: ScienceIcon },
-  {name: "Buffer", icon: RemoveCircleIcon },
-  {name: "Intersect", icon: CloseFullscreenIcon }
-]
 
 
 export default function MainPage() {
   const theme = useTheme();
+  //const myContext = useContext(MyContext)
   const [open, setOpen] = React.useState(false);
   const [openPop, setOpenPop] = useState<boolean>(false);
+  const [modal, setModal] = useState<boolean>(false);
+  const [openDropDown, setOpenDropDown] = useState<boolean>(false);
 
   //Vill måtte brukes som en en property i lista med layers, men nå kun for demo
-  const [isVisable, setIsVisable] = useState(true)
   const [color, setColor] = useState("red")
   const [isPicker, setIsPicker] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  //const [geoJSONList, setGeoJSONList] = useState<GeoJSONListState[]>([]);
+
+  const { geoJSONList, setGeoJSONList, setVisable } = useGeoJSONContext(); 
+
+
+const tools: Tool[] = [
+  {name: "Load data", icon: FileUploadIcon, handler: () => showModal()}, 
+  {name: "Feature extracor", icon: ScienceIcon, handler: () => showModal()},
+  {name: "Buffer", icon: RemoveCircleIcon, handler:() => showModal() },
+  {name: "Intersect", icon: CloseFullscreenIcon, handler: () => showModal() }
+]
 
   const setLayerColor = (color: string) => {
     setColor(color)
@@ -65,21 +84,40 @@ export default function MainPage() {
     setOpen(false);
   };
   
+  const toggleVisibility = (layer: GeoJSONItem) => {
+    const newObj: GeoJSONItem = { ...layer, visable: !layer.visable };
+    setGeoJSONList(prevList => {
+      const index = prevList.findIndex(item => item.id === layer.id);
+      const updatedList = [...prevList]; // create a copy of the original list
+      updatedList[index] = newObj; // replace the layer with the new object
+      return updatedList;
+    });
+  };
 
-  const handleVisibility = () => {
-    setIsVisable(!isVisable)
+  const handleShowEdit = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+    setOpenDropDown((previousOpenDropDown) => !previousOpenDropDown)
+
+
   }
+
   const handleShowColorPicker = (event: React.MouseEvent<HTMLElement>) => {
-    setIsPicker(true)
     setAnchorEl(event.currentTarget);
     setOpenPop((previousOpen) => !previousOpen);
   }
 
   const handleCloseColorPicker = () => {
-    setIsPicker(false)
     setOpenPop((previousOpen) => !previousOpen);
     
   };
+
+  const showModal = () => {
+    setModal(true)
+    
+  }
+  const closeModal = () => {
+    setModal(false)
+  }
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -124,8 +162,8 @@ export default function MainPage() {
         <List>
           {tools.map((element, index) => (
             <ListItem key={element.name} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
+              <ListItemButton onClick={element.handler}>
+                <ListItemIcon >
                   <element.icon/>
                 </ListItemIcon>
                 <ListItemText primary={element.name} />
@@ -139,26 +177,41 @@ export default function MainPage() {
         </Typography>
         <Divider/> 
         <List>
-          {['Layer1', 'Layer2', 'layer3'].map((text, index) => (
+          {geoJSONList.map((layer) => (
             <Stack spacing={10} direction="row">
-            <ListItem key={text} disablePadding >
+            <ListItem key={layer.id} disablePadding >
               <ListItemButton >
-                <ListItemText primary={text} />
-                <ListItemIcon style={{justifyContent: "space-between", alignContent: "space-between"}}>
+                <ListItemText primary={layer.name}  />
+                <ListItemIcon style={{justifyContent: "space-between", alignContent: "space-between", alignItems: "center"}}>
+                  {/* <div onClick={handleShowEdit}> */}
+                  <div>
+                  <DropDown layer={layer}/>
+                  </div>
+                  {/*<Popper id={"test"} open={openDropDown} anchorEl={anchorEl} transition style={{zIndex: 2}}>
+                  {({ TransitionProps }) => (
+                      <Fade {...TransitionProps} timeout={100}>
+                  <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper',  }}>
+                    <DropDown/>
+                  </Box>
+                  </Fade>
+                    )}
+                  </Popper>*/}
                 <div onClick={handleShowColorPicker}>
-                     <PaletteIcon htmlColor={color} />
+                     <PaletteIcon htmlColor={layer.color} />
                 </div>
                   <Popper id={"test"} open={openPop} anchorEl={anchorEl} transition style={{zIndex: 2}}>
                     {({ TransitionProps }) => (
-                      <Fade {...TransitionProps} timeout={250}>
-                        <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper',  }}>
+                      <Fade {...TransitionProps} timeout={100}>
+                        
+                        <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper'  }}>
                           <ColorPicker handleCloseColorPicker={handleCloseColorPicker} setColor={setLayerColor}/>
-                          <p>Chosen color is {color}</p>
+                          <p>Chosen color is {layer.color}</p>
                         </Box>
+      
                       </Fade>
                     )}
                   </Popper>
-                 {isVisable? <VisibilityIcon onClick={handleVisibility} /> : <VisibilityOffIcon onClick={handleVisibility} />} 
+                 {layer.visable? <VisibilityIcon onClick={() => toggleVisibility(layer)} /> : <VisibilityOffIcon onClick={() => toggleVisibility(layer)} />} 
                 </ListItemIcon>
               </ListItemButton>
             </ListItem>
@@ -168,8 +221,21 @@ export default function MainPage() {
         <DrawerHeader />
       </Drawer> 
       <Main open={open}>
+      <Modal
+        open={modal}
+        onClose={() => setModal(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={modalStyle}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+          </Typography>
+          <FileInput handleCloseModal={closeModal} />
+        </Box>
+      </Modal>
         <StrollyMap/>
       </Main>
     </Box>
   );
 }
+

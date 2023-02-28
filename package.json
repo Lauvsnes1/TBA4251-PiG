@@ -28,6 +28,7 @@
     "react-map-gl": "^7.0.21",
     "react-scripts": "5.0.1",
     "typescript": "^4.9.5",
+    "uid": "^2.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
