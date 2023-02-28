@@ -32,7 +32,8 @@ import StrollyMap from './strollyMap';
 import ColorPicker from './colorPicker';
 import FileInput from './fileInput';
 import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
-import { useGeoJSONContext } from '../context/geoJSONContext';
+import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
+import { FeatureCollection } from 'geojson';
 
 const drawerWidth = 240;
 
@@ -56,8 +57,9 @@ export default function MainPage() {
   const [color, setColor] = useState("red")
   const [isPicker, setIsPicker] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  //const [geoJSONList, setGeoJSONList] = useState<GeoJSONListState[]>([]);
 
-  const { geoJSONList, setGeoJSONList } = useGeoJSONContext(); 
+  const { geoJSONList, setGeoJSONList, setVisable } = useGeoJSONContext(); 
 
 
 const tools: Tool[] = [
@@ -78,10 +80,12 @@ const tools: Tool[] = [
     setOpen(false);
   };
   
+  const toggleVisibility = (layer: GeoJSONItem) => {
+    const newObj: GeoJSONItem = { ...layer, visable: !layer.visable };
+  };
 
-  const handleVisibility = () => {
-    setIsVisable(!isVisable)
-  }
+
+
   const handleShowColorPicker = (event: React.MouseEvent<HTMLElement>) => {
     setIsPicker(true)
     setAnchorEl(event.currentTarget);
@@ -162,24 +166,24 @@ const tools: Tool[] = [
         <List>
           {geoJSONList.map((layer) => (
             <Stack spacing={10} direction="row">
-            <ListItem key={""} disablePadding >
+            <ListItem key={layer.id} disablePadding >
               <ListItemButton >
-                <ListItemText primary={"text"} />
+                <ListItemText primary={layer.name} />
                 <ListItemIcon style={{justifyContent: "space-between", alignContent: "space-between"}}>
                 <div onClick={handleShowColorPicker}>
-                     <PaletteIcon htmlColor={color} />
+                     <PaletteIcon htmlColor={layer.color} />
                 </div>
                   <Popper id={"test"} open={openPop} anchorEl={anchorEl} transition style={{zIndex: 2}}>
                     {({ TransitionProps }) => (
-                      <Fade {...TransitionProps} timeout={250}>
+                      <Fade {...TransitionProps} timeout={150}>
                         <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper',  }}>
                           <ColorPicker handleCloseColorPicker={handleCloseColorPicker} setColor={setLayerColor}/>
-                          <p>Chosen color is {color}</p>
+                          <p>Chosen color is {layer.color}</p>
                         </Box>
                       </Fade>
                     )}
                   </Popper>
-                 {isVisable? <VisibilityIcon onClick={handleVisibility} /> : <VisibilityOffIcon onClick={handleVisibility} />} 
+                 {layer.visable? <VisibilityIcon onClick={() => toggleVisibility(layer)} /> : <VisibilityOffIcon onClick={() => toggleVisibility(layer)} />} 
                 </ListItemIcon>
               </ListItemButton>
             </ListItem>

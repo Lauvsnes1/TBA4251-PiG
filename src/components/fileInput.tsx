@@ -11,28 +11,13 @@ function FileInput(props: { handleCloseModal: () => void;}) {
   const [geoJSONs, setGeoJSONs] = useState<FeatureCollection[]>([])
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
+  const { geoJSONList } = useGeoJSONContext();
 
 
   const handleUploadClick = () => {
     // 👇 We redirect the click event onto the hidden input element
     inputRef.current?.click();
   };
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) {
-      return;
-    }
-  
-    const list = e.target.files;
-    for (let i = 0; i < list.length; i++) {
-      console.log("adding item:", list[i], "with index i:", i);
-      setFiles((prevFiles) => [...prevFiles, list[i] as File]);
-    }
-    console.log("Target: ", list);
-  };
-
-
   const handleOk = () => {
     //pass state up to close modal
     props.handleCloseModal()
@@ -42,86 +27,127 @@ function FileInput(props: { handleCloseModal: () => void;}) {
     
   }
 
-//   const handleGeoJSONs = () => {
-//     console.log("FILES TO WORK WITH", files)
-//     const filesToAdd = files.map( file => {
-//         const reader = new FileReader();
-//         reader.readAsText(file);
-//         return new Promise((resolve, reject) => {
-//             reader.onload = () => {
-//               try {
-//                 const content = JSON.parse(reader.result as string);
-//                 const isGeoJSON = content.type === 'FeatureCollection';
-//                 resolve(isGeoJSON ? content : null);
-//               } catch (error) {
-//                 reject(error);
-//               }
-//             };
-//             reader.onerror = reject;
-//           });
-//     })
-//     Promise.all(filesToAdd)
-//     .then(files => {
-//       const geoJSONs = files.filter(file => file !== null);
-//       console.log("GeoJSONS:", geoJSONs)
-//       geoJSONs.forEach(json => {console.log("Jason:", json, "type:", typeof json);
-//       geoJSONs.push(json)
-//     });
-//       //setGeoJSONs(prevGeoJSONs => [...prevGeoJSONs, geoJSONs]);
-//     })
-//     .catch(error => {
-//       console.error('Error reading file:', error);
-//     });
-
-//   }
+  // const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   if (!e.target.files) {
+  //     return;
+  //   }
+  //   const list = e.target.files;
+  //   for (let i = 0; i < list.length; i++) {
+  //     console.log("adding item:", list[i], "with index i:", i);
+  //     setFiles((prevFiles) => [...prevFiles, list[i] as File]);
+  //   }
+  //   console.log("Target: ", list);
+  // };
 
   //UseEffect to process when file is uploaded
-  useEffect(() => {
-    const filesToAdd = files.map( file => {
+  // useEffect(() => {
+  //   const filesToAdd = files.map( file => {
+  //       const reader = new FileReader();
+  //       reader.readAsText(file);
+  //       return new Promise((resolve, reject) => {
+  //           reader.onload = () => {
+  //             try {
+  //               const content = JSON.parse(reader.result as string);
+  //               const isGeoJSON = content.type === 'FeatureCollection';
+  //               resolve(isGeoJSON ? content : null);
+  //             } catch (error) {
+  //               reject(error);
+  //             }
+  //           };
+  //           reader.onerror = reject;
+  //         });
+  //   })
+  //   Promise.all(filesToAdd)
+  //   .then(files => {
+  //     const geoJSONs = files.filter(file => file !== null);
+  //     const counter: number = 0;
+  //     geoJSONs.forEach(json => {console.log("Jason:", json, "type:", typeof json);
+  //     console.log("GLOBAL Before:", geoJSONList)
+  //     //Local
+  //     setGeoJSONs((prevGeoJSONs) => [...prevGeoJSONs, json as FeatureCollection]);
+  //     //Global
+  //      console.log("POTENSIELT NAVN", files);
+  //     const newObj: GeoJSONItem = {
+  //       id: uid(),
+  //       name: "files[counter]?.name",
+  //       visable: true,
+  //       geoJSON: json as FeatureCollection
+  //     }
+  //     geoJSONList.push(newObj)
+  //     //setGeoJSONList([...geoJSONList, json as FeatureCollection])
+  //     console.log("GLOBAL after:", geoJSONList)
+  //   });
+  //     //setGeoJSONs(prevGeoJSONs => [...prevGeoJSONs, geoJSONs]);
+  //   })
+  //   .catch(error => {
+  //     console.error('Error reading file:', error);
+  //   });
+
+  // }, [files])
+
+
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) {
+      return;
+    }
+    const list = e.target.files
+    
+  
+    const promises = Array.from(list).map((file) => {
+      setFiles((prevList) => [...prevList, file as File]);
+      return new Promise((resolve, reject) => {
         const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const content = JSON.parse(reader.result as string);
+            const isGeoJSON = content.type === 'FeatureCollection';
+            resolve(isGeoJSON ? content : null);
+          } catch (error) {
+            reject(error);
+          }
+        };
         reader.readAsText(file);
-        return new Promise((resolve, reject) => {
-            reader.onload = () => {
-              try {
-                const content = JSON.parse(reader.result as string);
-                const isGeoJSON = content.type === 'FeatureCollection';
-                resolve(isGeoJSON ? content : null);
-              } catch (error) {
-                reject(error);
-              }
-            };
-            reader.onerror = reject;
-          });
-    })
-    Promise.all(filesToAdd)
-    .then(files => {
-      const geoJSONs = files.filter(file => file !== null);
-      const counter: number = 0;
-      geoJSONs.forEach(json => {console.log("Jason:", json, "type:", typeof json);
+      });
+    });
+  
+    try {
+      const files = await Promise.all(promises);
+      const geoJSONs = files.filter((file) => file !== null);
+      let nameCounter: number = 0;
+      geoJSONs.forEach(json => { console.log("Jason:", json, "type:", typeof json);
       console.log("GLOBAL Before:", geoJSONList)
       //Local
       setGeoJSONs((prevGeoJSONs) => [...prevGeoJSONs, json as FeatureCollection]);
       //Global
-       console.log("POTENSIELT NAVN", files);
+      const name: string = list[nameCounter].name.split(".")[0]; //To remove ".geoJSON"
+     
       const newObj: GeoJSONItem = {
         id: uid(),
-        name: "files[counter]?.name",
+        name: name, 
         visable: true,
+        color: getRandomColor(),
         geoJSON: json as FeatureCollection
       }
-      geoJSONList.push(newObj)
-      //setGeoJSONList([...geoJSONList, json as FeatureCollection])
-      console.log("GLOBAL after:", geoJSONList)
-    });
-      //setGeoJSONs(prevGeoJSONs => [...prevGeoJSONs, geoJSONs]);
-    })
-    .catch(error => {
+      geoJSONList.push(newObj);
+      nameCounter ++;
+     })
+
+    } catch (error) {
       console.error('Error reading file:', error);
-    });
-
-  }, [files])
-
-
+    }
+  };
+  
+  function getRandomColor(): string {
+    const hexChars = "0123456789ABCDEF";
+    let hexColor = "#";
+  
+    // generate a random hex color code
+    for (let i = 0; i < 6; i++) {
+      hexColor += hexChars[Math.floor(Math.random() * 16)];
+    }
+  
+    return hexColor;
+  }
   
 
   return (
@@ -134,8 +160,8 @@ function FileInput(props: { handleCloseModal: () => void;}) {
         {'Click to Upload'}
       </Button>
       <div>
-        {files.map((item )=> {
-            return <Typography>{item.name}</Typography>
+        {files.map((files )=> {
+            return <Typography key={files.name} >{files.name}</Typography>
         })}
         </div>
       <input
