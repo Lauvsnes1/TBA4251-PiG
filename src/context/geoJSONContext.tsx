@@ -2,12 +2,15 @@ import { createContext, useContext, useState } from "react";
 import { FeatureCollection } from "geojson";
 
 export type GeoJSONItem = {
+  id: string,
+  name: string,
+  visable: boolean,
   geoJSON: FeatureCollection;
 };
 
 type GeoJSONContextType = {
-  geoJSONList: FeatureCollection[];
-  setGeoJSONList: (selected: FeatureCollection[]) => void;
+  geoJSONList: Array<GeoJSONItem>;
+  setGeoJSONList: (selected: GeoJSONItem[]) => void;
 };
 
 const GeoJSONContext = createContext<GeoJSONContextType>({
@@ -22,7 +25,7 @@ type Props = {
 };
 
 const GeoJSONProvider: React.FC<Props> = ({ children }) => {
-  const [geoJSONList, setGeoJSONList] = useState<FeatureCollection[]>([]);
+  const [geoJSONList, setGeoJSONList] = useState<GeoJSONItem[]>([]);
 
 
   return (

@@ -2,7 +2,8 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import { Typography } from '@mui/material';
 import { FeatureCollection } from 'geojson';
-import { useGeoJSONContext } from '../context/geoJSONContext';
+import { useGeoJSONContext, GeoJSONItem} from '../context/geoJSONContext';
+import { uid } from 'uid';
 
 
 function FileInput(props: { handleCloseModal: () => void;}) {
@@ -95,13 +96,20 @@ function FileInput(props: { handleCloseModal: () => void;}) {
     Promise.all(filesToAdd)
     .then(files => {
       const geoJSONs = files.filter(file => file !== null);
-      console.log("GeoJSONS:", geoJSONs)
+      const counter: number = 0;
       geoJSONs.forEach(json => {console.log("Jason:", json, "type:", typeof json);
       console.log("GLOBAL Before:", geoJSONList)
       //Local
       setGeoJSONs((prevGeoJSONs) => [...prevGeoJSONs, json as FeatureCollection]);
       //Global
-      geoJSONList.push(json as FeatureCollection)
+       console.log("POTENSIELT NAVN", files);
+      const newObj: GeoJSONItem = {
+        id: uid(),
+        name: "files[counter]?.name",
+        visable: true,
+        geoJSON: json as FeatureCollection
+      }
+      geoJSONList.push(newObj)
       //setGeoJSONList([...geoJSONList, json as FeatureCollection])
       console.log("GLOBAL after:", geoJSONList)
     });

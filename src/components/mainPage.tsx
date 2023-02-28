@@ -32,6 +32,7 @@ import StrollyMap from './strollyMap';
 import ColorPicker from './colorPicker';
 import FileInput from './fileInput';
 import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
+import { useGeoJSONContext } from '../context/geoJSONContext';
 
 const drawerWidth = 240;
 
@@ -55,6 +56,8 @@ export default function MainPage() {
   const [color, setColor] = useState("red")
   const [isPicker, setIsPicker] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const { geoJSONList, setGeoJSONList } = useGeoJSONContext(); 
 
 
 const tools: Tool[] = [
@@ -93,6 +96,7 @@ const tools: Tool[] = [
 
   const showModal = () => {
     setModal(true)
+    
   }
   const closeModal = () => {
     setModal(false)
@@ -156,11 +160,11 @@ const tools: Tool[] = [
         </Typography>
         <Divider/> 
         <List>
-          {['Layer1', 'Layer2', 'layer3'].map((text, index) => (
+          {geoJSONList.map((layer) => (
             <Stack spacing={10} direction="row">
-            <ListItem key={text} disablePadding >
+            <ListItem key={""} disablePadding >
               <ListItemButton >
-                <ListItemText primary={text} />
+                <ListItemText primary={"text"} />
                 <ListItemIcon style={{justifyContent: "space-between", alignContent: "space-between"}}>
                 <div onClick={handleShowColorPicker}>
                      <PaletteIcon htmlColor={color} />
