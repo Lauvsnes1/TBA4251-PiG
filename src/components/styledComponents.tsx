@@ -78,6 +78,8 @@ export const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open
   }));
   
   export const modalStyle = {
+    display: 'flex', 
+    flexDirection: 'column',
     position: 'absolute' as 'absolute',
     top: '50%',
     left: '50%',

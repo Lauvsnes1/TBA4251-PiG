@@ -11,7 +11,7 @@ export type GeoJSONItem = {
 
 type GeoJSONContextType = {
   geoJSONList: Array<GeoJSONItem>;
-  setGeoJSONList: (selected: GeoJSONItem[]) => void;
+  setGeoJSONList: (selected: GeoJSONItem[] | ((prevSelected: GeoJSONItem[]) => GeoJSONItem[])) => void;
   setVisable: (value: boolean) => void;
 };
 

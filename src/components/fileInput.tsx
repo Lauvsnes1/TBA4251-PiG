@@ -11,7 +11,7 @@ function FileInput(props: { handleCloseModal: () => void;}) {
   const [geoJSONs, setGeoJSONs] = useState<FeatureCollection[]>([])
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const { geoJSONList } = useGeoJSONContext();
+  const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
 
 
   const handleUploadClick = () => {
@@ -118,7 +118,6 @@ function FileInput(props: { handleCloseModal: () => void;}) {
       console.log("GLOBAL Before:", geoJSONList)
       //Local
       setGeoJSONs((prevGeoJSONs) => [...prevGeoJSONs, json as FeatureCollection]);
-      //Global
       const name: string = list[nameCounter].name.split(".")[0]; //To remove ".geoJSON"
      
       const newObj: GeoJSONItem = {
@@ -128,7 +127,7 @@ function FileInput(props: { handleCloseModal: () => void;}) {
         color: getRandomColor(),
         geoJSON: json as FeatureCollection
       }
-      geoJSONList.push(newObj);
+      setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem])
       nameCounter ++;
      })
 
