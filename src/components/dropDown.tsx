@@ -54,7 +54,6 @@ export default function LongMenu(props: {layer: GeoJSONItem}) {
     })
     closeEditModal()
     handleClose()
-
   }
 
   const handleDelete = () => {
@@ -65,18 +64,6 @@ export default function LongMenu(props: {layer: GeoJSONItem}) {
     closeDeleteModal()
     handleClose()
   }
-
-
-  
-  const toggleVisibility = (layer: GeoJSONItem) => {
-    const newObj: GeoJSONItem = { ...layer, visable: !layer.visable };
-    setGeoJSONList(prevList => {
-      const index = prevList.findIndex(item => item.id === layer.id);
-      const updatedList = [...prevList]; // create a copy of the original list
-      updatedList[index] = newObj; // replace the layer with the new object
-      return updatedList;
-    });
-  };
 
   return (
     <div style={{ display: "contents"}}>

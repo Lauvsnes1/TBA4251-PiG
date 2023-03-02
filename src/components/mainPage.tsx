@@ -61,9 +61,10 @@ export default function MainPage() {
   const [color, setColor] = useState("red")
   const [isPicker, setIsPicker] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem | null>(null);
   //const [geoJSONList, setGeoJSONList] = useState<GeoJSONListState[]>([]);
 
-  const { geoJSONList, setGeoJSONList, setVisable } = useGeoJSONContext(); 
+  const { geoJSONList, setGeoJSONList} = useGeoJSONContext(); 
 
 
 const tools: Tool[] = [
@@ -101,13 +102,17 @@ const tools: Tool[] = [
 
   }
 
-  const handleShowColorPicker = (event: React.MouseEvent<HTMLElement>) => {
+  const handleShowColorPicker = (event: React.MouseEvent<HTMLElement>, layer: GeoJSONItem) => {
+    setSelectedLayer(layer)
     setAnchorEl(event.currentTarget);
     setOpenPop((previousOpen) => !previousOpen);
   }
 
   const handleCloseColorPicker = () => {
+    setSelectedLayer(null)
+    setAnchorEl(null)
     setOpenPop((previousOpen) => !previousOpen);
+    
     
   };
 
@@ -180,37 +185,28 @@ const tools: Tool[] = [
           {geoJSONList.map((layer) => (
             <Stack spacing={10} direction="row">
             <ListItem key={layer.id} disablePadding >
-              <ListItemButton >
+              <ListItemButton key={layer.id} >
                 <ListItemText primary={layer.name}  />
                 <ListItemIcon style={{justifyContent: "space-between", alignContent: "space-between", alignItems: "center"}}>
                   {/* <div onClick={handleShowEdit}> */}
                   <div>
                   <DropDown layer={layer}/>
                   </div>
-                  {/*<Popper id={"test"} open={openDropDown} anchorEl={anchorEl} transition style={{zIndex: 2}}>
-                  {({ TransitionProps }) => (
-                      <Fade {...TransitionProps} timeout={100}>
-                  <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper',  }}>
-                    <DropDown/>
-                  </Box>
-                  </Fade>
-                    )}
-                  </Popper>*/}
-                <div onClick={handleShowColorPicker}>
-                     <PaletteIcon htmlColor={layer.color} />
+                <div onClick={(e) => handleShowColorPicker(e, layer)}>
+                     <PaletteIcon htmlColor={layer.color} key={layer.id} />
                 </div>
-                  <Popper id={"test"} open={openPop} anchorEl={anchorEl} transition style={{zIndex: 2}}>
+                {selectedLayer ===layer && (
+                <Popper id={layer.id} open={openPop} anchorEl={anchorEl} transition style={{zIndex: 2}}>
                     {({ TransitionProps }) => (
                       <Fade {...TransitionProps} timeout={100}>
-                        
                         <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper'  }}>
-                          <ColorPicker handleCloseColorPicker={handleCloseColorPicker} setColor={setLayerColor}/>
-                          <p>Chosen color is {layer.color}</p>
+                        <Typography>{layer.id}</Typography> 
+                          <ColorPicker handleCloseColorPicker={handleCloseColorPicker} layer={layer}/>
                         </Box>
-      
                       </Fade>
                     )}
-                  </Popper>
+                  </Popper>)}
+                  
                  {layer.visable? <VisibilityIcon onClick={() => toggleVisibility(layer)} /> : <VisibilityOffIcon onClick={() => toggleVisibility(layer)} />} 
                 </ListItemIcon>
               </ListItemButton>
