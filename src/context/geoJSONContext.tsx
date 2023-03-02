@@ -12,13 +12,11 @@ export type GeoJSONItem = {
 type GeoJSONContextType = {
   geoJSONList: Array<GeoJSONItem>;
   setGeoJSONList: (selected: GeoJSONItem[] | ((prevSelected: GeoJSONItem[]) => GeoJSONItem[])) => void;
-  setVisable: (value: boolean) => void;
 };
 
 const GeoJSONContext = createContext<GeoJSONContextType>({
   geoJSONList: [],
   setGeoJSONList: () => {},
-  setVisable: () => {}
 });
 
 export const useGeoJSONContext = () => useContext(GeoJSONContext);
@@ -29,11 +27,10 @@ type Props = {
 
 const GeoJSONProvider: React.FC<Props> = ({ children }) => {
   const [geoJSONList, setGeoJSONList] = useState<GeoJSONItem[]>([]);
-  const [visable, setVisable] = useState<boolean>(); 
 
 
   return (
-    <GeoJSONContext.Provider value={{ geoJSONList, setGeoJSONList, setVisable }}>
+    <GeoJSONContext.Provider value={{ geoJSONList, setGeoJSONList}}>
       {children}
     </GeoJSONContext.Provider>
   );

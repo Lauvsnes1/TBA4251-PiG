@@ -6,7 +6,7 @@ import { GeoJSONItem, useGeoJSONContext} from '../context/geoJSONContext';
 
 function ColorPicker(props: { handleCloseColorPicker: () => void; layer: GeoJSONItem}) {
     const [color, setColor] = useState<any | string>(props.layer.color);
-    const { setGeoJSONList, geoJSONList } = useGeoJSONContext(); 
+    const { setGeoJSONList } = useGeoJSONContext(); 
 
     const handleColorChange = (color: string) => {
       setColor(color)

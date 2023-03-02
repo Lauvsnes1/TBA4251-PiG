@@ -9,10 +9,8 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 
 import { GeoJSONItem, useGeoJSONContext} from '../context/geoJSONContext';
-import { Layer } from 'react-map-gl';
 import { Button } from '@mui/material';
 import { modalStyle } from './styledComponents';
-import { close } from 'inspector';
 
 const ITEM_HEIGHT = 48;
 

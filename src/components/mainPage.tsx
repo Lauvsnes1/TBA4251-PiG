@@ -1,4 +1,4 @@
-import React, { ElementType, useState, useContext} from 'react';
+import React, { ElementType, useState} from 'react';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -26,10 +26,6 @@ import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
 import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import EditIcon from '@mui/icons-material/Edit';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 
 import StrollyMap from './strollyMap';
 import ColorPicker from './colorPicker';
@@ -37,7 +33,6 @@ import FileInput from './fileInput';
 import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import DropDown from "./dropDown"
-import { FeatureCollection } from 'geojson';
 
 const drawerWidth = 240;
 
@@ -51,18 +46,13 @@ interface Tool {
 
 export default function MainPage() {
   const theme = useTheme();
-  //const myContext = useContext(MyContext)
   const [open, setOpen] = React.useState(false);
   const [openPop, setOpenPop] = useState<boolean>(false);
   const [modal, setModal] = useState<boolean>(false);
-  const [openDropDown, setOpenDropDown] = useState<boolean>(false);
 
-  //Vill måtte brukes som en en property i lista med layers, men nå kun for demo
-  const [color, setColor] = useState("red")
-  const [isPicker, setIsPicker] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem | null>(null);
-  //const [geoJSONList, setGeoJSONList] = useState<GeoJSONListState[]>([]);
+
 
   const { geoJSONList, setGeoJSONList} = useGeoJSONContext(); 
 
@@ -73,10 +63,6 @@ const tools: Tool[] = [
   {name: "Buffer", icon: RemoveCircleIcon, handler:() => showModal() },
   {name: "Intersect", icon: CloseFullscreenIcon, handler: () => showModal() }
 ]
-
-  const setLayerColor = (color: string) => {
-    setColor(color)
-  }
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -94,13 +80,6 @@ const tools: Tool[] = [
       return updatedList;
     });
   };
-
-  const handleShowEdit = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-    setOpenDropDown((previousOpenDropDown) => !previousOpenDropDown)
-
-
-  }
 
   const handleShowColorPicker = (event: React.MouseEvent<HTMLElement>, layer: GeoJSONItem) => {
     setSelectedLayer(layer)

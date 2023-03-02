@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import { Typography } from '@mui/material';
 import { FeatureCollection } from 'geojson';
@@ -26,65 +26,6 @@ function FileInput(props: { handleCloseModal: () => void;}) {
     console.log("List of Global GeoJSONS after ok", geoJSONList)
     
   }
-
-  // const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   if (!e.target.files) {
-  //     return;
-  //   }
-  //   const list = e.target.files;
-  //   for (let i = 0; i < list.length; i++) {
-  //     console.log("adding item:", list[i], "with index i:", i);
-  //     setFiles((prevFiles) => [...prevFiles, list[i] as File]);
-  //   }
-  //   console.log("Target: ", list);
-  // };
-
-  //UseEffect to process when file is uploaded
-  // useEffect(() => {
-  //   const filesToAdd = files.map( file => {
-  //       const reader = new FileReader();
-  //       reader.readAsText(file);
-  //       return new Promise((resolve, reject) => {
-  //           reader.onload = () => {
-  //             try {
-  //               const content = JSON.parse(reader.result as string);
-  //               const isGeoJSON = content.type === 'FeatureCollection';
-  //               resolve(isGeoJSON ? content : null);
-  //             } catch (error) {
-  //               reject(error);
-  //             }
-  //           };
-  //           reader.onerror = reject;
-  //         });
-  //   })
-  //   Promise.all(filesToAdd)
-  //   .then(files => {
-  //     const geoJSONs = files.filter(file => file !== null);
-  //     const counter: number = 0;
-  //     geoJSONs.forEach(json => {console.log("Jason:", json, "type:", typeof json);
-  //     console.log("GLOBAL Before:", geoJSONList)
-  //     //Local
-  //     setGeoJSONs((prevGeoJSONs) => [...prevGeoJSONs, json as FeatureCollection]);
-  //     //Global
-  //      console.log("POTENSIELT NAVN", files);
-  //     const newObj: GeoJSONItem = {
-  //       id: uid(),
-  //       name: "files[counter]?.name",
-  //       visable: true,
-  //       geoJSON: json as FeatureCollection
-  //     }
-  //     geoJSONList.push(newObj)
-  //     //setGeoJSONList([...geoJSONList, json as FeatureCollection])
-  //     console.log("GLOBAL after:", geoJSONList)
-  //   });
-  //     //setGeoJSONs(prevGeoJSONs => [...prevGeoJSONs, geoJSONs]);
-  //   })
-  //   .catch(error => {
-  //     console.error('Error reading file:', error);
-  //   });
-
-  // }, [files])
-
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
