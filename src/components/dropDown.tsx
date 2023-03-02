@@ -9,10 +9,8 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 
 import { GeoJSONItem, useGeoJSONContext} from '../context/geoJSONContext';
-import { Layer } from 'react-map-gl';
 import { Button } from '@mui/material';
 import { modalStyle } from './styledComponents';
-import { close } from 'inspector';
 
 const ITEM_HEIGHT = 48;
 
@@ -54,7 +52,6 @@ export default function LongMenu(props: {layer: GeoJSONItem}) {
     })
     closeEditModal()
     handleClose()
-
   }
 
   const handleDelete = () => {
@@ -65,18 +62,6 @@ export default function LongMenu(props: {layer: GeoJSONItem}) {
     closeDeleteModal()
     handleClose()
   }
-
-
-  
-  const toggleVisibility = (layer: GeoJSONItem) => {
-    const newObj: GeoJSONItem = { ...layer, visable: !layer.visable };
-    setGeoJSONList(prevList => {
-      const index = prevList.findIndex(item => item.id === layer.id);
-      const updatedList = [...prevList]; // create a copy of the original list
-      updatedList[index] = newObj; // replace the layer with the new object
-      return updatedList;
-    });
-  };
 
   return (
     <div style={{ display: "contents"}}>
