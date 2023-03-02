@@ -1,4 +1,4 @@
-export const geoJSONList: GeoJSON.FeatureCollection<GeoJSON.Point, { title: string, description: string }>[] = 
+export const geoJSONListTest: GeoJSON.FeatureCollection<GeoJSON.Point, { title: string, description: string }>[] = 
 [  {    type: 'FeatureCollection',    
       features: [      {        type: 'Feature',        geometry: {          type: 'Point',          coordinates: [ 10.414997227081066, 63.43964905148289  ]
         },

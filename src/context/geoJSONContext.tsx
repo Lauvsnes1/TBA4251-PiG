@@ -4,7 +4,7 @@ import { FeatureCollection } from "geojson";
 export type GeoJSONItem = {
   id: string,
   name: string,
-  visable: boolean,
+  visible: boolean,
   color: string,
   geoJSON: FeatureCollection;
 };

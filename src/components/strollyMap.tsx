@@ -1,17 +1,48 @@
-import React, { useState, useEffect, useRef } from 'react';
-import mapboxgl from 'mapbox-gl';
+import React, { useEffect, useRef } from 'react';
+import mapboxgl, { CirclePaint, FillPaint, LinePaint } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { geoJSONList } from '../data/test_points';
+import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 
-const accessToken: string|any = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
+const accessToken: string | any = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 mapboxgl.accessToken = accessToken;
-
-
 
 function StrollyMap() {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<mapboxgl.Map | null>(null);
-    console.log("ACCESS TOKEN:",accessToken)
+  const { geoJSONList } = useGeoJSONContext();
+
+  const determineType = (layer: GeoJSONItem): { type: string, paint?: mapboxgl.AnyPaint } => {
+    const type = layer.geoJSON.features[0].geometry.type;
+    switch (type) {
+      case "Point":
+        return {
+          type: "circle",
+          paint: {
+            "circle-radius": 5,
+            "circle-color": layer.color,
+          },
+        };
+      case "LineString":
+        return {
+          type: "line",
+          paint: {
+            'line-color': layer.color,
+            'line-width': 2,
+          }
+        };
+      case "Polygon":
+        return {
+          type: "fill",
+          paint: { 'fill-color': layer.color, 'fill-opacity': 0.5 }
+        };
+      default:
+        throw new Error(`Unsupported geometry type: ${type}`);
+    }
+  };
+
+  const determineVisibility = (layer: GeoJSONItem) => {
+    return layer.visible ? 'visible' : 'none';
+  }
+
   useEffect(() => {
     if (!mapContainer.current) {
       return;
@@ -25,33 +56,53 @@ function StrollyMap() {
     });
 
     map.on('load', () => {
-      // The map style is now fully loaded
-      for(const item of geoJSONList){
-        const {type: string,  } = item
-      map.addSource(item.features[0].properties.title, {
-        type: 'geojson',
-        data: item,
-      });
+      for (const layer of geoJSONList) {
+        map.addSource(layer.id, {
+          type: 'geojson',
+          data: layer.geoJSON,
+        });
 
-      map.addLayer({
-        id: item.features[0].properties.title, //Here will be more like a key or name of layer or smth
-        type: 'circle',
-        source: item.features[0].properties.title,
-        paint: {
-          'circle-radius': 6,
-          'circle-color': '#B42222'
+        const { type, paint } = determineType(layer);
+
+        switch (type) {
+          case 'fill':
+            map.addLayer({
+              id: layer.name,
+              type: type,
+              source: layer.id,
+              paint: paint as FillPaint,
+            });
+            break;
+          case 'circle':
+            map.addLayer({
+              id: layer.name,
+              type: type,
+              source: layer.id,
+              paint: paint as CirclePaint,
+            });
+            break;
+          case 'line':
+            map.addLayer({
+              id: layer.name,
+              type: type,
+              source: layer.id,
+              paint: paint as LinePaint,
+            });
+            break;
+          default:
+            throw new Error(`Unsupported layer type: ${type}`);
         }
-      });
-      console.log("added", item.features[0].properties.title)
-    }
 
-      setMap(map);
+        map.setLayoutProperty(layer.name, 'visibility', determineVisibility(layer));
+      }
     });
 
     return () => {
       map.remove();
+
     };
-  }, [mapContainer]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [geoJSONList]);
 
   return (
     <div

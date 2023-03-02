@@ -64,7 +64,7 @@ function FileInput(props: { handleCloseModal: () => void;}) {
       const newObj: GeoJSONItem = {
         id: uid(),
         name: name, 
-        visable: true,
+        visible: true,
         color: getRandomColor(),
         geoJSON: json as FeatureCollection
       }

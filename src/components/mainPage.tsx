@@ -72,7 +72,7 @@ const tools: Tool[] = [
   };
   
   const toggleVisibility = (layer: GeoJSONItem) => {
-    const newObj: GeoJSONItem = { ...layer, visable: !layer.visable };
+    const newObj: GeoJSONItem = { ...layer, visible: !layer.visible };
     setGeoJSONList(prevList => {
       const index = prevList.findIndex(item => item.id === layer.id);
       const updatedList = [...prevList]; // create a copy of the original list
@@ -186,7 +186,7 @@ const tools: Tool[] = [
                     )}
                   </Popper>)}
                   
-                 {layer.visable? <VisibilityIcon onClick={() => toggleVisibility(layer)} /> : <VisibilityOffIcon onClick={() => toggleVisibility(layer)} />} 
+                 {layer.visible? <VisibilityIcon onClick={() => toggleVisibility(layer)} /> : <VisibilityOffIcon onClick={() => toggleVisibility(layer)} />} 
                 </ListItemIcon>
               </ListItemButton>
             </ListItem>
