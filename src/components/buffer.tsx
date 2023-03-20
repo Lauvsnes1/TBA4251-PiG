@@ -52,7 +52,6 @@ function Buffer(props: { handleCloseModal: () => void;}) {
   }
   const handleChoseLayer = (event: ChangeEvent<HTMLInputElement>) => {
     const chosenLayer: GeoJSONItem | undefined = geoJSONList.find((layer) => layer.id === event.target.value);
-    console.log('Chosen layer is of type', typeof(chosenLayer?.geoJSON.features[0].geometry.type))
     setSelectedLayer(chosenLayer);
   }
 
