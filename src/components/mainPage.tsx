@@ -31,6 +31,7 @@ import StrollyMap from './strollyMap';
 import ColorPicker from './colorPicker';
 import FileInput from './fileInput';
 import Buffer from './buffer';
+import Intersect from './intersect';
 import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import DropDown from "./dropDown"
@@ -98,7 +99,7 @@ export default function MainPage() {
     {id: 1, name: "Load data", icon: FileUploadIcon, component: <FileInput handleCloseModal={closeModal}/>}, 
     {id: 2, name: "Feature extracor", icon: ScienceIcon,  component: <FileInput handleCloseModal={closeModal}/>},
     {id: 3, name: "Buffer", icon: RemoveCircleIcon, component: <Buffer handleCloseModal={closeModal}/> },
-    {id: 4, name: "Intersect", icon: CloseFullscreenIcon,  component: <FileInput handleCloseModal={closeModal}/> }
+    {id: 4, name: "Intersect", icon: CloseFullscreenIcon,  component: <Intersect handleCloseModal={closeModal}/> }
   ]
   const showModal = (id: number) => {
     try{

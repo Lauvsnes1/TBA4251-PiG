@@ -1,15 +1,18 @@
 import React, { useState, ChangeEvent, } from 'react';
 import Button from '@mui/material/Button';
 import { Typography } from '@mui/material';
-import { FeatureCollection } from 'geojson';
+import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem} from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { uid } from 'uid';
-import buffer from '@turf/buffer';
+import intersect from '@turf/intersect';
 
-function Buffer(props: { handleCloseModal: () => void;}) {
-  const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem>()
+
+
+function Intersect(props: { handleCloseModal: () => void;}) {
+  const [selectedLayer1, setSelectedLayer1] = useState<GeoJSONItem>()
+  const [selectedLayer2, setSelectedLayer2] = useState<GeoJSONItem>()
   const [name, setName] = useState<string>("")
   const [bufferRadius, setBufferRadius] = useState<number>(0)
 
@@ -31,41 +34,65 @@ function Buffer(props: { handleCloseModal: () => void;}) {
 
   } 
 
-  const handleBuffer = () => {
-    const buffered = buffer(selectedLayer?.geoJSON as FeatureCollection, bufferRadius, {units: 'meters'})
-    return buffered;
+  function handleIntersection() {
+    // for (let i = 0; selectedLayer1?.geoJSON.features.length; i++){
+
+    // }
+    if (
+      selectedLayer1?.geoJSON.features[0].geometry.type === "Polygon" &&
+      selectedLayer2?.geoJSON.features[0].geometry.type === "Polygon"
+    ) {
+      const intersection = intersect(
+        selectedLayer1.geoJSON.features[0].geometry as Polygon,
+        selectedLayer2.geoJSON.features[0].geometry as Polygon
+      ) as Feature<Polygon | MultiPolygon>;
+      if (intersection === undefined) {
+        console.log('error')
+        return null;
+      } 
+  
+      const featureCollection: FeatureCollection = {
+        type: "FeatureCollection",
+        features: [intersection]
+      }
+      return featureCollection;
+    };
   }
 
+  
   const handleOk = () => {
-    const buffered = handleBuffer();
+    const intersected = handleIntersection();
     const newObj: GeoJSONItem = {
         id: uid(),
         name: name, 
         visible: true,
         color: getRandomColor(),
-        geoJSON: buffered
+        geoJSON: intersected as FeatureCollection
       }
     setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem])
     //pass state up to close modal
     props.handleCloseModal()
     
   }
-  const handleChoseLayer = (event: ChangeEvent<HTMLInputElement>) => {
-    const chosenLayer: GeoJSONItem | undefined = geoJSONList.find((layer) => layer.id === event.target.value);
-    console.log('Chosen layer is of type', typeof(chosenLayer?.geoJSON.features[0].geometry.type))
-    setSelectedLayer(chosenLayer);
+  const handleChoseLayer1 = (event: ChangeEvent<HTMLInputElement>) => {
+    const chosenLayer: GeoJSONItem = geoJSONList.find((layer) => layer.id === event.target.value) as GeoJSONItem;
+    setSelectedLayer1(chosenLayer);
+  }
+  const handleChoseLayer2 = (event: ChangeEvent<HTMLInputElement>) => {
+    const chosenLayer: GeoJSONItem = geoJSONList.find((layer) => layer.id === event.target.value) as GeoJSONItem;
+    setSelectedLayer2(chosenLayer);
   }
 
   return (
     <div style={{display: "flex", flexDirection: "column",  justifyContent: "center", flexWrap: 'wrap', width: '100%' }}>
-        <Typography variant="h6"> Buffer Tool:</Typography>
+        <Typography variant="h6"> Intersect Tool:</Typography>
       
         <TextField
           style={{paddingTop: '10px'}}
           id="Selected-buffer-layer"
           select
-          label="Select layer"
-          onChange={handleChoseLayer}
+          label="Select layer one"
+          onChange={handleChoseLayer1}
           variant="filled"
         >
           {geoJSONList.map((layer) => (
@@ -75,14 +102,19 @@ function Buffer(props: { handleCloseModal: () => void;}) {
           ))}
         </TextField>
         <TextField
-          id="outlined-error"
-          label="Buffer radius in m"
-          onChange={(e) => handleBufferSelect(e)}
           style={{paddingTop: '10px'}}
+          id="Selected-buffer-layer"
+          select
+          label="Select layer two"
+          onChange={handleChoseLayer2}
           variant="filled"
-          type='number'
-        
-        />
+        >
+          {geoJSONList.map((layer) => (
+            <MenuItem key={layer.id} value={layer.id} >
+              {layer.name}
+            </MenuItem>
+          ))}
+        </TextField>
         <TextField
           required
           id="outlined-required"
@@ -99,4 +131,4 @@ function Buffer(props: { handleCloseModal: () => void;}) {
     
   );
 }
-export default Buffer;
+export default Intersect;
