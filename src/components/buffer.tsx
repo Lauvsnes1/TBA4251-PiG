@@ -10,7 +10,7 @@ import buffer from '@turf/buffer';
 
 function Buffer(props: { handleCloseModal: () => void;}) {
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem>()
-  const [name, setName] = useState<string>("")
+  const [name, setName] = useState<string>()
   const [bufferRadius, setBufferRadius] = useState<number>(0)
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
@@ -37,6 +37,7 @@ function Buffer(props: { handleCloseModal: () => void;}) {
   }
 
   const handleOk = () => {
+    if (selectedLayer && bufferRadius && name){
     const buffered = handleBuffer();
     const newObj: GeoJSONItem = {
         id: uid(),
@@ -48,31 +49,38 @@ function Buffer(props: { handleCloseModal: () => void;}) {
     setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem])
     //pass state up to close modal
     props.handleCloseModal()
+    }
     
   }
   const handleChoseLayer = (event: ChangeEvent<HTMLInputElement>) => {
     const chosenLayer: GeoJSONItem | undefined = geoJSONList.find((layer) => layer.id === event.target.value);
-    setSelectedLayer(chosenLayer);
+    if (chosenLayer) {
+      setSelectedLayer(chosenLayer);
+    } else {
+      setSelectedLayer(undefined);
+    }
   }
+  
 
   return (
     <div style={{display: "flex", flexDirection: "column",  justifyContent: "center", flexWrap: 'wrap', width: '100%' }}>
         <Typography variant="h6"> Buffer Tool:</Typography>
       
         <TextField
-          style={{paddingTop: '10px'}}
-          id="Selected-buffer-layer"
-          select
-          label="Select layer"
-          onChange={handleChoseLayer}
-          variant="filled"
-        >
-          {geoJSONList.map((layer) => (
-            <MenuItem key={layer.id} value={layer.id} >
-              {layer.name}
-            </MenuItem>
-          ))}
-        </TextField>
+        style={{paddingTop: '10px'}}
+        id="Selected-buffer-layer"
+        select
+        label="Select layer"
+        onChange={handleChoseLayer}
+        variant="filled"
+      >
+        
+        {geoJSONList.map((layer) => (
+          <MenuItem key={layer.id} value={layer.id}>
+            {layer.name}
+          </MenuItem>
+        ))}
+      </TextField>
         <TextField
           id="outlined-error"
           label="Buffer radius in m"
