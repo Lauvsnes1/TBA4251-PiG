@@ -30,6 +30,7 @@ import Modal from '@mui/material/Modal';
 import StrollyMap from './strollyMap';
 import ColorPicker from './colorPicker';
 import FileInput from './fileInput';
+import Buffer from './buffer';
 import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import DropDown from "./dropDown"
@@ -37,9 +38,10 @@ import DropDown from "./dropDown"
 const drawerWidth = 240;
 
 interface Tool {
+  id: number;
   name: string;
   icon: ElementType;
-  handler: () => void;
+  component: JSX.Element; 
 }
 
 
@@ -49,7 +51,7 @@ export default function MainPage() {
   const [open, setOpen] = React.useState(false);
   const [openPop, setOpenPop] = useState<boolean>(false);
   const [modal, setModal] = useState<boolean>(false);
-
+  const [modalComponent, setModalComponent] = useState<JSX.Element | undefined>(undefined)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem | null>(null);
 
@@ -57,12 +59,6 @@ export default function MainPage() {
   const { geoJSONList, setGeoJSONList} = useGeoJSONContext(); 
 
 
-const tools: Tool[] = [
-  {name: "Load data", icon: FileUploadIcon, handler: () => showModal()}, 
-  {name: "Feature extracor", icon: ScienceIcon, handler: () => showModal()},
-  {name: "Buffer", icon: RemoveCircleIcon, handler:() => showModal() },
-  {name: "Intersect", icon: CloseFullscreenIcon, handler: () => showModal() }
-]
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -95,13 +91,27 @@ const tools: Tool[] = [
     
   };
 
-  const showModal = () => {
-    setModal(true)
-    
-  }
   const closeModal = () => {
     setModal(false)
   }
+  const tools: Tool[] = [
+    {id: 1, name: "Load data", icon: FileUploadIcon, component: <FileInput handleCloseModal={closeModal}/>}, 
+    {id: 2, name: "Feature extracor", icon: ScienceIcon,  component: <FileInput handleCloseModal={closeModal}/>},
+    {id: 3, name: "Buffer", icon: RemoveCircleIcon, component: <Buffer handleCloseModal={closeModal}/> },
+    {id: 4, name: "Intersect", icon: CloseFullscreenIcon,  component: <FileInput handleCloseModal={closeModal}/> }
+  ]
+  const showModal = (id: number) => {
+    try{
+    const componentToRender: JSX.Element | undefined = tools.find((comp) => comp.id === id)?.component;
+    console.log('Id pressed: ', id, 'component found: ', tools.find((comp) => comp.id === id)?.name )
+    setModalComponent(componentToRender)
+    }
+    catch{
+      console.log("Tool not found")
+    }
+    setModal(true)
+  }
+
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -146,7 +156,7 @@ const tools: Tool[] = [
         <List>
           {tools.map((element, index) => (
             <ListItem key={element.name} disablePadding>
-              <ListItemButton onClick={element.handler}>
+              <ListItemButton onClick={() => showModal(element.id)}>
                 <ListItemIcon >
                   <element.icon/>
                 </ListItemIcon>
@@ -205,7 +215,7 @@ const tools: Tool[] = [
         <Box sx={modalStyle}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
           </Typography>
-          <FileInput handleCloseModal={closeModal} />
+          {modalComponent}
         </Box>
       </Modal>
         <StrollyMap/>

@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import mapboxgl, { CirclePaint, FillPaint, LinePaint } from 'mapbox-gl';
+import React, { useEffect, useRef, useState } from 'react';
+import mapboxgl, { CirclePaint, FillPaint, LinePaint, LngLatLike } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 
@@ -8,7 +8,11 @@ mapboxgl.accessToken = accessToken;
 
 function StrollyMap() {
   const mapContainer = useRef<HTMLDivElement>(null);
+  //const [center, setCenter] = useState<LngLatLike | undefined>([, ])
   const { geoJSONList } = useGeoJSONContext();
+  const [lng, setLng] = useState(10.421906);
+  const [lat, setLat] = useState(63.446827);
+  const [zoom, setZoom] = useState(12);
 
   const determineType = (layer: GeoJSONItem): { type: string, paint?: mapboxgl.AnyPaint } => {
     const type = layer.geoJSON.features[0].geometry.type;
@@ -51,8 +55,8 @@ function StrollyMap() {
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v10',
-      center: [10.421906, 63.446827],
-      zoom: 12
+      center: [lng, lat],
+      zoom: zoom
     });
 
     map.on('load', () => {
@@ -95,6 +99,14 @@ function StrollyMap() {
 
         map.setLayoutProperty(layer.name, 'visibility', determineVisibility(layer));
       }
+    });
+
+    //to keep persistent position
+    map.on('move', () => {
+      setLng(Number(map.getCenter().lng.toFixed(4)));
+      setLat(Number(map.getCenter().lat.toFixed(4)));
+      setZoom(Number(map.getZoom().toFixed(2)));
+
     });
 
     return () => {
