@@ -6,9 +6,9 @@ import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { uid } from 'uid';
-import union from '@turf/union';
+import differnce from '@turf/difference';
 
-function Union(props: { handleCloseModal: () => void; }) {
+function Difference(props: { handleCloseModal: () => void; }) {
   const [selectedLayer1, setSelectedLayer1] = useState<GeoJSONItem>();
   const [selectedLayer2, setSelectedLayer2] = useState<GeoJSONItem>();
   const [name, setName] = useState<string>('');
@@ -27,8 +27,8 @@ function Union(props: { handleCloseModal: () => void; }) {
     return hexColor;
   }
 
-  function handleUnion() {
-    const unionsLst: FeatureCollection = {
+  function handleDifference() {
+    const differenceList: FeatureCollection = {
         type: 'FeatureCollection',
         features: [],
       };
@@ -40,27 +40,27 @@ function Union(props: { handleCloseModal: () => void; }) {
       selectedLayer1?.geoJSON.features[i].geometry.type === "Polygon" &&
       selectedLayer2?.geoJSON.features[j].geometry.type === "Polygon"
     ) {
-      const unions = union(
+      const differences = differnce(
         selectedLayer1.geoJSON.features[i].geometry as Polygon,
         selectedLayer2.geoJSON.features[j].geometry as Polygon
       ) as Feature<Polygon | MultiPolygon>;
-      if (unions === undefined) {
+      if (differences === undefined) {
         console.log('error')
         return null;
       }
-      if(unions !== null){ 
-      unionsLst.features.push(unions)
+      if(differences !== null){ 
+      differenceList.features.push(differences)
       }
   
     }
     }
     };
-    return unionsLst;
+    return differenceList;
 }
   }
 
   const handleOk = () => {
-    const unioned = handleUnion();
+    const unioned = handleDifference();
     const newObj: GeoJSONItem = {
       id: uid(),
       name: name,
@@ -130,4 +130,4 @@ function Union(props: { handleCloseModal: () => void; }) {
     
   );
 }
-export default Union;
+export default Difference;
