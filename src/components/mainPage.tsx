@@ -101,14 +101,6 @@ export default function MainPage() {
   const closeModal = () => {
     setModal(false)
   }
-  const tools: Tool[] = [
-    {id: 1, name: "Load data", icon: FileUploadIcon, component: <FileInput handleCloseModal={closeModal}/>}, 
-    {id: 2, name: "Feature extracor", icon: ScienceIcon,  component: <FileInput handleCloseModal={closeModal}/>},
-    {id: 3, name: "Buffer", icon: RemoveCircleIcon, component: <Buffer handleCloseModal={closeModal}/> },
-    {id: 4, name: "Intersect", icon: JoinInnerIcon,  component: <Intersect handleCloseModal={closeModal}/> },
-    {id: 5, name: "Union", icon: JoinFullIcon, component: <Union handleCloseModal={closeModal}/>},
-    {id: 6, name: "Difference", icon: RemoveIcon, component: <Difference handleCloseModal={closeModal}/>}
-  ]
   const showModal = (id: number) => {
     try{
     const componentToRender: JSX.Element | undefined = tools.find((comp) => comp.id === id)?.component;
@@ -120,6 +112,23 @@ export default function MainPage() {
     }
     setModal(true)
   }
+
+  //function that gives the user ability to imediately changing name of layer when drawn
+  const editNameOfDrawinf = (uid: string) => {
+    const drawing = geoJSONList.find((item) => uid === item.id)
+
+
+  }
+
+  const tools: Tool[] = [
+    {id: 1, name: "Load data", icon: FileUploadIcon, component: <FileInput handleCloseModal={closeModal}/>}, 
+    {id: 2, name: "Feature extracor", icon: ScienceIcon,  component: <FileInput handleCloseModal={closeModal}/>},
+    {id: 3, name: "Buffer", icon: RemoveCircleIcon, component: <Buffer handleCloseModal={closeModal}/> },
+    {id: 4, name: "Intersect", icon: JoinInnerIcon,  component: <Intersect handleCloseModal={closeModal}/> },
+    {id: 5, name: "Union", icon: JoinFullIcon, component: <Union handleCloseModal={closeModal}/>},
+    {id: 6, name: "Difference", icon: RemoveIcon, component: <Difference handleCloseModal={closeModal}/>}
+  ]
+
 
 
   return (
@@ -186,9 +195,8 @@ export default function MainPage() {
               <ListItemButton key={layer.id} >
                 <ListItemText primary={layer.name}  />
                 <ListItemIcon style={{justifyContent: "space-between", alignContent: "space-between", alignItems: "center"}}>
-                  {/* <div onClick={handleShowEdit}> */}
                   <div>
-                  <DropDown layer={layer}/>
+                  <DropDown layer={layer} />
                   </div>
                 <div onClick={(e) => handleShowColorPicker(e, layer)}>
                      <PaletteIcon htmlColor={layer.color} key={layer.id} />

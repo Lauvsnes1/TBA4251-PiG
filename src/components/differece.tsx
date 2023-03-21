@@ -104,7 +104,7 @@ function Difference(props: { handleCloseModal: () => void; }) {
           style={{paddingTop: '10px'}}
           id="Selected-buffer-layer"
           select
-          label="Select layer two"
+          label="Select layer to subtract"
           onChange={handleChoseLayer2}
           variant="filled"
         >
