@@ -18,13 +18,13 @@ import ListItemText from '@mui/material/ListItemText';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import ScienceIcon from '@mui/icons-material/Science';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import PaletteIcon from '@mui/icons-material/Palette';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import JoinInnerIcon from '@mui/icons-material/JoinInner';
 import JoinFullIcon from '@mui/icons-material/JoinFull';
 import RemoveIcon from '@mui/icons-material/Remove';
+import ContentCutIcon from '@mui/icons-material/ContentCut';
 
 import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
@@ -38,6 +38,7 @@ import Buffer from './buffer';
 import Intersect from './intersect';
 import Union from './union'
 import Difference from './differece';
+import Clip from './Clip';
 import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import DropDown from "./dropDown"
@@ -113,12 +114,6 @@ export default function MainPage() {
     setModal(true)
   }
 
-  //function that gives the user ability to imediately changing name of layer when drawn
-  const editNameOfDrawinf = (uid: string) => {
-    const drawing = geoJSONList.find((item) => uid === item.id)
-
-
-  }
 
   const tools: Tool[] = [
     {id: 1, name: "Load data", icon: FileUploadIcon, component: <FileInput handleCloseModal={closeModal}/>}, 
@@ -126,7 +121,8 @@ export default function MainPage() {
     {id: 3, name: "Buffer", icon: RemoveCircleIcon, component: <Buffer handleCloseModal={closeModal}/> },
     {id: 4, name: "Intersect", icon: JoinInnerIcon,  component: <Intersect handleCloseModal={closeModal}/> },
     {id: 5, name: "Union", icon: JoinFullIcon, component: <Union handleCloseModal={closeModal}/>},
-    {id: 6, name: "Difference", icon: RemoveIcon, component: <Difference handleCloseModal={closeModal}/>}
+    {id: 6, name: "Difference", icon: RemoveIcon, component: <Difference handleCloseModal={closeModal}/>},
+    {id: 7, name: "Clip", icon: ContentCutIcon, component: <Clip handleCloseModal={closeModal} />}
   ]
 
 
