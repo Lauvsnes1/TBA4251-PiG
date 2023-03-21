@@ -22,6 +22,10 @@ import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import PaletteIcon from '@mui/icons-material/Palette';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import JoinInnerIcon from '@mui/icons-material/JoinInner';
+import JoinFullIcon from '@mui/icons-material/JoinFull';
+import RemoveIcon from '@mui/icons-material/Remove';
+
 import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
 import Stack from '@mui/material/Stack';
@@ -31,6 +35,9 @@ import StrollyMap from './strollyMap';
 import ColorPicker from './colorPicker';
 import FileInput from './fileInput';
 import Buffer from './buffer';
+import Intersect from './intersect';
+import Union from './union'
+import Difference from './differece';
 import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import DropDown from "./dropDown"
@@ -51,7 +58,7 @@ export default function MainPage() {
   const [open, setOpen] = React.useState(false);
   const [openPop, setOpenPop] = useState<boolean>(false);
   const [modal, setModal] = useState<boolean>(false);
-  const [modalComponent, setModalComponent] = useState<JSX.Element | undefined>(undefined)
+  const [modalComponent, setModalComponent] = useState<JSX.Element>()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem | null>(null);
 
@@ -94,12 +101,6 @@ export default function MainPage() {
   const closeModal = () => {
     setModal(false)
   }
-  const tools: Tool[] = [
-    {id: 1, name: "Load data", icon: FileUploadIcon, component: <FileInput handleCloseModal={closeModal}/>}, 
-    {id: 2, name: "Feature extracor", icon: ScienceIcon,  component: <FileInput handleCloseModal={closeModal}/>},
-    {id: 3, name: "Buffer", icon: RemoveCircleIcon, component: <Buffer handleCloseModal={closeModal}/> },
-    {id: 4, name: "Intersect", icon: CloseFullscreenIcon,  component: <FileInput handleCloseModal={closeModal}/> }
-  ]
   const showModal = (id: number) => {
     try{
     const componentToRender: JSX.Element | undefined = tools.find((comp) => comp.id === id)?.component;
@@ -111,6 +112,23 @@ export default function MainPage() {
     }
     setModal(true)
   }
+
+  //function that gives the user ability to imediately changing name of layer when drawn
+  const editNameOfDrawinf = (uid: string) => {
+    const drawing = geoJSONList.find((item) => uid === item.id)
+
+
+  }
+
+  const tools: Tool[] = [
+    {id: 1, name: "Load data", icon: FileUploadIcon, component: <FileInput handleCloseModal={closeModal}/>}, 
+    {id: 2, name: "Feature extracor", icon: ScienceIcon,  component: <FileInput handleCloseModal={closeModal}/>},
+    {id: 3, name: "Buffer", icon: RemoveCircleIcon, component: <Buffer handleCloseModal={closeModal}/> },
+    {id: 4, name: "Intersect", icon: JoinInnerIcon,  component: <Intersect handleCloseModal={closeModal}/> },
+    {id: 5, name: "Union", icon: JoinFullIcon, component: <Union handleCloseModal={closeModal}/>},
+    {id: 6, name: "Difference", icon: RemoveIcon, component: <Difference handleCloseModal={closeModal}/>}
+  ]
+
 
 
   return (
@@ -177,9 +195,8 @@ export default function MainPage() {
               <ListItemButton key={layer.id} >
                 <ListItemText primary={layer.name}  />
                 <ListItemIcon style={{justifyContent: "space-between", alignContent: "space-between", alignItems: "center"}}>
-                  {/* <div onClick={handleShowEdit}> */}
                   <div>
-                  <DropDown layer={layer}/>
+                  <DropDown layer={layer} />
                   </div>
                 <div onClick={(e) => handleShowColorPicker(e, layer)}>
                      <PaletteIcon htmlColor={layer.color} key={layer.id} />

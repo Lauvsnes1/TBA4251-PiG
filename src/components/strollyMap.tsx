@@ -1,19 +1,69 @@
 import React, { useEffect, useRef, useState } from 'react';
-import mapboxgl, { CirclePaint, FillPaint, LinePaint, LngLatLike } from 'mapbox-gl';
+import mapboxgl, { CirclePaint, FillPaint, LinePaint } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
+import { uid } from 'uid';
+import { FeatureCollection } from 'geojson';
+import Modal from '@mui/material/Modal';
+
+import { Button } from '@mui/material';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import { modalStyle } from './styledComponents';
 
 const accessToken: string | any = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 mapboxgl.accessToken = accessToken;
 
 function StrollyMap() {
   const mapContainer = useRef<HTMLDivElement>(null);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem>();
   //const [center, setCenter] = useState<LngLatLike | undefined>([, ])
-  const { geoJSONList } = useGeoJSONContext();
+  const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
   const [lng, setLng] = useState(10.421906);
   const [lat, setLat] = useState(63.446827);
   const [zoom, setZoom] = useState(12);
+  const [editModal, setEditModal] = useState(false)
+  const [name, setName] = useState("")
 
+  const handleShowEditModal = () => {
+    setEditModal(true)
+  }
+  const closeEditModal = () => {
+    setEditModal(false)
+  }
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleEditName = () => {
+    if(selectedLayer){
+    const newObj: GeoJSONItem = {...selectedLayer, name: name}
+    setGeoJSONList(prevList => {
+      const index = prevList.findIndex(item => item.id === selectedLayer?.id);
+      const updatedList = [...prevList]; // create a copy of the original list
+      updatedList[index] = newObj; // replace the layer with the new object
+      return updatedList;
+    })
+    closeEditModal()
+    handleClose()
+  }
+ 
+  }
+  
+  function getRandomColor(): string {
+    const hexChars = '0123456789ABCDEF';
+    let hexColor = '#';
+
+    // generate a random hex color code
+    for (let i = 0; i < 6; i++) {
+      hexColor += hexChars[Math.floor(Math.random() * 16)];
+    }
+
+    return hexColor;
+  }
+ 
   const determineType = (layer: GeoJSONItem): { type: string, paint?: mapboxgl.AnyPaint } => {
     const type = layer.geoJSON.features[0].geometry.type;
     switch (type) {
@@ -58,6 +108,41 @@ function StrollyMap() {
       center: [lng, lat],
       zoom: zoom
     });
+
+
+    const draw = new MapboxDraw({
+      displayControlsDefault: false,
+      // Select which mapbox-gl-draw control buttons to add to the map.
+      controls: {
+      polygon: true,
+      trash: true
+      },
+      // Set mapbox-gl-draw to draw by default.
+      // The user does not have to click the polygon control button first.
+      defaultMode: 'draw_polygon'
+      });
+      const createDrawing = () => {
+        const data = draw.getAll();
+        if(data.features.length > 0){
+          const newObj: GeoJSONItem = {
+            id: uid(),
+            name: uid(),
+            visible: true,
+            color: getRandomColor(),
+            geoJSON: data as FeatureCollection
+          };
+          setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+          handleShowEditModal()
+          setSelectedLayer(newObj)
+        }
+        
+      }
+
+    map.addControl(draw, "bottom-left");
+    map.on('draw.create', createDrawing);
+    map.on('draw.update', createDrawing);
+    
+
 
     map.on('load', () => {
       for (const layer of geoJSONList) {
@@ -117,6 +202,7 @@ function StrollyMap() {
   }, [geoJSONList]);
 
   return (
+    <div>
     <div
       ref={mapContainer}
       className="map-container"
@@ -131,6 +217,20 @@ function StrollyMap() {
         borderColor: 'primary.main'
       }}
     />
+    <Modal
+    open={editModal}
+    onClose={() => setEditModal(false)}
+    aria-labelledby="modal-modal-title"
+    aria-describedby="modal-modal-description"
+  >
+    <Box sx={modalStyle} >
+    <TextField id="outlined-basic" label="New Name" variant="outlined" value={name} placeholder={name} onChange={(e) => setName(e.target.value)}/>
+    <Button variant='outlined' onClick={handleEditName}>
+      OK
+    </Button>
+    </Box>
+  </Modal>
+  </div>
   );
 }
 

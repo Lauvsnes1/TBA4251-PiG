@@ -1,6 +1,5 @@
 import React, { useState, ChangeEvent, } from 'react';
 import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 import { FeatureCollection } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem} from '../context/geoJSONContext';
@@ -9,12 +8,9 @@ import MenuItem from '@mui/material/MenuItem';
 import { uid } from 'uid';
 import buffer from '@turf/buffer';
 
-
-
 function Buffer(props: { handleCloseModal: () => void;}) {
-  const [geoJSONs, setGeoJSONs] = useState<FeatureCollection[]>([])
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem>()
-  const [name, setName] = useState<string>("")
+  const [name, setName] = useState<string>()
   const [bufferRadius, setBufferRadius] = useState<number>(0)
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
@@ -41,6 +37,7 @@ function Buffer(props: { handleCloseModal: () => void;}) {
   }
 
   const handleOk = () => {
+    if (selectedLayer && bufferRadius && name){
     const buffered = handleBuffer();
     const newObj: GeoJSONItem = {
         id: uid(),
@@ -52,38 +49,45 @@ function Buffer(props: { handleCloseModal: () => void;}) {
     setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem])
     //pass state up to close modal
     props.handleCloseModal()
-    //console.log("List after ok press:", files)
-    console.log("List of Local GeoJSONS after ok", geoJSONs)
-    console.log("List of Global GeoJSONS after ok", geoJSONList)
+    }
     
   }
   const handleChoseLayer = (event: ChangeEvent<HTMLInputElement>) => {
     const chosenLayer: GeoJSONItem | undefined = geoJSONList.find((layer) => layer.id === event.target.value);
-    setSelectedLayer(chosenLayer);
+    if (chosenLayer) {
+      setSelectedLayer(chosenLayer);
+    } else {
+      setSelectedLayer(undefined);
+    }
   }
+  
 
   return (
-    <div style={{display: "flex", flexDirection: "column",  justifyContent: "center", alignItems: "center" }}>
+    <div style={{display: "flex", flexDirection: "column",  justifyContent: "center", flexWrap: 'wrap', width: '100%' }}>
         <Typography variant="h6"> Buffer Tool:</Typography>
-        <div style={{width: '100%', justifyContent: 'center', display: 'flex' }}>
+      
         <TextField
-          id="Selected-buffer-layer"
-          select
-          label="Select layer"
-          onChange={handleChoseLayer}
-        >
-          {geoJSONList.map((layer) => (
-            <MenuItem key={layer.id} value={layer.id} >
-              {layer.name}
-            </MenuItem>
-          ))}
-        </TextField>
-        </div>
+        style={{paddingTop: '10px'}}
+        id="Selected-buffer-layer"
+        select
+        label="Select layer"
+        onChange={handleChoseLayer}
+        variant="filled"
+      >
+        
+        {geoJSONList.map((layer) => (
+          <MenuItem key={layer.id} value={layer.id}>
+            {layer.name}
+          </MenuItem>
+        ))}
+      </TextField>
         <TextField
-          error
           id="outlined-error"
           label="Buffer radius in m"
           onChange={(e) => handleBufferSelect(e)}
+          style={{paddingTop: '10px'}}
+          variant="filled"
+          type='number'
         
         />
         <TextField
@@ -91,8 +95,10 @@ function Buffer(props: { handleCloseModal: () => void;}) {
           id="outlined-required"
           label="Name of output layer"
           onChange={(e) => setName(e.target.value)}
+          style={{paddingTop: '10px'}}
+          variant="filled"
         />
-      <div style={{flexDirection: 'row', justifyContent: 'space-between', display: 'flex'}}>
+      <div style={{flexDirection: 'row', justifyContent: 'space-around', display: 'flex', paddingTop: '10px'}}>
       <Button variant="outlined" color="error" onClick={props.handleCloseModal}>Cancel</Button>
       <Button onClick={handleOk} variant="outlined">OK</Button>
       </div>
