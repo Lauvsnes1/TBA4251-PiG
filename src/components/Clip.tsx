@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
 import { Typography } from '@mui/material';
-import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
+import { Feature, FeatureCollection, LineString, MultiPolygon, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import { uid } from 'uid';
@@ -13,6 +13,9 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
 import intersect from '@turf/intersect';
+import { polygonToLine } from '@turf/polygon-to-line';
+import lineSplit from '@turf/line-split';
+import { lineString } from '@turf/helpers';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -36,20 +39,20 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
 
 function Clip(props: { handleCloseModal: () => void; }) {
   const [selectedMainLayer, setSelectedMainLayer] = useState<GeoJSONItem>();
-  const [layers, setLayers] = useState<string[]>([]);
+  const [layerNames, setLayerNames] = useState<string[]>([]);
   const theme = useTheme();
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
 
-  const handleChange = (event: SelectChangeEvent<typeof layers>) => {
+  const handleChange = (event: SelectChangeEvent<typeof layerNames>) => {
     const {
       target: { value },
     } = event;
-    setLayers(
+    setLayerNames(
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
-    console.log("layers selected:", layers)
+    console.log("layers selected:", layerNames)
   };
 
   function getRandomColor(): string {
@@ -64,38 +67,43 @@ function Clip(props: { handleCloseModal: () => void; }) {
     return hexColor;
   }
   const findAllLayers = () => {
-    const selectedLayers: GeoJSONItem[] = [];
-    layers.forEach((item) => {
+    const selectedPolygonLayers: GeoJSONItem[] = [];
+    const selectedLineStringLayers: GeoJSONItem[] = [];
+
+    layerNames.forEach((item) => {
       const matchingLayer = geoJSONList.find(layer => layer.name === item);
-      if (matchingLayer) {
-        selectedLayers.push(matchingLayer);
+      if (matchingLayer && matchingLayer.geoJSON.features[0].geometry.type ==="Polygon") {
+        selectedPolygonLayers.push(matchingLayer);
+      }
+      if(matchingLayer && matchingLayer.geoJSON.features[0].geometry.type ==="LineString"){
+        selectedLineStringLayers.push(matchingLayer)
       }
     });
-    return selectedLayers;
+    return [selectedPolygonLayers, selectedLineStringLayers];
   };
   
   function handleClip() {
     const totalClippedList = new Map<string, FeatureCollection>(); 
-
     //Find all selectedlayers
-    const selectedLayers: GeoJSONItem[] = findAllLayers();
-
+    const [selectedPolyLayers, selectedLineLayers]  = findAllLayers();
+    console.log("SelectedLayers", selectedPolyLayers)
+    console.log("SelectedLineLayers", selectedLineLayers)
     //For each selected layer, find and save the intersect with the polygon to clip
-    for(let k = 0; k < selectedLayers.length; k++){
+    for(let k = 0; k < selectedPolyLayers.length; k++){
         const clipps: FeatureCollection = {
             type: 'FeatureCollection',
             features: [],
           };
-    if(selectedMainLayer?.geoJSON && selectedLayers[k]?.geoJSON){
+    if(selectedMainLayer?.geoJSON && selectedPolyLayers[k]?.geoJSON){
     for (let i = 0; i < (selectedMainLayer?.geoJSON.features.length); i++){
-        for (let j = 0; j< (selectedLayers[k]?.geoJSON.features.length); j++){
+        for (let j = 0; j< (selectedPolyLayers[k]?.geoJSON.features.length); j++){
     if (
       selectedMainLayer?.geoJSON.features[i].geometry.type === "Polygon" &&
-      selectedLayers[k]?.geoJSON.features[j].geometry.type === "Polygon"
+      selectedPolyLayers[k]?.geoJSON.features[j].geometry.type === "Polygon"
     ) {
       const clipped = intersect(
         selectedMainLayer.geoJSON.features[i].geometry as Polygon,
-        selectedLayers[k].geoJSON.features[j].geometry as Polygon
+        selectedPolyLayers[k].geoJSON.features[j].geometry as Polygon
       ) as Feature<Polygon | MultiPolygon>;
       if (clipped === undefined) {
         console.log('error')
@@ -106,10 +114,48 @@ function Clip(props: { handleCloseModal: () => void; }) {
       }
   
     }
+
     }
     }};
-    totalClippedList.set(selectedLayers[k].name ,clipps);
+    totalClippedList.set(selectedPolyLayers[k].name ,clipps);
 }
+for(let k = 0; k< selectedLineLayers.length; k++){
+  const clipps: FeatureCollection = {
+    type: 'FeatureCollection',
+    features: [],
+  }; 
+
+  if(selectedMainLayer?.geoJSON && selectedLineLayers[k]?.geoJSON){
+    for (let i = 0; i < (selectedMainLayer?.geoJSON.features.length); i++){
+      for (let j = 0; j< (selectedLineLayers[k]?.geoJSON.features.length); j++){
+        if(selectedMainLayer?.geoJSON.features[i].geometry.type === "Polygon" &&
+          selectedLineLayers[k]?.geoJSON.features[j].geometry.type === "LineString"){
+          console.log('came here!!')
+          const poly = polygonToLine(selectedMainLayer?.geoJSON.features[i].geometry as Polygon);
+          const line = selectedLineLayers[k]?.geoJSON.features[j] as Feature<LineString>;
+          const clippedLines = lineSplit(line, poly) as FeatureCollection<LineString>;
+          if (clippedLines === undefined) {
+            console.log('error')
+            return null;
+            }
+          console.log("ClippedLines", clippedLines)
+          console.log(line)
+          if(clippedLines !== null){
+          for(let l = 0; l < clippedLines.features.length; l++)
+            clipps.features.push(clippedLines.features[l])
+          }
+  
+}
+
+
+      }
+    }
+
+  }
+  totalClippedList.set(selectedLineLayers[k].name ,clipps);
+
+}
+
     return totalClippedList;
   }
 
@@ -157,7 +203,7 @@ function Clip(props: { handleCloseModal: () => void; }) {
           labelId="demo-multiple-chip-standard-label"
           id="demo-multiple-chip"
           multiple
-          value={layers}
+          value={layerNames}
           onChange={handleChange}
           input={<TextField select variant="filled" id="select-multi" label="Select layers"/>}//{<NativeSelect id="select-multiple-chip" variant='outlined'/>}
           renderValue={(selected) => (
@@ -173,7 +219,7 @@ function Clip(props: { handleCloseModal: () => void; }) {
             <MenuItem
               key={layer.id}
               value={layer.name}
-              style={getStyles(layer.name, layers, theme)}
+              style={getStyles(layer.name, layerNames, theme)}
             >
               {layer.name}
             </MenuItem>

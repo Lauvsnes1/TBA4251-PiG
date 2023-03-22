@@ -38,7 +38,7 @@ import Buffer from './buffer';
 import Intersect from './intersect';
 import Union from './union'
 import Difference from './differece';
-import Clip from './Clip';
+import Clip from './clip';
 import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import DropDown from "./dropDown"
