@@ -84,7 +84,7 @@ function Union(props: { handleCloseModal: () => void; }) {
 
   return (
     <div style={{display: "flex", flexDirection: "column",  justifyContent: "center", flexWrap: 'wrap', width: '100%' }}>
-        <Typography variant="h6"> Difference Tool:</Typography>
+        <Typography variant="h6"> Union Tool:</Typography>
       
         <TextField
           style={{paddingTop: '10px'}}

@@ -7,9 +7,7 @@ import TextField from '@mui/material/TextField';
 import { uid } from 'uid';
 import { Theme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import NativeSelect from '@mui/material/NativeSelect';
-import InputLabel from '@mui/material/InputLabel';
+
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -38,7 +36,6 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
 
 function Clip(props: { handleCloseModal: () => void; }) {
   const [selectedMainLayer, setSelectedMainLayer] = useState<GeoJSONItem>();
-  const [name, setName] = useState<string>('');
   const [layers, setLayers] = useState<string[]>([]);
   const theme = useTheme();
 
@@ -77,17 +74,18 @@ function Clip(props: { handleCloseModal: () => void; }) {
     return selectedLayers;
   };
   
-
   function handleClip() {
-    const clippedList: FeatureCollection = {
-        type: 'FeatureCollection',
-        features: [],
-      };
+    const totalClippedList = new Map<string, FeatureCollection>(); 
+
     //Find all selectedlayers
     const selectedLayers: GeoJSONItem[] = findAllLayers();
 
     //For each selected layer, find and save the intersect with the polygon to clip
     for(let k = 0; k < selectedLayers.length; k++){
+        const clipps: FeatureCollection = {
+            type: 'FeatureCollection',
+            features: [],
+          };
     if(selectedMainLayer?.geoJSON && selectedLayers[k]?.geoJSON){
     for (let i = 0; i < (selectedMainLayer?.geoJSON.features.length); i++){
         for (let j = 0; j< (selectedLayers[k]?.geoJSON.features.length); j++){
@@ -104,26 +102,29 @@ function Clip(props: { handleCloseModal: () => void; }) {
         return null;
       }
       if(clipped !== null){ 
-      clippedList.features.push(clipped)
+      clipps.features.push(clipped)
       }
   
     }
     }
     }};
+    totalClippedList.set(selectedLayers[k].name ,clipps);
 }
-    return clippedList;
+    return totalClippedList;
   }
 
   const handleOk = () => {
     const clipped = handleClip();
-    const newObj: GeoJSONItem = {
-      id: uid(),
-      name: name,
-      visible: true,
-      color: getRandomColor(),
-      geoJSON: clipped as FeatureCollection,
-    };
+    clipped?.forEach((value: FeatureCollection, key: string ) => {
+        const newObj: GeoJSONItem = {
+            id: uid(),
+            name: key + "_clip",
+            visible: true,
+            color: getRandomColor(),
+            geoJSON: value as FeatureCollection,
+          };
     setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+    });
     props.handleCloseModal();
   };
 
@@ -135,7 +136,6 @@ function Clip(props: { handleCloseModal: () => void; }) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flexWrap: 'wrap', width: '100%' }}>
       <Typography variant="h6">Clipping Tool:</Typography>
-
       <TextField
         style={{ paddingTop: '10px' }}
         id="Selected-buffer-layer"
@@ -180,16 +180,6 @@ function Clip(props: { handleCloseModal: () => void; }) {
           ))}
         </Select>
       </FormControl>
-
-      <TextField
-        required
-        id="outlined-required"
-        label="Name of output layer"
-        onChange={(e) => setName(e.target.value)}
-        style={{ paddingTop: '10px' }}
-        variant="filled"
-      />
-
       <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', paddingTop: '10px' }}>
         <Button variant="outlined" color="error" onClick={props.handleCloseModal}>
           Cancel
