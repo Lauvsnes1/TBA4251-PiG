@@ -8,6 +8,7 @@ import { uid } from 'uid';
 import { Theme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import NativeSelect from '@mui/material/NativeSelect';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -132,33 +133,33 @@ function Clip(props: { handleCloseModal: () => void; }) {
   };
 
   return (
-    <div style={{display: "flex", flexDirection: "column",  justifyContent: "center", flexWrap: 'wrap', width: '100%' }}>
-        <Typography variant="h6"> Difference Tool:</Typography>
-      
-        <TextField
-          style={{paddingTop: '10px'}}
-          id="Selected-buffer-layer"
-          select
-          label="Select layer to fit"
-          onChange={handleChoseLayer1}
-          variant="filled"
-        >
-          {geoJSONList.map((layer) => (
-            <MenuItem key={layer.id} value={layer.id} >
-              {layer.name}
-            </MenuItem>
-          ))}
-        </TextField>
-        <div>
-      <FormControl sx={{ m: 1, width: 300 }}>
-        <InputLabel id="demo-multiple-chip-label">Chip</InputLabel>
+    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flexWrap: 'wrap', width: '100%' }}>
+      <Typography variant="h6">Clipping Tool:</Typography>
+
+      <TextField
+        style={{ paddingTop: '10px' }}
+        id="Selected-buffer-layer"
+        select
+        label="Select layer to fit"
+        onChange={handleChoseLayer1}
+        variant="filled"
+      >
+        {geoJSONList.map((layer) => (
+          <MenuItem key={layer.id} value={layer.id}>
+            {layer.name}
+          </MenuItem>
+        ))}
+      </TextField>
+
+      <FormControl sx={{ m: 1, paddingTop: '10px'}}>
+        
         <Select
-          labelId="demo-multiple-chip-label"
+          labelId="demo-multiple-chip-standard-label"
           id="demo-multiple-chip"
           multiple
           value={layers}
           onChange={handleChange}
-          input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+          input={<TextField select variant="filled" id="select-multi" label="Select layers"/>}//{<NativeSelect id="select-multiple-chip" variant='outlined'/>}
           renderValue={(selected) => (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
               {selected.map((value) => (
@@ -179,21 +180,26 @@ function Clip(props: { handleCloseModal: () => void; }) {
           ))}
         </Select>
       </FormControl>
-    </div>
-        <TextField
-          required
-          id="outlined-required"
-          label="Name of output layer"
-          onChange={(e) => setName(e.target.value)}
-          style={{paddingTop: '10px'}}
-          variant="filled"
-        />
-      <div style={{flexDirection: 'row', justifyContent: 'space-around', display: 'flex', paddingTop: '10px'}}>
-      <Button variant="outlined" color="error" onClick={props.handleCloseModal}>Cancel</Button>
-      <Button onClick={handleOk} variant="outlined">OK</Button>
-      </div>
-    </div>
-    
+
+      <TextField
+        required
+        id="outlined-required"
+        label="Name of output layer"
+        onChange={(e) => setName(e.target.value)}
+        style={{ paddingTop: '10px' }}
+        variant="filled"
+      />
+
+      <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', paddingTop: '10px' }}>
+        <Button variant="outlined" color="error" onClick={props.handleCloseModal}>
+          Cancel
+        </Button>
+        <Button onClick={handleOk} variant="outlined">
+          OK
+        </Button>
+      </Box>
+    </Box>
   );
-}
+};
+
 export default Clip;
