@@ -130,7 +130,7 @@ export default function MainPage() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
+      <AppBar position="fixed" open={open} >
         <Toolbar>
           <IconButton
             color="inherit"
@@ -142,7 +142,7 @@ export default function MainPage() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Gis-App
+            QGEE's
           </Typography>
         </Toolbar>
       </AppBar>
@@ -219,8 +219,9 @@ export default function MainPage() {
           ))}
         </List>
         <DrawerHeader />
-      </Drawer> 
-      <Main open={open}>
+      </Drawer>
+      
+      <Main open={open} > 
       <Modal
         open={modal}
         onClose={() => setModal(false)}
