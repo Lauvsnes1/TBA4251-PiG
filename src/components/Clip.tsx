@@ -16,6 +16,7 @@ import Chip from '@mui/material/Chip';
 import intersect from '@turf/intersect';
 import { polygonToLine } from '@turf/polygon-to-line';
 import lineSplit from '@turf/line-split';
+import booleanCrosses from '@turf/boolean-crosses';
 import booleanContains from '@turf/boolean-contains';
 import booleanDisjoint from '@turf/boolean-disjoint';
 import buffer from '@turf/buffer';
@@ -135,19 +136,21 @@ for(let k = 0; k< selectedLineLayers.length; k++){
         if(selectedMainLayer?.geoJSON.features[i].geometry.type === "Polygon" &&
           selectedLineLayers[k]?.geoJSON.features[j].geometry.type === "LineString"){
           const line = selectedLineLayers[k]?.geoJSON.features[j] as Feature<LineString>;
+          const polygon = selectedMainLayer?.geoJSON.features[i].geometry as Polygon;
           //const lineTest = selectedLineLayers[k]?.geoJSON.features[j];
           //console.log('line test:', lineTest)
           if(booleanDisjoint(line, selectedMainLayer?.geoJSON.features[i])){
                 //is outside the polygon
             console.log('Line is completely outside')
             }
-          if(booleanContains(selectedMainLayer?.geoJSON.features[i].geometry as Polygon, line)){
-                //is completely inside
+
+          if(booleanContains(polygon, line) && !booleanCrosses(polygon, line)){
+              //is completely inside
               console.log("line is completely inside")
               clipps.features.push(line)
               }
           //for the remaining lines that intersect with the polygon
-          const polygon = selectedMainLayer?.geoJSON.features[i].geometry as Polygon;
+          
           const polyLine = polygonToLine(polygon);
           const clippedLines = lineSplit(line, polyLine) as FeatureCollection<LineString>;
           if (clippedLines === undefined) {
