@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
 import { Typography } from '@mui/material';
@@ -15,13 +16,8 @@ import Chip from '@mui/material/Chip';
 import intersect from '@turf/intersect';
 import { polygonToLine } from '@turf/polygon-to-line';
 import lineSplit from '@turf/line-split';
-import booleanWithin from '@turf/boolean-within';
 import booleanContains from '@turf/boolean-contains';
-import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import booleanDisjoint from '@turf/boolean-disjoint';
-import center from '@turf/center';
-import bboxClip from '@turf/bbox-clip';
-import { BBox, lineString, point } from '@turf/helpers';
 import buffer from '@turf/buffer';
 
 const ITEM_HEIGHT = 48;
@@ -288,6 +284,7 @@ for(let k = 0; k< selectedLineLayers.length; k++){
         label="Select layer to fit"
         onChange={handleChoseLayer1}
         variant="filled"
+        defaultValue=""
       >
         {geoJSONList.map((layer) => (
           <MenuItem key={layer.id} value={layer.id}>
@@ -304,7 +301,7 @@ for(let k = 0; k< selectedLineLayers.length; k++){
           multiple
           value={layerNames}
           onChange={handleChange}
-          input={<TextField select variant="filled" id="select-multi" label="Select layers"/>}//{<NativeSelect id="select-multiple-chip" variant='outlined'/>}
+          input={<TextField select variant="filled" id="select-multi" label="Select layers" children="test"/>}
           renderValue={(selected) => (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
               {selected.map((value) => (
@@ -312,6 +309,7 @@ for(let k = 0; k< selectedLineLayers.length; k++){
               ))}
             </Box>
           )}
+          //defaultValue={[""]}
           MenuProps={MenuProps}
         >
           {geoJSONList.map((layer) => (

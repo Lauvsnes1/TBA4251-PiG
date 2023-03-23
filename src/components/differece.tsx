@@ -93,6 +93,7 @@ function Difference(props: { handleCloseModal: () => void; }) {
           label="Select layer one"
           onChange={handleChoseLayer1}
           variant="filled"
+          defaultValue={""}
         >
           {geoJSONList.map((layer) => (
             <MenuItem key={layer.id} value={layer.id} >
@@ -107,6 +108,7 @@ function Difference(props: { handleCloseModal: () => void; }) {
           label="Select layer to subtract"
           onChange={handleChoseLayer2}
           variant="filled"
+          defaultValue={""}
         >
           {geoJSONList.map((layer) => (
             <MenuItem key={layer.id} value={layer.id} >

@@ -48,6 +48,8 @@ function StrollyMap() {
     })
     closeEditModal()
     handleClose()
+    setSelectedLayer(undefined)
+    setName("");
   }
  
   }

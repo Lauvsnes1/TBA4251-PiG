@@ -186,6 +186,7 @@ export default function MainPage() {
         <Divider/> 
         <List>
           {geoJSONList.map((layer) => (
+            <div key={layer.id}>
             <Stack spacing={10} direction="row">
             <ListItem key={layer.id} disablePadding >
               <ListItemButton key={layer.id} >
@@ -214,6 +215,7 @@ export default function MainPage() {
               </ListItemButton>
             </ListItem>
             </Stack>
+            </div>
           ))}
         </List>
         <DrawerHeader />
