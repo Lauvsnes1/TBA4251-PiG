@@ -96,6 +96,7 @@ function Intersect(props: { handleCloseModal: () => void; }) {
           label="Select layer one"
           onChange={handleChoseLayer1}
           variant="filled"
+          defaultValue={""}
         >
           {geoJSONList.map((layer) => (
             <MenuItem key={layer.id} value={layer.id} >
@@ -110,6 +111,7 @@ function Intersect(props: { handleCloseModal: () => void; }) {
           label="Select layer two"
           onChange={handleChoseLayer2}
           variant="filled"
+          defaultValue={""}
         >
           {geoJSONList.map((layer) => (
             <MenuItem key={layer.id} value={layer.id} >

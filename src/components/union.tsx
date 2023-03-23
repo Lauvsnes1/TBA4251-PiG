@@ -84,7 +84,7 @@ function Union(props: { handleCloseModal: () => void; }) {
 
   return (
     <div style={{display: "flex", flexDirection: "column",  justifyContent: "center", flexWrap: 'wrap', width: '100%' }}>
-        <Typography variant="h6"> Difference Tool:</Typography>
+        <Typography variant="h6"> Union Tool:</Typography>
       
         <TextField
           style={{paddingTop: '10px'}}
@@ -93,6 +93,7 @@ function Union(props: { handleCloseModal: () => void; }) {
           label="Select layer one"
           onChange={handleChoseLayer1}
           variant="filled"
+          defaultValue={""}
         >
           {geoJSONList.map((layer) => (
             <MenuItem key={layer.id} value={layer.id} >
@@ -107,6 +108,7 @@ function Union(props: { handleCloseModal: () => void; }) {
           label="Select layer two"
           onChange={handleChoseLayer2}
           variant="filled"
+          defaultValue={""}
         >
           {geoJSONList.map((layer) => (
             <MenuItem key={layer.id} value={layer.id} >

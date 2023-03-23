@@ -73,6 +73,7 @@ function Buffer(props: { handleCloseModal: () => void;}) {
         label="Select layer"
         onChange={handleChoseLayer}
         variant="filled"
+        defaultValue={""}
       >
         
         {geoJSONList.map((layer) => (
@@ -88,6 +89,7 @@ function Buffer(props: { handleCloseModal: () => void;}) {
           style={{paddingTop: '10px'}}
           variant="filled"
           type='number'
+          defaultValue={""}
         
         />
         <TextField

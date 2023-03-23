@@ -8,7 +8,7 @@ import { uid } from 'uid';
 import { FeatureCollection } from 'geojson';
 import Modal from '@mui/material/Modal';
 
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { modalStyle } from './styledComponents';
@@ -48,6 +48,8 @@ function StrollyMap() {
     })
     closeEditModal()
     handleClose()
+    setSelectedLayer(undefined)
+    setName("");
   }
  
   }
@@ -117,9 +119,6 @@ function StrollyMap() {
       polygon: true,
       trash: true
       },
-      // Set mapbox-gl-draw to draw by default.
-      // The user does not have to click the polygon control button first.
-      defaultMode: 'draw_polygon'
       });
       const createDrawing = () => {
         const data = draw.getAll();
@@ -224,8 +223,9 @@ function StrollyMap() {
     aria-describedby="modal-modal-description"
   >
     <Box sx={modalStyle} >
-    <TextField id="outlined-basic" label="New Name" variant="outlined" value={name} placeholder={name} onChange={(e) => setName(e.target.value)}/>
-    <Button variant='outlined' onClick={handleEditName}>
+      <Typography>Select name for your costum layer:</Typography>
+    <TextField style={{paddingTop: '10px'}}id="outlined-basic" label="Name" variant="outlined" value={name} placeholder={name} onChange={(e) => setName(e.target.value)}/>
+    <Button style={{paddingTop: '10px'}}variant='outlined' onClick={handleEditName}>
       OK
     </Button>
     </Box>
