@@ -15,7 +15,14 @@ import Chip from '@mui/material/Chip';
 import intersect from '@turf/intersect';
 import { polygonToLine } from '@turf/polygon-to-line';
 import lineSplit from '@turf/line-split';
-import { lineString } from '@turf/helpers';
+import booleanWithin from '@turf/boolean-within';
+import booleanContains from '@turf/boolean-contains';
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
+import booleanDisjoint from '@turf/boolean-disjoint';
+import center from '@turf/center';
+import bboxClip from '@turf/bbox-clip';
+import { BBox, lineString, point } from '@turf/helpers';
+import buffer from '@turf/buffer';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -119,36 +126,63 @@ function Clip(props: { handleCloseModal: () => void; }) {
     }};
     totalClippedList.set(selectedPolyLayers[k].name ,clipps);
 }
+
+//For Line clipping
 for(let k = 0; k< selectedLineLayers.length; k++){
   const clipps: FeatureCollection = {
     type: 'FeatureCollection',
     features: [],
   }; 
-
   if(selectedMainLayer?.geoJSON && selectedLineLayers[k]?.geoJSON){
     for (let i = 0; i < (selectedMainLayer?.geoJSON.features.length); i++){
       for (let j = 0; j< (selectedLineLayers[k]?.geoJSON.features.length); j++){
         if(selectedMainLayer?.geoJSON.features[i].geometry.type === "Polygon" &&
           selectedLineLayers[k]?.geoJSON.features[j].geometry.type === "LineString"){
-          console.log('came here!!')
-          const poly = polygonToLine(selectedMainLayer?.geoJSON.features[i].geometry as Polygon);
           const line = selectedLineLayers[k]?.geoJSON.features[j] as Feature<LineString>;
-          const clippedLines = lineSplit(line, poly) as FeatureCollection<LineString>;
+          //const lineTest = selectedLineLayers[k]?.geoJSON.features[j];
+          //console.log('line test:', lineTest)
+          if(booleanDisjoint(line, selectedMainLayer?.geoJSON.features[i])){
+                //is outside the polygon
+            console.log('Line is completely outside')
+            }
+          if(booleanContains(selectedMainLayer?.geoJSON.features[i].geometry as Polygon, line)){
+                //is completely inside
+              console.log("line is completely inside")
+              clipps.features.push(line)
+              }
+          //for the remaining lines that intersect with the polygon
+          const polygon = selectedMainLayer?.geoJSON.features[i].geometry as Polygon;
+          const polyLine = polygonToLine(polygon);
+          const clippedLines = lineSplit(line, polyLine) as FeatureCollection<LineString>;
           if (clippedLines === undefined) {
             console.log('error')
             return null;
             }
-          console.log("ClippedLines", clippedLines)
-          console.log(line)
+          
           if(clippedLines !== null){
-          for(let l = 0; l < clippedLines.features.length; l++)
-            clipps.features.push(clippedLines.features[l])
+          //Now we check which line segments are inside the polygon
+          const bufferedPolygon = buffer(polygon, 0.000001, { units: 'kilometers' });
+          const insideSegments = clippedLines.features.filter(segment => {
+            const isInside = booleanContains(bufferedPolygon, segment);
+            return isInside;
+          });
+          insideSegments.forEach(segment => {
+            clipps.features.push(segment);
+          });
+
+          // The way to do it with the center technique
+          // for(let x= 0; x< clippedLines.features.length; x++){
+          //   let c = center(clippedLines.features[x]);
+          //   if(booleanContains(polygon, c)){
+          //     console.log(booleanContains(polygon, c));
+          //     clipps.features.push(clippedLines.features[x])
+          //   }
+
+          // }
+          
           }
-  
 }
-
-
-      }
+     }
     }
 
   }
@@ -158,6 +192,71 @@ for(let k = 0; k< selectedLineLayers.length; k++){
 
     return totalClippedList;
   }
+
+  // const clipLines = (selectedLineLayers: GeoJSONItem[]) => {
+  //   const lines: FeatureCollection = {
+  //     type: 'FeatureCollection',
+  //     features: [],
+  //   }; 
+  //   for(let k = 0; k< selectedLineLayers.length; k++){    
+  //     if(selectedMainLayer?.geoJSON && selectedLineLayers[k]?.geoJSON){
+  //       for (let i = 0; i < (selectedMainLayer?.geoJSON.features.length); i++){
+  //         for (let j = 0; j< (selectedLineLayers[k]?.geoJSON.features.length); j++){
+  //           if(selectedMainLayer?.geoJSON.features[i].geometry.type === "Polygon" &&
+  //             selectedLineLayers[k]?.geoJSON.features[j].geometry.type === "LineString"){
+  //             console.log('came here!!')
+  //             const lineTest = selectedLineLayers[k]?.geoJSON.features[j] as Feature<LineString>;
+  //             const bbox = selectedMainLayer?.geoJSON.features[i].bbox as BBox;
+  //             const res = bboxClip(lineTest, bbox);
+              
+  //             lines.features.push(res)
+
+  //             if(booleanDisjoint(lineTest, selectedMainLayer?.geoJSON.features[i])){
+  //               //is outside the polygon
+  //               console.log('Line is outside')
+  //               break;
+  //             }
+  //             if(booleanContains(selectedMainLayer?.geoJSON.features[i].geometry as Polygon, lineTest)){
+  //               //is completely inside
+
+  //             }
+  //             const poly = polygonToLine(selectedMainLayer?.geoJSON.features[i].geometry as Polygon);
+  //             const line = selectedLineLayers[k]?.geoJSON.features[j] as Feature<LineString>;
+  //             const clippedLines = lineSplit(line, poly) as FeatureCollection<LineString>;
+  //             if (clippedLines === undefined) {
+  //               console.log('error')
+  //               return null;
+  //               }
+  //             console.log("ClippedLines", clippedLines)
+  //             console.log(line)
+              
+  //             if(clippedLines !== null){
+  //             for(let l = 0; l < clippedLines.features.length; l++){
+  //               const rdmPoint = point(clippedLines.features[l].geometry.coordinates[0])
+  //               // console.log('point', rdmPoint)
+  //               // console.log('polygon', selectedMainLayer?.geoJSON.features[i].geometry as Polygon)
+  //               // console.log("booleanContains(clippedLines.features[l], poly)", booleanPointInPolygon(rdmPoint, selectedMainLayer?.geoJSON.features[i].geometry as Polygon, {ignoreBoundary: true}))
+  //               console.log(booleanDisjoint(selectedMainLayer?.geoJSON.features[i].geometry as Polygon, clippedLines.features[l]))
+  //               if(booleanPointInPolygon(rdmPoint, selectedMainLayer?.geoJSON.features[i].geometry as Polygon)){
+                  
+  //               lines.features.push(clippedLines.features[l])
+  //               }
+  //             }
+  //           }
+      
+  //   }
+    
+    
+  //         }
+  //       }
+    
+  //     }
+  //     totalClippedList.set(selectedLineLayers[k].name ,clipps);
+    
+  //   }
+  //   return lines;
+
+  // }
 
   const handleOk = () => {
     const clipped = handleClip();
