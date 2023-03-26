@@ -111,9 +111,6 @@ function StrollyMap() {
       zoom: zoom
     });
 
-    //Fix the gap
-    var canvas = map.getCanvas()
-    canvas.style.position = 'fixed';
 
     const draw = new MapboxDraw({
       displayControlsDefault: false,
@@ -204,12 +201,12 @@ function StrollyMap() {
   }, [geoJSONList]);
 
   return (
-    <div style={{position: 'fixed'}}>
+    <div >
     <div
       ref={mapContainer}
       className="map-container"
       style={{
-        position: 'fixed',
+        position: 'absolute',
         top: '0',
         bottom: '0',
         width: '100vw',
