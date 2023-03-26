@@ -21,12 +21,14 @@ export default function LongMenu(props: {layer: GeoJSONItem}) {
   const [name, setName] = useState('')
   const { setGeoJSONList } = useGeoJSONContext(); 
 
-  const open = Boolean(anchorEl);
+  const [open, setOpen] = useState(false);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
+    setOpen(true);
   };
   const handleClose = () => {
     setAnchorEl(null);
+    setOpen(false)
   };
 
   const handleShowEditModal = () => {
@@ -34,12 +36,14 @@ export default function LongMenu(props: {layer: GeoJSONItem}) {
   }
   const closeEditModal = () => {
     setEditModal(false)
+    setOpen(false)
   }
   const handleShowDeleteModal = () => {
     setDeleteModal(true)
   }
   const closeDeleteModal = () => {
     setDeleteModal(false)
+    setOpen(false)
   }
 
   const handleEditName = () => {
@@ -104,8 +108,9 @@ export default function LongMenu(props: {layer: GeoJSONItem}) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={modalStyle} >
-        <TextField id="outlined-basic" label="New Name" variant="outlined" value={name} placeholder={props.layer.name} onChange={(e) => setName(e.target.value)}/>
-        <Button variant='outlined' onClick={handleEditName}>
+        <Typography >New name: </Typography>
+        <TextField style={{marginTop: '10px'}} id="outlined-basic" label="New Name" variant="filled" value={name} placeholder={props.layer.name} onChange={(e) => setName(e.target.value)}/>
+        <Button style={{marginTop: '10px'}} variant='outlined' onClick={handleEditName}>
           OK
         </Button>
         </Box>
@@ -117,11 +122,16 @@ export default function LongMenu(props: {layer: GeoJSONItem}) {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={modalStyle} >
-      <Typography>Are You sure you want to delete?</Typography>
-        <Button onClick={handleDelete} variant="outlined" color="error">
-          Delete
+      <Box sx={modalStyle} >
+      <Typography>Are you sure you want to delete "{props.layer.name}"?</Typography>
+      <Box sx={{display: 'flex', marginTop: '15px', flexDirection: 'row', justifyContent: 'space-around'}} >
+        <Button variant='outlined' onClick={closeDeleteModal}>
+          No
         </Button>
+        <Button onClick={handleDelete} variant="outlined" color="error">
+          Yes, delete
+        </Button>
+        </Box>
         </Box>
       </Modal>
       

@@ -31,7 +31,7 @@ import Fade from '@mui/material/Fade';
 import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
 
-import StrollyMap from './strollyMap';
+import BaseMap from './baseMapMapbox';
 import ColorPicker from './colorPicker';
 import FileInput from './fileInput';
 import Buffer from './buffer';
@@ -62,7 +62,6 @@ export default function MainPage() {
   const [modalComponent, setModalComponent] = useState<JSX.Element>()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem | null>(null);
-
 
   const { geoJSONList, setGeoJSONList} = useGeoJSONContext(); 
 
@@ -203,13 +202,11 @@ export default function MainPage() {
                     {({ TransitionProps }) => (
                       <Fade {...TransitionProps} timeout={100}>
                         <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper'  }}>
-                        <Typography>{layer.id}</Typography> 
                           <ColorPicker handleCloseColorPicker={handleCloseColorPicker} layer={layer}/>
                         </Box>
                       </Fade>
                     )}
-                  </Popper>)}
-                  
+                  </Popper>)}   
                  {layer.visible? <VisibilityIcon onClick={() => toggleVisibility(layer)} /> : <VisibilityOffIcon onClick={() => toggleVisibility(layer)} />} 
                 </ListItemIcon>
               </ListItemButton>
@@ -234,7 +231,7 @@ export default function MainPage() {
           {modalComponent}
         </Box>
       </Modal>
-        <StrollyMap/>
+        <BaseMap/>
       </Main>
     </Box>
   );

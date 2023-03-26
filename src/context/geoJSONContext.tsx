@@ -6,6 +6,7 @@ export type GeoJSONItem = {
   name: string,
   visible: boolean,
   color: string,
+  opacity: number,
   geoJSON: FeatureCollection;
 };
 

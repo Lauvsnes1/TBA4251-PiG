@@ -265,6 +265,7 @@ for(let k = 0; k< selectedLineLayers.length; k++){
             name: key + "_clip",
             visible: true,
             color: getRandomColor(),
+            opacity: 0.5,
             geoJSON: value as FeatureCollection,
           };
     setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
@@ -296,9 +297,10 @@ for(let k = 0; k< selectedLineLayers.length; k++){
         ))}
       </TextField>
 
-      <FormControl sx={{ m: 1, paddingTop: '10px'}}>
+      <FormControl sx={{ paddingTop: '10px'}}>
         
         <Select
+        style={{margin: 0}}
           labelId="demo-multiple-chip-standard-label"
           id="demo-multiple-chip"
           multiple

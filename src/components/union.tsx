@@ -66,6 +66,7 @@ function Union(props: { handleCloseModal: () => void; }) {
       name: name,
       visible: true,
       color: getRandomColor(),
+      opacity: 0.5,
       geoJSON: unioned as FeatureCollection,
     };
     setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);

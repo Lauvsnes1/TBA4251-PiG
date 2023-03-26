@@ -44,6 +44,7 @@ function Buffer(props: { handleCloseModal: () => void;}) {
         name: name, 
         visible: true,
         color: getRandomColor(),
+        opacity: 0.5,
         geoJSON: buffered
       }
     setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem])

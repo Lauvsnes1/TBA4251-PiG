@@ -16,7 +16,7 @@ import { modalStyle } from './styledComponents';
 const accessToken: string | any = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 mapboxgl.accessToken = accessToken;
 
-function StrollyMap() {
+function BaseMap() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem>();
@@ -88,7 +88,7 @@ function StrollyMap() {
       case "Polygon":
         return {
           type: "fill",
-          paint: { 'fill-color': layer.color, 'fill-opacity': 0.5 }
+          paint: { 'fill-color': layer.color, 'fill-opacity': layer.opacity }
         };
       default:
         throw new Error(`Unsupported geometry type: ${type}`);
@@ -128,6 +128,7 @@ function StrollyMap() {
             name: uid(),
             visible: true,
             color: getRandomColor(),
+            opacity: 0.5,
             geoJSON: data as FeatureCollection
           };
           setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
@@ -225,7 +226,7 @@ function StrollyMap() {
     <Box sx={modalStyle} >
       <Typography>Select name for your costum layer:</Typography>
     <TextField style={{paddingTop: '10px'}}id="outlined-basic" label="Name" variant="outlined" value={name} placeholder={name} onChange={(e) => setName(e.target.value)}/>
-    <Button style={{paddingTop: '10px'}}variant='outlined' onClick={handleEditName}>
+    <Button style={{marginTop: '10px'}}variant='outlined' onClick={handleEditName}>
       OK
     </Button>
     </Box>
@@ -234,4 +235,4 @@ function StrollyMap() {
   );
 }
 
-export default StrollyMap;
+export default BaseMap;

@@ -66,6 +66,7 @@ function Intersect(props: { handleCloseModal: () => void; }) {
       name: name,
       visible: true,
       color: getRandomColor(),
+      opacity: 0.5,
       geoJSON: intersected as FeatureCollection,
     };
     console.log('the list:', geoJSONList)
