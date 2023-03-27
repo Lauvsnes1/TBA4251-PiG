@@ -236,6 +236,19 @@ for (const selectedLineLayer of selectedLineLayers) {
   
     return totalClippedList;
   }
+
+  //Function to avoid duplicates of clipps
+  const generateClipName = (name: string) => {
+    const suffix = "_clip";
+    let uniqueName = name + suffix;
+    let count = 2;
+    while(geoJSONList.find((layer) => layer.name  === uniqueName)){
+      console.log("name exists")
+      uniqueName = uniqueName + count
+      count ++;
+    }
+    return uniqueName
+  }
   
 
 
@@ -246,7 +259,7 @@ for (const selectedLineLayer of selectedLineLayers) {
     clipped?.forEach((value: FeatureCollection, key: string ) => {
         const newObj: GeoJSONItem = {
             id: uid(),
-            name: key + "_clip",
+            name: generateClipName(key),
             visible: true,
             color: getRandomColor(),
             opacity: 0.5,
