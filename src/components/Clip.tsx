@@ -1,7 +1,8 @@
+/* eslint-disable no-loop-func */
 /* eslint-disable react/prop-types */
 import React, { useState, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
-import { Typography } from '@mui/material';
+import { FilledInput, Typography } from '@mui/material';
 import { Feature, FeatureCollection, LineString, MultiPolygon, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
@@ -13,6 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
+import InputLabel from '@mui/material/InputLabel';
 import intersect from '@turf/intersect';
 import { polygonToLine } from '@turf/polygon-to-line';
 import lineSplit from '@turf/line-split';
@@ -243,7 +245,6 @@ for (const selectedLineLayer of selectedLineLayers) {
     let uniqueName = name + suffix;
     let count = 2;
     while(geoJSONList.find((layer) => layer.name  === uniqueName)){
-      console.log("name exists")
       uniqueName = uniqueName + count
       count ++;
     }
@@ -282,33 +283,19 @@ for (const selectedLineLayer of selectedLineLayers) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flexWrap: 'wrap', width: '100%' }}>
       {isLoading ? <CircularProgress/> : <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flexWrap: 'wrap', width: '100%' }}>
-      <Typography variant="h6">Clipping Tool:</Typography>
-      <TextField
-        style={{ paddingTop: '10px' }}
-        id="Selected-buffer-layer"
-        select
-        label="Select layer to fit"
-        onChange={handleChoseLayer1}
-        variant="filled"
-        defaultValue=""
-      >
-        {geoJSONList.map((layer) => (
-          <MenuItem key={layer.id} value={layer.id}>
-            {layer.name}
-          </MenuItem>
-        ))}
-      </TextField>
+      <Typography sx={{ paddingBottom: '10px'}} variant="h6">Clipping Tool:</Typography>
 
-      <FormControl sx={{ paddingTop: '10px'}}>
-        
+    
+      <FormControl  >
+      <InputLabel id="demo-multiple-chip-label" >Select layers:</InputLabel>
         <Select
-        style={{margin: 0}}
-          labelId="demo-multiple-chip-standard-label"
+          style={{margin: 0}}
           id="demo-multiple-chip"
+          label='Select layers'
           multiple
           value={layerNames}
           onChange={handleChange}
-          input={<TextField select variant="filled" id="select-multi" label="Select layers" children="test"/>}
+          input={<FilledInput id="select-multiple-chip" placeholder='chip'/>}
           renderValue={(selected) => (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
               {selected.map((value) => (
@@ -330,6 +317,21 @@ for (const selectedLineLayer of selectedLineLayers) {
           ))}
         </Select>
       </FormControl>
+      <TextField
+        style={{ paddingTop: '10px' }}
+        id="Selected-buffer-layer"
+        select
+        label="Select layer to fit"
+        onChange={handleChoseLayer1}
+        variant="filled"
+        defaultValue=""
+      >
+        {geoJSONList.map((layer) => (
+          <MenuItem key={layer.id} value={layer.id}>
+            {layer.name}
+          </MenuItem>
+        ))}
+      </TextField>
       <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', paddingTop: '10px' }}>
         <Button variant="outlined" color="error" onClick={props.handleCloseModal}>
           Cancel
