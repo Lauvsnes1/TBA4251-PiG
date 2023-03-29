@@ -19,11 +19,9 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
   const operations: string[] = ["=", "≠", "<", ">" ]
 
   useEffect(() => {
-    //Kanskje flytte inn i onSelectlayer funksjonen
-    console.log("kjører useEffect med:", selectedLayer);
     // create a Set to store the unique properties
     const uniqueProperties = new Set<string>();
-  
+
     // loop through each feature in the GeoJSON
     selectedLayer?.geoJSON.features.forEach((feature) => {
       // loop through each property in the feature
@@ -65,11 +63,6 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
       type: 'FeatureCollection',
       features: [],
     };
-    console.log('Extraherer med variabler:')
-    console.log("selected layer:", selectedLayer)
-    console.log('Operation:', operation);
-    console.log("Value:", selectedValue)
-    console.log("selectedProperty", selectedProperty)
     let target: number | string = selectedValue;
 
     //If input is a number, convert for easier comparison
@@ -160,9 +153,6 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
     return extracted;
   };
   
-
-
-
   const handleOk = () => {
     const extract = handleExtract();
     const newObj: GeoJSONItem = {
