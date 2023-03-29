@@ -3,7 +3,7 @@
 import React, { useState, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
 import { FilledInput, Typography } from '@mui/material';
-import { Feature, FeatureCollection, LineString, MultiPolygon, Polygon } from 'geojson';
+import { Feature, FeatureCollection, GeoJsonProperties, Geometry, LineString, MultiPolygon, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import { uid } from 'uid';
@@ -163,7 +163,7 @@ for (const selectedLineLayer of selectedLineLayers) {
   function handleClip_2() {
     const totalClippedList = new Map<string, FeatureCollection>(); 
     //Find all selectedlayers
-    const [selectedPolyLayers, selectedLineLayers]  = findAllLayers();
+    const [selectedPolyLayers, selectedLineLayers] = findAllLayers();
     console.log("SelectedLayers", selectedPolyLayers)
     console.log("SelectedLineLayers", selectedLineLayers)
   
@@ -183,13 +183,21 @@ for (const selectedLineLayer of selectedLineLayers) {
         polyFeatures.forEach((polyFeature) => {
           const clipped = intersect(mainFeature.geometry as Polygon, polyFeature.geometry as Polygon) as Feature<Polygon | MultiPolygon>;
           if (clipped) {
-            clipps.features.push(clipped);
+            const originalFeature = polyFeature as Feature<Polygon>; // cast to Polygon feature for access to properties
+            const clippedFeature = {
+              type: 'Feature',
+              properties: originalFeature.properties, // copy properties from original feature
+              geometry: clipped.geometry,
+            };
+            clipps.features.push(clippedFeature as Feature<Geometry, GeoJsonProperties>);
           }
         });
       });
   
       totalClippedList.set(polyLayer.name, clipps);
     });
+  
+  
   
     selectedLineLayers.forEach((selectedLineLayer) => {
       const clipps: FeatureCollection = {
