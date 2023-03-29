@@ -59,6 +59,7 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
   }
 
   const handleExtract = () => {
+    console.log("selectedLayer:", selectedLayer);
     const extracted: FeatureCollection = {
       type: 'FeatureCollection',
       features: [],
