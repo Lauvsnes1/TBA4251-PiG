@@ -1,12 +1,17 @@
 import React, { useState, ChangeEvent, useEffect } from 'react';
 import Button from '@mui/material/Button';
-import { FormControl, FormHelperText, InputLabel, Select, SelectChangeEvent, Typography } from '@mui/material';
-import { Feature, FeatureCollection, GeoJsonProperties, Geometry, MultiPolygon, Polygon } from 'geojson';
+import { FormControl, InputLabel, Select, SelectChangeEvent, Typography } from '@mui/material';
+import { FeatureCollection } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
+import { styled} from '@mui/material/styles';
 import { uid } from 'uid';
-import differnce from '@turf/difference';
+
+const CustomSelect = styled(Select)({
+    width: '150px', // define the desired width here
+  });
+
 
 function FeatureExtractor(props: { handleCloseModal: () => void; }) {
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem>();
@@ -16,7 +21,7 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
   const [uniqueProperties, setUniqueProperties] = useState<string[]>([]);
   const [selectedProperty, setSelectedProperty] = useState<string>("")
 
-  const operations: string[] = ["equals", "not equals", "greater", "less", "greater and eual", "less and equal"]
+  const operations: string[] = ["=", "≠", "<", ">" ]
 
   useEffect(() => {
     //Kanskje flytte inn i onSelectlayer funksjonen
@@ -39,8 +44,6 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
     // convert the Set to an array and update the state
     setUniqueProperties(Array.from(uniqueProperties));
   }, [selectedLayer]);
-  
-
 
   function getRandomColor(): string {
     const hexChars = '0123456789ABCDEF';
@@ -58,8 +61,11 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
     setSelectedProperty(event.target.value)
   }
 
+  const handleChoseOperation = (event: SelectChangeEvent) => {
+    setOperation(event.target.value)
+  }
+
   const handleExtract = () => {
-    const test2: string[] = [];
     const extracted: FeatureCollection = {
       type: 'FeatureCollection',
       features: [],
@@ -77,7 +83,7 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
     }
     switch(operation) {
 
-        case 'equals':
+        case '=':
             console.log('case: equal')
             if (selectedLayer && selectedLayer.geoJSON.features && selectedLayer.geoJSON.features.length > 0) {
             const matchingFeatures = selectedLayer.geoJSON.features.filter((feature) => {
@@ -95,7 +101,7 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
             }
             break;
 
-        case 'not equals':
+        case '≠':
             console.log("Case: not equals")
             if (selectedLayer && selectedLayer.geoJSON.features && selectedLayer.geoJSON.features.length > 0) {
                 const matchingFeatures = selectedLayer.geoJSON.features.filter((feature) => {
@@ -112,7 +118,7 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
                 extracted.features = matchingFeatures;
                 }
             break;
-        case 'greater':
+        case '>':
             console.log("Case: greater")
             if (selectedLayer && selectedLayer.geoJSON.features && selectedLayer.geoJSON.features.length > 0) {
                 const matchingFeatures = selectedLayer.geoJSON.features.filter((feature) => {
@@ -120,7 +126,7 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
                   for (const key in feature.properties) {
                     if (Object.prototype.hasOwnProperty.call(feature.properties, key)) {
                       const propValue = feature.properties[key];
-                      if (typeof propValue === 'number' && propValue > target) {
+                      if (typeof propValue === 'number' && propValue > target && feature.properties[key] != null) {
                         // if the property is a number and is greater than the selected value, return true to include the feature in the filtered array
                         return true;
                       }
@@ -132,25 +138,23 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
                 extracted.features = matchingFeatures;
               }
             break;
-        case 'less':
-            console.log("Case: less")
+        case '<':
+            console.log('Case: less');
             if (selectedLayer && selectedLayer.geoJSON.features && selectedLayer.geoJSON.features.length > 0) {
-                const matchingFeatures = selectedLayer.geoJSON.features.filter((feature) => {
-                  // loop through each property in the feature
-                  for (const key in feature.properties) {
-                    if (Object.prototype.hasOwnProperty.call(feature.properties, key)) {
-                      const propValue = feature.properties[key];
-                      if (typeof propValue === 'number' && propValue > selectedValue) {
-                        // if the property is a number and is greater than the selected value, return true to include the feature in the filtered array
-                        return false;
-                      }
-                    }
+              const matchingFeatures = selectedLayer.geoJSON.features.filter((feature) => {
+                // loop through each property in the feature
+                for (const key in feature.properties) {
+                    console.log('featureProp', feature.properties[key], 'and target:', target )
+                  if (Object.prototype.hasOwnProperty.call(feature.properties, key)&& feature.properties[key] != null && feature.properties[key] < target) {
+                    // if it is, return true to include the feature in the filtered array
+                    return true;
                   }
-                  // if none of the properties match, return false to exclude the feature from the filtered array
-                  return true;
-                });
-                extracted.features = matchingFeatures;
-              }
+                }
+                // if none of the properties match, return false to exclude the feature from the filtered array
+                return false;
+              });
+              extracted.features = matchingFeatures;
+            }
             break;
   
       default:
@@ -183,11 +187,9 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
     setSelectedLayer(chosenLayer);
   };
 
-
   return (
     <div style={{display: "flex", flexDirection: "column",  justifyContent: "center", flexWrap: 'wrap', width: '100%' }}>
         <Typography variant="h6"> Feature extractor:</Typography>
-      
         <TextField
           style={{paddingTop: '10px'}}
           id="Selected-buffer-layer"
@@ -203,12 +205,15 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
             </MenuItem>
           ))}
         </TextField>
-        <div style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-        <FormControl sx={{ m: 1, minWidth: 120 }}>
+        <div style={{flexDirection: 'row', display: 'flex', justifyContent: 'space-between'}}>
+        <FormControl sx={{ m: 1, width: 150 }}>
+        <Typography variant="subtitle1" fontSize={1}> 
+        <InputLabel sx={{fontSize: 12 }}  id="demo-multiple-chip-label">Select Property</InputLabel>
+        </Typography>
         <Select
+          variant="filled" 
           value={selectedProperty}
           onChange={handleChoseProperty}
-          label={"Operation"}
           displayEmpty
           inputProps={{ 'aria-label': 'Without label' }}
           defaultValue=""
@@ -223,14 +228,15 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
           
         </Select>
       </FormControl>
-      <FormControl sx={{ m: 1, minWidth: 120 }}>
-        <InputLabel id="demo-simple-select-helper-label">Operation</InputLabel>
+      <FormControl sx={{ m: 1, minWidth: 80}}>
+      <InputLabel id="demo-multiple-chip-label"  >Operation</InputLabel>
         <Select
+          variant="filled" 
           labelId="demo-simple-select-helper-label"
           id="demo-simple-select-helper"
           //value={age}
           label="Operation"
-          onChange={(e) => setOperation(e.target.value)}
+          onChange={handleChoseOperation}
           defaultValue=""
         >
         {operations.map((operation) => (
@@ -241,12 +247,15 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
 
         </Select>
       </FormControl>
+      <FormControl sx={{ m: 1, width: 150 }}>
       <TextField 
       variant="filled" 
+      label="Value"
       onChange={(e) => setSelectedValue(e.target.value)}
       defaultValue=""
       >
       </TextField>
+      </FormControl>
 
       
     </div>
