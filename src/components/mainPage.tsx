@@ -42,6 +42,7 @@ import Clip from './clip';
 import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import DropDown from "./dropDown"
+import FeatureExtractor from './featureExtractor';
 
 const drawerWidth = 240;
 
@@ -116,7 +117,7 @@ export default function MainPage() {
 
   const tools: Tool[] = [
     {id: 1, name: "Load data", icon: FileUploadIcon, component: <FileInput handleCloseModal={closeModal}/>}, 
-    {id: 2, name: "Feature extracor", icon: ScienceIcon,  component: <FileInput handleCloseModal={closeModal}/>},
+    {id: 2, name: "Feature extracor", icon: ScienceIcon,  component: <FeatureExtractor handleCloseModal={closeModal}/>},
     {id: 3, name: "Buffer", icon: RemoveCircleIcon, component: <Buffer handleCloseModal={closeModal}/> },
     {id: 4, name: "Intersect", icon: JoinInnerIcon,  component: <Intersect handleCloseModal={closeModal}/> },
     {id: 5, name: "Union", icon: JoinFullIcon, component: <Union handleCloseModal={closeModal}/>},
