@@ -49,7 +49,14 @@ function Difference(props: { handleCloseModal: () => void; }) {
         return null;
       }
       if(differences !== null){ 
-      differenceList.features.push(differences)
+        const feature1 = selectedLayer1.geoJSON.features[i];
+        const feature2 = selectedLayer2.geoJSON.features[j];
+        const intersectionFeature: Feature<Polygon | MultiPolygon> = {
+          type: 'Feature',
+          properties: {...feature1.properties, ...feature2.properties}, // combine properties from both input features
+          geometry: differences.geometry,
+        };
+        differenceList.features.push(intersectionFeature);
       }
   
     }

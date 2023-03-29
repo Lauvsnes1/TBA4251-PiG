@@ -27,37 +27,89 @@ function Union(props: { handleCloseModal: () => void; }) {
     return hexColor;
   }
 
-  function handleUnion() {
-    const unionsLst: FeatureCollection = {
-        type: 'FeatureCollection',
-        features: [],
-      };
-      console.log("length of polygons list:", selectedLayer1?.geoJSON.features.length, selectedLayer2?.geoJSON.features.length )
-    if(selectedLayer1?.geoJSON && selectedLayer2?.geoJSON){
-    for (let i = 0; i < (selectedLayer1?.geoJSON.features.length); i++){
-        for (let j = 0; j< (selectedLayer2?.geoJSON.features.length); j++){
-    if (
-      selectedLayer1?.geoJSON.features[i].geometry.type === "Polygon" &&
-      selectedLayer2?.geoJSON.features[j].geometry.type === "Polygon"
-    ) {
-      const unions = union(
-        selectedLayer1.geoJSON.features[i].geometry as Polygon,
-        selectedLayer2.geoJSON.features[j].geometry as Polygon
-      ) as Feature<Polygon | MultiPolygon>;
-      if (unions === undefined) {
-        console.log('error')
-        return null;
-      }
-      if(unions !== null){ 
-      unionsLst.features.push(unions)
-      }
+//   function handleUnion() {
+//     const unionsLst: FeatureCollection = {
+//         type: 'FeatureCollection',
+//         features: [],
+//       };
+//       console.log("length of polygons list:", selectedLayer1?.geoJSON.features.length, selectedLayer2?.geoJSON.features.length )
+//     if(selectedLayer1?.geoJSON && selectedLayer2?.geoJSON){
+//     for (let i = 0; i < (selectedLayer1?.geoJSON.features.length); i++){
+//         for (let j = 0; j< (selectedLayer2?.geoJSON.features.length); j++){
+//     if (
+//       selectedLayer1?.geoJSON.features[i].geometry.type === "Polygon" &&
+//       selectedLayer2?.geoJSON.features[j].geometry.type === "Polygon"
+//     ) {
+//       const unions = union(
+//         selectedLayer1.geoJSON.features[i].geometry as Polygon,
+//         selectedLayer2.geoJSON.features[j].geometry as Polygon
+//       ) as Feature<Polygon | MultiPolygon>;
+//       if (unions === undefined) {
+//         console.log('error')
+//         return null;
+//       }
+//       if(unions !== null){
+//         const feature1 = selectedLayer1.geoJSON.features[i];
+//         const feature2 = selectedLayer2.geoJSON.features[j];
+//         const unionFeature: Feature<Polygon | MultiPolygon> = {
+//           type: 'Feature',
+//           properties: {...feature1.properties, ...feature2.properties}, // combine properties from both input features
+//           geometry: unions.geometry,
+//         }; 
+//       unionsLst.features.push(unionFeature)
+//       }
   
+//     }
+//     }
+//     };
+//     return unionsLst;
+// }
+//   }
+
+function handleUnion() {
+  const unionsLst: FeatureCollection = {
+    type: 'FeatureCollection',
+    features: [],
+  };
+  const processedPairs = new Set<string>(); // create a set to store IDs of processed pairs
+  if (selectedLayer1?.geoJSON && selectedLayer2?.geoJSON) {
+    for (let i = 0; i < selectedLayer1.geoJSON.features.length; i++) {
+      for (let j = 0; j < selectedLayer2.geoJSON.features.length; j++) {
+        if (
+          selectedLayer1.geoJSON.features[i].geometry.type === 'Polygon' &&
+          selectedLayer2.geoJSON.features[j].geometry.type === 'Polygon'
+        ) {
+          const polygonPairId = `${i}-${j}`; // create an ID for this pair of polygons
+          if (processedPairs.has(polygonPairId)) {
+            // skip this pair if it has already been processed
+            continue;
+          }
+          const unions = union(
+            selectedLayer1.geoJSON.features[i].geometry as Polygon,
+            selectedLayer2.geoJSON.features[j].geometry as Polygon
+          ) as Feature<Polygon | MultiPolygon>;
+          if (unions !== null) {
+            const feature1 = selectedLayer1.geoJSON.features[i];
+            const feature2 = selectedLayer2.geoJSON.features[j];
+            const unionFeature: Feature<Polygon | MultiPolygon> = {
+              type: 'Feature',
+              properties: {
+                ...feature1.properties,
+                ...feature2.properties,
+              },
+              geometry: unions.geometry,
+            };
+            unionsLst.features.push(unionFeature);
+            processedPairs.add(polygonPairId); // add the pair to the processed set
+          }
+        }
+      }
     }
-    }
-    };
-    return unionsLst;
-}
   }
+  return unionsLst;
+}
+
+
 
   const handleOk = () => {
     const unioned = handleUnion();

@@ -90,6 +90,11 @@ function BaseMap() {
           type: "fill",
           paint: { 'fill-color': layer.color, 'fill-opacity': layer.opacity }
         };
+        case "MultiPolygon":
+          return {
+            type: "fill",
+            paint: { 'fill-color': layer.color, 'fill-opacity': layer.opacity }
+          };
       default:
         throw new Error(`Unsupported geometry type: ${type}`);
     }
