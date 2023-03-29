@@ -5,12 +5,7 @@ import { FeatureCollection } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
-import { styled} from '@mui/material/styles';
 import { uid } from 'uid';
-
-const CustomSelect = styled(Select)({
-    width: '150px', // define the desired width here
-  });
 
 
 function FeatureExtractor(props: { handleCloseModal: () => void; }) {
