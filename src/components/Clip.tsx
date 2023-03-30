@@ -95,8 +95,8 @@ function Clip(props: { handleCloseModal: () => void; }) {
     const [selectedPolyLayers, selectedLineLayers]  = findAllLayers();
     console.log("SelectedLayers", selectedPolyLayers)
     console.log("SelectedLineLayers", selectedLineLayers)
-selectedPolyLayers.forEach((polyLayer) => {
-  const clipps: FeatureCollection = {
+    selectedPolyLayers.forEach((polyLayer) => {
+    const clipps: FeatureCollection = {
     type: 'FeatureCollection',
     features: [],
   };
