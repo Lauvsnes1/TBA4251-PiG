@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
-import { Box, CircularProgress, Modal, Typography } from '@mui/material';
+import { Box, Modal, Typography } from '@mui/material';
 import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';

@@ -7,6 +7,9 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { uid } from 'uid';
 import differnce from '@turf/difference';
+import dissolve from '@turf/dissolve';
+import { Properties } from '@turf/helpers';
+import booleanOverlap from '@turf/boolean-overlap';
 
 function Difference(props: { handleCloseModal: () => void; }) {
   const [selectedLayer1, setSelectedLayer1] = useState<GeoJSONItem>();
@@ -27,43 +30,44 @@ function Difference(props: { handleCloseModal: () => void; }) {
     return hexColor;
   }
 
+
   function handleDifference() {
     const differenceList: FeatureCollection = {
-        type: 'FeatureCollection',
-        features: [],
-      };
-      console.log("length of polygons list:", selectedLayer1?.geoJSON.features.length, selectedLayer2?.geoJSON.features.length )
-    if(selectedLayer1?.geoJSON && selectedLayer2?.geoJSON){
-    for (let i = 0; i < (selectedLayer1?.geoJSON.features.length); i++){
-        for (let j = 0; j< (selectedLayer2?.geoJSON.features.length); j++){
-    if (
-      selectedLayer1?.geoJSON.features[i].geometry.type === "Polygon" &&
-      selectedLayer2?.geoJSON.features[j].geometry.type === "Polygon"
-    ) {
-      const differences = differnce(
-        selectedLayer1.geoJSON.features[i].geometry as Polygon,
-        selectedLayer2.geoJSON.features[j].geometry as Polygon
-      ) as Feature<Polygon | MultiPolygon>;
-      if (differences === undefined) {
-        console.log('error')
-        return null;
-      }
-      if(differences !== null){ 
-        const feature1 = selectedLayer1.geoJSON.features[i];
-        const feature2 = selectedLayer2.geoJSON.features[j];
-        const intersectionFeature: Feature<Polygon | MultiPolygon> = {
-          type: 'Feature',
-          properties: {...feature1.properties, ...feature2.properties}, // combine properties from both input features
-          geometry: differences.geometry,
-        };
-        differenceList.features.push(intersectionFeature);
-      }
-  
-    }
-    }
+      type: 'FeatureCollection',
+      features: [],
     };
-    return differenceList;
-}
+    if(selectedLayer1?.geoJSON && selectedLayer2?.geoJSON){
+      const layer1 = selectedLayer1.geoJSON
+      const layer2 = selectedLayer2.geoJSON
+
+      const dissolved1 = dissolve(layer1 as FeatureCollection<Polygon, Properties>)
+      const dissolved2 = dissolve(layer2 as FeatureCollection<Polygon, Properties>)
+
+      dissolved1.features.forEach(feature1 => {
+        let feature1Added: boolean = false;
+        dissolved2.features.forEach(feature2 => {
+          if(booleanOverlap(feature1, feature2)){
+            const diff = differnce(feature1, feature2)
+            if(diff !== null && differenceList.features.every(feat => !booleanOverlap(diff, feat))){
+              const diffFeature: Feature<Polygon | MultiPolygon> = {
+                type: 'Feature',
+                properties: {...feature1.properties, ...feature2.properties}, // combine properties from both input features
+                geometry: diff.geometry,
+              };
+              differenceList.features.push(diffFeature)
+
+            }
+          }
+        //Check that it is not added before and has no overlapping fractions of already existing features
+        else if(!feature1Added && differenceList.features.every(feat => !booleanOverlap(feature1, feat))){
+          differenceList.features.push(feature1)
+          feature1Added = true
+        }
+        })
+
+      })
+      return differenceList;
+    }
   }
 
   const handleOk = () => {
