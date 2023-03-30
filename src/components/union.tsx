@@ -12,6 +12,7 @@ import cleanCoords from '@turf/clean-coords';
 import dissolve from '@turf/dissolve';
 import combine from '@turf/combine';
 import { featureCollection, Properties } from '@turf/helpers';
+import booleanContains from '@turf/boolean-contains';
 
 function Union(props: { handleCloseModal: () => void; }) {
   const [selectedLayer1, setSelectedLayer1] = useState<GeoJSONItem>();
@@ -312,22 +313,20 @@ const unionDissolve= () => {
   console.log("Layer1", selectedLayer1)
   console.log("Layer2", selectedLayer2)
   if(selectedLayer1?.geoJSON && selectedLayer2?.geoJSON){
-    const layer1 = featureCollection(selectedLayer1.geoJSON.features)
+    const layer1 = selectedLayer1.geoJSON
     const layer2 = selectedLayer2.geoJSON
     
     const dissolved1 = dissolve(layer1 as FeatureCollection<Polygon, Properties>)
     const dissolved2 = dissolve(layer2 as FeatureCollection<Polygon, Properties>)
-    console.log("dissolved1", dissolved1)
-    console.log("dissolved2", dissolved2)
-
+    
     dissolved1.features.forEach(feature1 => {
+      let feature1Added: boolean = false;
       dissolved2.features.forEach(feature2 => {
-        let feat1Added: boolean = false;
         if(booleanOverlap(feature1, feature2)){
           //Overlap
-          console.log("Overlap")
           const unions = union(feature1, feature2)
-          if(unions !== null){
+          //Check that it is not null and has no overlapping fractions
+          if(unions !== null && unionsLst.features.every(feat => !booleanOverlap(unions, feat))){
             const unionFeature: Feature<Polygon | MultiPolygon> = {
               type: 'Feature',
               properties: {...feature1.properties, ...feature2.properties}, // combine properties from both input features
@@ -336,22 +335,23 @@ const unionDissolve= () => {
             unionsLst.features.push(unionFeature)
           }
         }
-        else if(feat1Added){
-          //No overlap, just add to final list
-          console.log("no overlap")
+        //Check that it is not added before and has no overlapping fractions of already existing features
+        else if(!feature1Added && unionsLst.features.every(feat => !booleanOverlap(feature1, feat))){
           unionsLst.features.push(feature1)
-          feat1Added = true; 
+          feature1Added = true
+  
         }
-        else{
-          console.log("No overlap")
-        }
+        
       })
+
 
     })
     console.log(unionsLst)
     return unionsLst;
   }
 }
+
+
 
 
   const handleOk = () => {
