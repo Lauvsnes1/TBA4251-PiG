@@ -1,17 +1,24 @@
 import React, { useState, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
-import { Typography } from '@mui/material';
+import { Box, Modal, Typography } from '@mui/material';
 import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { uid } from 'uid';
 import union from '@turf/union';
+import booleanOverlap from '@turf/boolean-overlap';
+import dissolve from '@turf/dissolve';
+import { Properties } from '@turf/helpers';
+import Loading from './loading';
+import { modalStyle } from './styledComponents';
+
 
 function Union(props: { handleCloseModal: () => void; }) {
   const [selectedLayer1, setSelectedLayer1] = useState<GeoJSONItem>();
   const [selectedLayer2, setSelectedLayer2] = useState<GeoJSONItem>();
-  const [name, setName] = useState<string>('');
+  const [name, setName] = useState<string>('union');
+  const [isLoading, setIsloading] = useState(false);
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
 
@@ -27,92 +34,54 @@ function Union(props: { handleCloseModal: () => void; }) {
     return hexColor;
   }
 
-//   function handleUnion() {
-//     const unionsLst: FeatureCollection = {
-//         type: 'FeatureCollection',
-//         features: [],
-//       };
-//       console.log("length of polygons list:", selectedLayer1?.geoJSON.features.length, selectedLayer2?.geoJSON.features.length )
-//     if(selectedLayer1?.geoJSON && selectedLayer2?.geoJSON){
-//     for (let i = 0; i < (selectedLayer1?.geoJSON.features.length); i++){
-//         for (let j = 0; j< (selectedLayer2?.geoJSON.features.length); j++){
-//     if (
-//       selectedLayer1?.geoJSON.features[i].geometry.type === "Polygon" &&
-//       selectedLayer2?.geoJSON.features[j].geometry.type === "Polygon"
-//     ) {
-//       const unions = union(
-//         selectedLayer1.geoJSON.features[i].geometry as Polygon,
-//         selectedLayer2.geoJSON.features[j].geometry as Polygon
-//       ) as Feature<Polygon | MultiPolygon>;
-//       if (unions === undefined) {
-//         console.log('error')
-//         return null;
-//       }
-//       if(unions !== null){
-//         const feature1 = selectedLayer1.geoJSON.features[i];
-//         const feature2 = selectedLayer2.geoJSON.features[j];
-//         const unionFeature: Feature<Polygon | MultiPolygon> = {
-//           type: 'Feature',
-//           properties: {...feature1.properties, ...feature2.properties}, // combine properties from both input features
-//           geometry: unions.geometry,
-//         }; 
-//       unionsLst.features.push(unionFeature)
-//       }
-  
-//     }
-//     }
-//     };
-//     return unionsLst;
-// }
-//   }
 
-function handleUnion() {
+const excecuteUnion = () => {
+  setIsloading(true)
   const unionsLst: FeatureCollection = {
     type: 'FeatureCollection',
     features: [],
   };
-  const processedPairs = new Set<string>(); // create a set to store IDs of processed pairs
-  if (selectedLayer1?.geoJSON && selectedLayer2?.geoJSON) {
-    for (let i = 0; i < selectedLayer1.geoJSON.features.length; i++) {
-      for (let j = 0; j < selectedLayer2.geoJSON.features.length; j++) {
-        if (
-          selectedLayer1.geoJSON.features[i].geometry.type === 'Polygon' &&
-          selectedLayer2.geoJSON.features[j].geometry.type === 'Polygon'
-        ) {
-          const polygonPairId = `${i}-${j}`; // create an ID for this pair of polygons
-          if (processedPairs.has(polygonPairId)) {
-            // skip this pair if it has already been processed
-            continue;
-          }
-          const unions = union(
-            selectedLayer1.geoJSON.features[i].geometry as Polygon,
-            selectedLayer2.geoJSON.features[j].geometry as Polygon
-          ) as Feature<Polygon | MultiPolygon>;
-          if (unions !== null) {
-            const feature1 = selectedLayer1.geoJSON.features[i];
-            const feature2 = selectedLayer2.geoJSON.features[j];
+  console.log("Layer1", selectedLayer1)
+  console.log("Layer2", selectedLayer2)
+  if(selectedLayer1?.geoJSON && selectedLayer2?.geoJSON){
+    const layer1 = selectedLayer1.geoJSON
+    const layer2 = selectedLayer2.geoJSON
+    
+    const dissolved1 = dissolve(layer1 as FeatureCollection<Polygon, Properties>)
+    const dissolved2 = dissolve(layer2 as FeatureCollection<Polygon, Properties>)
+    
+    dissolved1.features.forEach(feature1 => {
+      let feature1Added: boolean = false;
+      dissolved2.features.forEach(feature2 => {
+        if(booleanOverlap(feature1, feature2)){
+          //Overlap
+          const unions = union(feature1, feature2)
+          //Check that it is not null and has no overlapping fractions
+          if(unions !== null && unionsLst.features.every(feat => !booleanOverlap(unions, feat))){
             const unionFeature: Feature<Polygon | MultiPolygon> = {
               type: 'Feature',
-              properties: {
-                ...feature1.properties,
-                ...feature2.properties,
-              },
+              properties: {...feature1.properties, ...feature2.properties}, // combine properties from both input features
               geometry: unions.geometry,
             };
-            unionsLst.features.push(unionFeature);
-            processedPairs.add(polygonPairId); // add the pair to the processed set
+            unionsLst.features.push(unionFeature)
           }
         }
-      }
-    }
+        //Check that it is not added before and has no overlapping fractions of already existing features
+        else if(!feature1Added && unionsLst.features.every(feat => !booleanOverlap(feature1, feat))){
+          unionsLst.features.push(feature1)
+          feature1Added = true
+        }
+      })
+    })
+    console.log(unionsLst)
+    return unionsLst;
   }
-  return unionsLst;
 }
 
-
-
-  const handleOk = () => {
-    const unioned = handleUnion();
+const handleOk = () => {
+  setIsloading(true);
+  setTimeout(() => {
+    let unioned = excecuteUnion();
     const newObj: GeoJSONItem = {
       id: uid(),
       name: name,
@@ -121,9 +90,11 @@ function handleUnion() {
       opacity: 0.5,
       geoJSON: unioned as FeatureCollection,
     };
-    setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+    setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs,newObj as GeoJSONItem]);
+    setIsloading(false);
     props.handleCloseModal();
-  };
+  }, 10);
+};
 
   const handleChoseLayer1 = (event: ChangeEvent<HTMLInputElement>) => {
     const chosenLayer: GeoJSONItem = geoJSONList.find((layer) => layer.id === event.target.value) as GeoJSONItem;
@@ -135,54 +106,83 @@ function handleUnion() {
     setSelectedLayer2(chosenLayer);
   };
 
-  return (
-    <div style={{display: "flex", flexDirection: "column",  justifyContent: "center", flexWrap: 'wrap', width: '100%' }}>
-        <Typography variant="h6"> Union Tool:</Typography>
-      
-        <TextField
-          style={{paddingTop: '10px'}}
-          id="Selected-buffer-layer"
-          select
-          label="Select layer one"
-          onChange={handleChoseLayer1}
-          variant="filled"
-          defaultValue={""}
+ return (
+    <>
+      {isLoading ? ( // Check if isLoading is true
+        // If it is, render the loading component
+        <Box sx={{modalStyle, height: '100px'}}>
+       <Loading/>
+       </Box>
+      ) : (
+        // Otherwise, render the original code
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            width: "100%",
+          }}
         >
-          {geoJSONList.map((layer) => (
-            <MenuItem key={layer.id} value={layer.id} >
-              {layer.name}
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          style={{paddingTop: '10px'}}
-          id="Selected-buffer-layer"
-          select
-          label="Select layer two"
-          onChange={handleChoseLayer2}
-          variant="filled"
-          defaultValue={""}
-        >
-          {geoJSONList.map((layer) => (
-            <MenuItem key={layer.id} value={layer.id} >
-              {layer.name}
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          required
-          id="outlined-required"
-          label="Name of output layer"
-          onChange={(e) => setName(e.target.value)}
-          style={{paddingTop: '10px'}}
-          variant="filled"
-        />
-      <div style={{flexDirection: 'row', justifyContent: 'space-around', display: 'flex', paddingTop: '10px'}}>
-      <Button variant="outlined" color="error" onClick={props.handleCloseModal}>Cancel</Button>
-      <Button onClick={handleOk} variant="outlined">OK</Button>
-      </div>
-    </div>
-    
+          <Typography variant="h6">Union Tool:</Typography>
+
+          <TextField
+            style={{ paddingTop: "10px" }}
+            id="Selected-buffer-layer"
+            select
+            label="Select layer one"
+            onChange={handleChoseLayer1}
+            variant="filled"
+            defaultValue={""}
+          >
+            {geoJSONList.map((layer) => (
+              <MenuItem key={layer.id} value={layer.id}>
+                {layer.name}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            style={{ paddingTop: "10px" }}
+            id="Selected-buffer-layer"
+            select
+            label="Select layer two"
+            onChange={handleChoseLayer2}
+            variant="filled"
+            defaultValue={""}
+          >
+            {geoJSONList.map((layer) => (
+              <MenuItem key={layer.id} value={layer.id}>
+                {layer.name}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            required
+            id="outlined-required"
+            label="Name of output layer"
+            onChange={(e) => setName(e.target.value)}
+            style={{ paddingTop: "10px" }}
+            variant="filled"
+            value={name}
+          />
+          <div
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-around",
+              display: "flex",
+              paddingTop: "10px",
+            }}
+          >
+            <Button variant="outlined" color="error" onClick={props.handleCloseModal}>
+              Cancel
+            </Button>
+            <Button onClick={handleOk} variant="outlined">
+              OK
+            </Button>
+          </div>
+        </div>
+      )}
+    </>
   );
-}
+};
 export default Union;
