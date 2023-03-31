@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
@@ -10,11 +10,14 @@ import differnce from '@turf/difference';
 import dissolve from '@turf/dissolve';
 import { Properties } from '@turf/helpers';
 import booleanOverlap from '@turf/boolean-overlap';
+import Loading from './loading';
+import { modalStyle } from './styledComponents';
 
 function Difference(props: { handleCloseModal: () => void; }) {
   const [selectedLayer1, setSelectedLayer1] = useState<GeoJSONItem>();
   const [selectedLayer2, setSelectedLayer2] = useState<GeoJSONItem>();
   const [name, setName] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
 
@@ -29,7 +32,6 @@ function Difference(props: { handleCloseModal: () => void; }) {
 
     return hexColor;
   }
-
 
   function handleDifference() {
     const differenceList: FeatureCollection = {
@@ -70,19 +72,23 @@ function Difference(props: { handleCloseModal: () => void; }) {
     }
   }
 
-  const handleOk = () => {
-    const unioned = handleDifference();
+const handleOk = () => {
+  setIsLoading(true);
+  setTimeout(() => {
+    let differenced = handleDifference();
     const newObj: GeoJSONItem = {
       id: uid(),
       name: name,
       visible: true,
       color: getRandomColor(),
       opacity: 0.5,
-      geoJSON: unioned as FeatureCollection,
+      geoJSON: differenced as FeatureCollection,
     };
-    setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+    setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs,newObj as GeoJSONItem]);
+    setIsLoading(false);
     props.handleCloseModal();
-  };
+  }, 10);
+};
 
   const handleChoseLayer1 = (event: ChangeEvent<HTMLInputElement>) => {
     const chosenLayer: GeoJSONItem = geoJSONList.find((layer) => layer.id === event.target.value) as GeoJSONItem;
@@ -95,9 +101,14 @@ function Difference(props: { handleCloseModal: () => void; }) {
   };
 
   return (
-    <div style={{display: "flex", flexDirection: "column",  justifyContent: "center", flexWrap: 'wrap', width: '100%' }}>
+      <>
+      {isLoading ? (
+        <Box sx={{modalStyle, height: '100px'}}>
+        <Loading/>
+        </Box>
+      ) : 
+      (<div style={{display: "flex", flexDirection: "column",  justifyContent: "center", flexWrap: 'wrap', width: '100%' }}>
         <Typography variant="h6"> Difference Tool:</Typography>
-      
         <TextField
           style={{paddingTop: '10px'}}
           id="Selected-buffer-layer"
@@ -140,8 +151,8 @@ function Difference(props: { handleCloseModal: () => void; }) {
       <Button variant="outlined" color="error" onClick={props.handleCloseModal}>Cancel</Button>
       <Button onClick={handleOk} variant="outlined">OK</Button>
       </div>
-    </div>
-    
+      </div>)}
+    </>
   );
 }
 export default Difference;

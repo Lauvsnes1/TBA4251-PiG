@@ -78,9 +78,10 @@ const excecuteUnion = () => {
   }
 }
 
-  const handleOk = () => {
-    setIsloading(true)
-    let unioned = excecuteUnion()
+const handleOk = () => {
+  setIsloading(true);
+  setTimeout(() => {
+    let unioned = excecuteUnion();
     const newObj: GeoJSONItem = {
       id: uid(),
       name: name,
@@ -89,11 +90,11 @@ const excecuteUnion = () => {
       opacity: 0.5,
       geoJSON: unioned as FeatureCollection,
     };
-    setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
-    setIsloading(false)
-    props.handleCloseModal()
-
-  };
+    setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs,newObj as GeoJSONItem]);
+    setIsloading(false);
+    props.handleCloseModal();
+  }, 10);
+};
 
   const handleChoseLayer1 = (event: ChangeEvent<HTMLInputElement>) => {
     const chosenLayer: GeoJSONItem = geoJSONList.find((layer) => layer.id === event.target.value) as GeoJSONItem;
@@ -109,10 +110,8 @@ const excecuteUnion = () => {
     <>
       {isLoading ? ( // Check if isLoading is true
         // If it is, render the loading component
-        <Box sx={modalStyle}>
-        <Modal open={isLoading}>
+        <Box sx={{modalStyle, height: '100px'}}>
        <Loading/>
-       </Modal>
        </Box>
       ) : (
         // Otherwise, render the original code
