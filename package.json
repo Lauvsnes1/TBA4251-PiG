@@ -26,6 +26,7 @@
     "@turf/combine": "^6.5.0",
     "@turf/difference": "^6.5.0",
     "@turf/dissolve": "^6.5.0",
+    "@turf/flatten": "^6.5.0",
     "@turf/helpers": "^6.5.0",
     "@turf/intersect": "^6.5.0",
     "@turf/line-split": "^6.5.0",
