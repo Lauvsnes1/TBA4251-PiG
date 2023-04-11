@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
@@ -8,10 +8,15 @@ import MenuItem from '@mui/material/MenuItem';
 import { uid } from 'uid';
 import intersect from '@turf/intersect';
 import booleanOverlap from '@turf/boolean-overlap';
+import dissolve from '@turf/dissolve';
+import { Properties } from '@turf/helpers';
+import Loading from './loading';
+import { modalStyle } from './styledComponents';
 
 function Intersect(props: { handleCloseModal: () => void; }) {
   const [selectedLayer1, setSelectedLayer1] = useState<GeoJSONItem>();
   const [selectedLayer2, setSelectedLayer2] = useState<GeoJSONItem>();
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [name, setName] = useState<string>('');
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
@@ -92,9 +97,47 @@ function handleIntersection() {
   return intersections;
 }
 
+function newIntersect () {
+  const intersections: FeatureCollection = {
+    type: 'FeatureCollection',
+    features: [],
+  }; 
+
+  if(selectedLayer1?.geoJSON && selectedLayer2?.geoJSON){
+    const layer1 = selectedLayer1?.geoJSON
+    const layer2 = selectedLayer2?.geoJSON
+
+    const dissolved1 = dissolve(layer1 as FeatureCollection<Polygon, Properties>)
+    const dissolved2 = dissolve(layer2 as FeatureCollection<Polygon, Properties>)
+
+    dissolved1.features.forEach(feature1 => {
+      dissolved2.features.forEach(feature2 => {
+        if(booleanOverlap(feature1, feature2)){ 
+          if((feature1.geometry.type ==="Polygon") && (feature2.geometry.type ==="Polygon")){
+          const intersection = intersect(feature1.geometry, feature2.geometry)
+          if(intersection !== null && intersections.features.every(feat => !booleanOverlap(intersection, feat))){
+            const intersectionFeature: Feature<Polygon | MultiPolygon> = {
+              type: 'Feature',
+              properties: {...feature1.properties, ...feature2.properties}, // combine properties from both input features
+              geometry: intersection.geometry,
+            };
+            intersections.features.push(intersectionFeature)
+
+          }
+          }
+        }
+      })
+    })
+  }
+  return intersections;
+
+
+}
+
 
   const handleOk = () => {
-    const intersected = handleIntersection();
+    setIsLoading(true)
+    const intersected = newIntersect();
     const newObj: GeoJSONItem = {
       id: uid(),
       name: name,
@@ -106,6 +149,7 @@ function handleIntersection() {
     console.log('the list:', geoJSONList)
     console.log('the new obj', newObj)
     setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+    setIsLoading(false)
     //pass state up to close modal
     props.handleCloseModal();
   };
@@ -121,6 +165,12 @@ function handleIntersection() {
   };
 
   return (
+    <>
+    {isLoading ? (
+        <Box sx={{modalStyle, height: '100px'}}>
+        <Loading/>
+        </Box>
+      ) :(
     <div style={{display: "flex", flexDirection: "column",  justifyContent: "center", flexWrap: 'wrap', width: '100%' }}>
         <Typography variant="h6"> Intersect Tool:</Typography>
       
@@ -166,7 +216,9 @@ function handleIntersection() {
       <Button variant="outlined" color="error" onClick={props.handleCloseModal}>Cancel</Button>
       <Button onClick={handleOk} variant="outlined">OK</Button>
       </div>
-    </div>
+    </div>)
+      }
+    </>
     
   );
 }
