@@ -33,71 +33,8 @@ function Intersect(props: { handleCloseModal: () => void; }) {
     return hexColor;
   }
 
-//   function handleIntersection() {
-//     const intersections: FeatureCollection = {
-//         type: 'FeatureCollection',
-//         features: [],
-//       };
-//       console.log("length of polygons list:", selectedLayer1?.geoJSON.features.length, selectedLayer2?.geoJSON.features.length )
-//     if(selectedLayer1?.geoJSON && selectedLayer2?.geoJSON){
-//     for (let i = 0; i < (selectedLayer1?.geoJSON.features.length); i++){
-//         for (let j = 0; j< (selectedLayer2?.geoJSON.features.length); j++){
-//     if (
-//       selectedLayer1?.geoJSON.features[i].geometry.type === "Polygon" &&
-//       selectedLayer2?.geoJSON.features[j].geometry.type === "Polygon"
-//     ) {
-//       const intersection = intersect(
-//         selectedLayer1.geoJSON.features[i].geometry as Polygon,
-//         selectedLayer2.geoJSON.features[j].geometry as Polygon
-//       ) as Feature<Polygon | MultiPolygon>;
-//       if (intersection === undefined) {
-//         console.log('error')
-//         return null;
-//       }
-//       if(intersection !== null){ 
-//       intersections.features.push(intersection)
-//       }
-  
-//     }
-//     }
-//     };
-//     return intersections;
-// }
-//   }
 
-function handleIntersection() {
-  const intersections: FeatureCollection = {
-    type: 'FeatureCollection',
-    features: [],
-  };
-  console.log("length of polygons list:", selectedLayer1?.geoJSON.features.length, selectedLayer2?.geoJSON.features.length )
-  if (selectedLayer1?.geoJSON && selectedLayer2?.geoJSON) {
-    for (let i = 0; i < selectedLayer1.geoJSON.features.length; i++) {
-      for (let j = 0; j < selectedLayer2.geoJSON.features.length; j++) {
-        if (selectedLayer1.geoJSON.features[i].geometry.type === "Polygon" &&
-            selectedLayer2.geoJSON.features[j].geometry.type === "Polygon") {
-          const intersection = intersect(
-            selectedLayer1.geoJSON.features[i].geometry as Polygon,
-            selectedLayer2.geoJSON.features[j].geometry as Polygon
-          ) as Feature<Polygon | MultiPolygon>;
-          if (intersection !== null&& intersections.features.every(feat => !booleanOverlap(intersection, feat))) {
-            const feature1 = selectedLayer1.geoJSON.features[i];
-            const feature2 = selectedLayer2.geoJSON.features[j];
-            const intersectionFeature: Feature<Polygon | MultiPolygon> = {
-              type: 'Feature',
-              properties: {...feature1.properties, ...feature2.properties}, // combine properties from both input features
-              geometry: intersection.geometry,
-            };
-            intersections.features.push(intersectionFeature);
-          }
-        }
-      }
-    }
-  }
-  return intersections;
-}
-
-function newIntersect () {
+function handleIntersection () {
   const intersections: FeatureCollection = {
     type: 'FeatureCollection',
     features: [],
@@ -122,7 +59,6 @@ function newIntersect () {
               geometry: intersection.geometry,
             };
             intersections.features.push(intersectionFeature)
-
           }
           }
         }
@@ -137,7 +73,7 @@ function newIntersect () {
 
   const handleOk = () => {
     setIsLoading(true)
-    const intersected = newIntersect();
+    const intersected = handleIntersection();
     const newObj: GeoJSONItem = {
       id: uid(),
       name: name,

@@ -150,7 +150,7 @@ function BaseMap() {
 
 
     map.on('load', () => {
-      for (const layer of geoJSONList) {
+      geoJSONList.forEach(layer => {
         map.addSource(layer.id, {
           type: 'geojson',
           data: layer.geoJSON,
@@ -186,9 +186,9 @@ function BaseMap() {
           default:
             throw new Error(`Unsupported layer type: ${type}`);
         }
-
         map.setLayoutProperty(layer.name, 'visibility', determineVisibility(layer));
-      }
+      });
+
     });
 
     //to keep persistent position
@@ -203,6 +203,7 @@ function BaseMap() {
       map.remove();
 
     };
+  
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [geoJSONList]);
 
