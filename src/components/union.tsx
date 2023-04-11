@@ -10,6 +10,7 @@ import union from '@turf/union';
 import booleanOverlap from '@turf/boolean-overlap';
 import dissolve from '@turf/dissolve';
 import { Properties } from '@turf/helpers';
+import flatten from '@turf/flatten';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 
@@ -46,6 +47,18 @@ const excecuteUnion = () => {
   if(selectedLayer1?.geoJSON && selectedLayer2?.geoJSON){
     const layer1 = selectedLayer1.geoJSON
     const layer2 = selectedLayer2.geoJSON
+
+    //Flatten if there are MultiPolygons(to make dissolve work)
+    layer1.features.forEach(feature => {
+      if(feature.geometry.type === 'MultiPolygon'){
+        flatten(feature.geometry)
+      }
+    })
+    layer2.features.forEach(feature => {
+      if(feature.geometry.type === 'MultiPolygon'){
+        flatten(feature.geometry)
+      }
+    })
     
     const dissolved1 = dissolve(layer1 as FeatureCollection<Polygon, Properties>)
     const dissolved2 = dissolve(layer2 as FeatureCollection<Polygon, Properties>)

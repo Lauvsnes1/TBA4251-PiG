@@ -7,6 +7,7 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { uid } from 'uid';
 import intersect from '@turf/intersect';
+import booleanOverlap from '@turf/boolean-overlap';
 
 function Intersect(props: { handleCloseModal: () => void; }) {
   const [selectedLayer1, setSelectedLayer1] = useState<GeoJSONItem>();
@@ -74,7 +75,7 @@ function handleIntersection() {
             selectedLayer1.geoJSON.features[i].geometry as Polygon,
             selectedLayer2.geoJSON.features[j].geometry as Polygon
           ) as Feature<Polygon | MultiPolygon>;
-          if (intersection) {
+          if (intersection !== null&& intersections.features.every(feat => !booleanOverlap(intersection, feat))) {
             const feature1 = selectedLayer1.geoJSON.features[i];
             const feature2 = selectedLayer2.geoJSON.features[j];
             const intersectionFeature: Feature<Polygon | MultiPolygon> = {

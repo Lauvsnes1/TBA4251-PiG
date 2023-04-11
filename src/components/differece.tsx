@@ -44,6 +44,8 @@ function Difference(props: { handleCloseModal: () => void; }) {
     if(selectedLayer1?.geoJSON && selectedLayer2?.geoJSON){
       const layer1 = selectedLayer1.geoJSON
       const layer2 = selectedLayer2.geoJSON
+
+      //Flatten if there are MultiPolygons(to make dissolve work)
       layer1.features.forEach(feature => {
         if(feature.geometry.type === 'MultiPolygon'){
           flatten(feature.geometry)
