@@ -126,7 +126,7 @@ function FileInput(props: { handleCloseModal: () => void;}) {
           {geoJSONList.map((file) => {
             return(
             <div key={file.id} style={{display: "flex", justifyContent: "space-between", flexDirection: "row", width: "100%"}}>
-            <ListItem>
+            <ListItem divider>
               <ListItemButton>
                 <ListItemText primary={file.name}/>
                 <div style={{flexDirection: "row", display: "flex", width: "20%", justifyContent: "space-between"}}>
@@ -148,7 +148,6 @@ function FileInput(props: { handleCloseModal: () => void;}) {
                     )}
                   </Popper>)} 
               </ListItemButton>
-              
             </ListItem>
             <Divider />
             </div>

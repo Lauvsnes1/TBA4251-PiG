@@ -25,6 +25,8 @@ import JoinInnerIcon from '@mui/icons-material/JoinInner';
 import JoinFullIcon from '@mui/icons-material/JoinFull';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ContentCutIcon from '@mui/icons-material/ContentCut';
+import Alert, { AlertColor } from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 
 import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
@@ -55,17 +57,16 @@ interface Tool {
 
 
 
-export default function MainPage() {
+export default function MainPage(props: {showAlert: (status: AlertColor, message: string) => void}) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [openPop, setOpenPop] = useState<boolean>(false);
   const [modal, setModal] = useState<boolean>(false);
   const [modalComponent, setModalComponent] = useState<JSX.Element>()
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem | null>(null);
-
-  const { geoJSONList, setGeoJSONList} = useGeoJSONContext(); 
-
+  const { geoJSONList, setGeoJSONList} = useGeoJSONContext();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -89,14 +90,13 @@ export default function MainPage() {
     setSelectedLayer(layer)
     setAnchorEl(event.currentTarget);
     setOpenPop((previousOpen) => !previousOpen);
+    props.showAlert("error", "this is a test")
   }
 
   const handleCloseColorPicker = () => {
     setSelectedLayer(null)
     setAnchorEl(null)
     setOpenPop((previousOpen) => !previousOpen);
-    
-    
   };
 
   const closeModal = () => {
@@ -125,8 +125,6 @@ export default function MainPage() {
     {id: 7, name: "Clip", icon: ContentCutIcon, component: <Clip handleCloseModal={closeModal} />}
   ]
 
-
-
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -146,6 +144,7 @@ export default function MainPage() {
           </Typography>
         </Toolbar>
       </AppBar>
+
        <Drawer
         sx={{
           zIndex: 1,
@@ -220,6 +219,7 @@ export default function MainPage() {
       </Drawer>
       
       <Main open={open} > 
+
       <Modal
         open={modal}
         onClose={() => setModal(false)}
