@@ -25,9 +25,7 @@ import JoinInnerIcon from '@mui/icons-material/JoinInner';
 import JoinFullIcon from '@mui/icons-material/JoinFull';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ContentCutIcon from '@mui/icons-material/ContentCut';
-import Alert, { AlertColor } from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
-
+import  { AlertColor } from '@mui/material/Alert';
 import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
 import Stack from '@mui/material/Stack';
@@ -90,7 +88,6 @@ export default function MainPage(props: {showAlert: (status: AlertColor, message
     setSelectedLayer(layer)
     setAnchorEl(event.currentTarget);
     setOpenPop((previousOpen) => !previousOpen);
-    props.showAlert("error", "this is a test")
   }
 
   const handleCloseColorPicker = () => {
@@ -113,16 +110,19 @@ export default function MainPage(props: {showAlert: (status: AlertColor, message
     }
     setModal(true)
   }
+  const passAlert = (status: AlertColor, message: string) => {
+    props.showAlert(status, message)
+  }
 
 
   const tools: Tool[] = [
-    {id: 1, name: "Load data", icon: FileUploadIcon, component: <FileInput handleCloseModal={closeModal}/>}, 
-    {id: 2, name: "Feature extracor", icon: ScienceIcon,  component: <FeatureExtractor handleCloseModal={closeModal}/>},
-    {id: 3, name: "Buffer", icon: RemoveCircleIcon, component: <Buffer handleCloseModal={closeModal}/> },
-    {id: 4, name: "Intersect", icon: JoinInnerIcon,  component: <Intersect handleCloseModal={closeModal}/> },
-    {id: 5, name: "Union", icon: JoinFullIcon, component: <Union handleCloseModal={closeModal}/>},
-    {id: 6, name: "Difference", icon: RemoveIcon, component: <Difference handleCloseModal={closeModal}/>},
-    {id: 7, name: "Clip", icon: ContentCutIcon, component: <Clip handleCloseModal={closeModal} />}
+    {id: 1, name: "Load data", icon: FileUploadIcon, component: <FileInput handleCloseModal={closeModal} showAlert={passAlert}/>}, 
+    {id: 2, name: "Feature extracor", icon: ScienceIcon,  component: <FeatureExtractor handleCloseModal={closeModal} showAlert={passAlert}/>},
+    {id: 3, name: "Buffer", icon: RemoveCircleIcon, component: <Buffer handleCloseModal={closeModal} showAlert={passAlert}/> },
+    {id: 4, name: "Intersect", icon: JoinInnerIcon,  component: <Intersect handleCloseModal={closeModal} showAlert={passAlert}/> },
+    {id: 5, name: "Union", icon: JoinFullIcon, component: <Union handleCloseModal={closeModal} showAlert={passAlert}/>},
+    {id: 6, name: "Difference", icon: RemoveIcon, component: <Difference handleCloseModal={closeModal} showAlert={passAlert}/>},
+    {id: 7, name: "Clip", icon: ContentCutIcon, component: <Clip handleCloseModal={closeModal} showAlert={passAlert} />}
   ]
 
   return (
@@ -144,7 +144,6 @@ export default function MainPage(props: {showAlert: (status: AlertColor, message
           </Typography>
         </Toolbar>
       </AppBar>
-
        <Drawer
         sx={{
           zIndex: 1,

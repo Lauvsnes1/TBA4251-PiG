@@ -11,11 +11,12 @@ const showAlert = (status: AlertColor, message: string) => {
   const componentToRender: JSX.Element | undefined = (
     <Alert
     severity={status}
+    variant="filled"
     style={{
       position: "fixed",
       top: 600,
       left: 30,
-      right: 800,
+      right: 750,
       zIndex: 9999,
       transition: "opacity 0.7s ease-in-out",
       // opacity: alert ? 1 : 0,

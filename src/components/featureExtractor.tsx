@@ -1,20 +1,23 @@
 import React, { useState, ChangeEvent, useEffect } from 'react';
 import Button from '@mui/material/Button';
-import { FormControl, InputLabel, Select, SelectChangeEvent, Typography } from '@mui/material';
+import { AlertColor, Box, FormControl, InputLabel, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { FeatureCollection } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { uid } from 'uid';
+import { modalStyle } from './styledComponents';
+import Loading from './loading';
 
 
-function FeatureExtractor(props: { handleCloseModal: () => void; }) {
+function FeatureExtractor(props: { handleCloseModal: () => void;showAlert: (status: AlertColor, message: string) => void }) {
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem>();
   const [selectedValue, setSelectedValue] = useState<string | number>('');
   const [operation, setOperation] = useState<string>();
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
   const [uniqueProperties, setUniqueProperties] = useState<string[]>([]);
   const [selectedProperty, setSelectedProperty] = useState<string>("")
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const operations: string[] = ["=", "≠", "<", ">" ]
 
@@ -115,7 +118,7 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
                   for (const key in feature.properties) {
                     if (Object.prototype.hasOwnProperty.call(feature.properties, key)) {
                       const propValue = feature.properties[key];
-                      if (typeof propValue === 'number' && propValue > target && feature.properties[key] != null) {
+                      if (typeof propValue === 'number' && propValue > Number(target) && feature.properties[key] != null) {
                         // if the property is a number and is greater than the selected value, return true to include the feature in the filtered array
                         return true;
                       }
@@ -155,7 +158,13 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
   };
   
   const handleOk = () => {
+    setIsLoading(true)
+    setTimeout(() => {
     const extract = handleExtract();
+    if(extract.features.length === 0){
+      props.showAlert("warning", "no features matching you query")
+    }
+    else{
     const newObj: GeoJSONItem = {
       id: uid(),
       name: selectedLayer?.name + "_ext",
@@ -164,8 +173,12 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
       opacity: 0.5,
       geoJSON: extract as FeatureCollection,
     };
+
     setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+    setIsLoading(false)
     props.handleCloseModal();
+  }
+},10);
   };
 
   const handleChoseLayer = (event: ChangeEvent<HTMLInputElement>) => {
@@ -174,6 +187,12 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
   };
 
   return (
+    <>
+    {isLoading ? (
+    <Box sx={{modalStyle, height: '100px'}}>
+    <Loading/>
+    </Box>
+      ) : (
     <div style={{display: "flex", flexDirection: "column",  justifyContent: "center", flexWrap: 'wrap', width: '100%' }}>
         <Typography variant="h6"> Feature extractor:</Typography>
         <TextField
@@ -249,7 +268,8 @@ function FeatureExtractor(props: { handleCloseModal: () => void; }) {
       <Button variant="outlined" color="error" onClick={props.handleCloseModal}>Cancel</Button>
       <Button variant="outlined" onClick={handleOk}>OK</Button>
       </div>
-    </div>
+    </div>)}
+    </>
     
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
-import { Box, Typography } from '@mui/material';
+import { AlertColor, Box, Typography } from '@mui/material';
 import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
@@ -13,7 +13,7 @@ import { Properties } from '@turf/helpers';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 
-function Intersect(props: { handleCloseModal: () => void; }) {
+function Intersect(props: { handleCloseModal: () => void; showAlert: (status: AlertColor, message: string) => void }) {
   const [selectedLayer1, setSelectedLayer1] = useState<GeoJSONItem>();
   const [selectedLayer2, setSelectedLayer2] = useState<GeoJSONItem>();
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -73,6 +73,7 @@ function handleIntersection () {
 
   const handleOk = () => {
     setIsLoading(true)
+    setTimeout(() => {
     const intersected = handleIntersection();
     const newObj: GeoJSONItem = {
       id: uid(),
@@ -82,12 +83,12 @@ function handleIntersection () {
       opacity: 0.5,
       geoJSON: intersected as FeatureCollection,
     };
-    console.log('the list:', geoJSONList)
-    console.log('the new obj', newObj)
     setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
     setIsLoading(false)
     //pass state up to close modal
     props.handleCloseModal();
+    props.showAlert("success", "")
+  },10);
   };
 
   const handleChoseLayer1 = (event: ChangeEvent<HTMLInputElement>) => {

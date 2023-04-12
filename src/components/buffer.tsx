@@ -1,17 +1,23 @@
 import React, { useState, ChangeEvent, } from 'react';
 import Button from '@mui/material/Button';
-import { Typography } from '@mui/material';
-import { FeatureCollection } from 'geojson';
+import { AlertColor, Box, Typography } from '@mui/material';
+import { FeatureCollection, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem} from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { uid } from 'uid';
 import buffer from '@turf/buffer';
+import flatten from '@turf/flatten';
+import dissolve from '@turf/dissolve';
+import { Properties } from '@turf/helpers';
+import Loading from './loading';
+import { modalStyle } from './styledComponents';
 
-function Buffer(props: { handleCloseModal: () => void;}) {
+function Buffer(props: { handleCloseModal: () => void; showAlert: (status: AlertColor, message: string) => void}) {
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem>()
-  const [name, setName] = useState<string>()
+  const [name, setName] = useState<string>("buffered")
   const [bufferRadius, setBufferRadius] = useState<number>(0)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
 
@@ -32,27 +38,39 @@ function Buffer(props: { handleCloseModal: () => void;}) {
   } 
 
   const handleBuffer = () => {
+     //Flatten if there are MultiPolygons(to make dissolve work)
+     let isPoly = false;
+     selectedLayer?.geoJSON.features.forEach(feature => {
+      if(feature.geometry.type === 'MultiPolygon'){
+        isPoly = true;
+        flatten(feature.geometry)
+      }
+    })
+    if(isPoly){
+      dissolve(selectedLayer?.geoJSON as FeatureCollection<Polygon, Properties>)
+    }
     const buffered = buffer(selectedLayer?.geoJSON as FeatureCollection, bufferRadius, {units: 'meters'})
     return buffered;
   }
 
   const handleOk = () => {
-    if (selectedLayer && bufferRadius && name){
-    const buffered = handleBuffer();
-    const newObj: GeoJSONItem = {
+    setIsLoading(true);
+    setTimeout(() => {
+      let buffered = handleBuffer();
+      const newObj: GeoJSONItem = {
         id: uid(),
-        name: name, 
+        name: name,
         visible: true,
         color: getRandomColor(),
         opacity: 0.5,
-        geoJSON: buffered
-      }
-    setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem])
-    //pass state up to close modal
-    props.handleCloseModal()
-    }
-    
-  }
+        geoJSON: buffered as FeatureCollection,
+      };
+      setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs,newObj as GeoJSONItem]);
+      setIsLoading(false);
+      props.handleCloseModal();
+      props.showAlert("success","");
+    }, 10);
+  };
   const handleChoseLayer = (event: ChangeEvent<HTMLInputElement>) => {
     const chosenLayer: GeoJSONItem | undefined = geoJSONList.find((layer) => layer.id === event.target.value);
     if (chosenLayer) {
@@ -64,6 +82,13 @@ function Buffer(props: { handleCloseModal: () => void;}) {
   
 
   return (
+    <>
+    {isLoading ? ( // Check if isLoading is true
+        // If it is, render the loading component
+        <Box sx={{modalStyle, height: '100px'}}>
+       <Loading/>
+       </Box>
+      ) : (
     <div style={{display: "flex", flexDirection: "column",  justifyContent: "center", flexWrap: 'wrap', width: '100%' }}>
         <Typography variant="h6"> Buffer Tool:</Typography>
       
@@ -105,8 +130,8 @@ function Buffer(props: { handleCloseModal: () => void;}) {
       <Button variant="outlined" color="error" onClick={props.handleCloseModal}>Cancel</Button>
       <Button onClick={handleOk} variant="outlined">OK</Button>
       </div>
-    </div>
-    
+    </div>)}
+    </>
   );
 }
 export default Buffer;

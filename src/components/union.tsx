@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
-import { Box, Modal, Typography } from '@mui/material';
+import { AlertColor, Box, Modal, Typography } from '@mui/material';
 import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
@@ -15,7 +15,7 @@ import Loading from './loading';
 import { modalStyle } from './styledComponents';
 
 
-function Union(props: { handleCloseModal: () => void; }) {
+function Union(props: { handleCloseModal: () => void; showAlert: (status: AlertColor, message: string) => void }) {
   const [selectedLayer1, setSelectedLayer1] = useState<GeoJSONItem>();
   const [selectedLayer2, setSelectedLayer2] = useState<GeoJSONItem>();
   const [name, setName] = useState<string>('union');
@@ -106,6 +106,7 @@ const handleOk = () => {
     setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs,newObj as GeoJSONItem]);
     setIsloading(false);
     props.handleCloseModal();
+    props.showAlert("success","");
   }, 10);
 };
 

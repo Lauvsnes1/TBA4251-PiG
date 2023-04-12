@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
-import { FilledInput, Typography } from '@mui/material';
+import { AlertColor, FilledInput, Typography } from '@mui/material';
 import { Feature, FeatureCollection, GeoJsonProperties, Geometry, LineString, MultiPolygon, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
@@ -22,6 +22,8 @@ import booleanCrosses from '@turf/boolean-crosses';
 import booleanContains from '@turf/boolean-contains';
 import booleanDisjoint from '@turf/boolean-disjoint';
 import buffer from '@turf/buffer';
+import Loading from './loading';
+import { modalStyle } from './styledComponents';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -43,7 +45,7 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
     };
   }
 
-function Clip(props: { handleCloseModal: () => void; }) {
+function Clip(props: { handleCloseModal: () => void; showAlert: (status: AlertColor, message: string) => void }) {
   const [selectedMainLayer, setSelectedMainLayer] = useState<GeoJSONItem>();
   const [layerNames, setLayerNames] = useState<string[]>([]);
   const [isLoading, setIsLoading ] = useState<boolean>(false)
@@ -262,8 +264,8 @@ for (const selectedLineLayer of selectedLineLayers) {
 
 
   const handleOk = () => {
-    const start = Date.now()
     setIsLoading(true)
+    setTimeout(() => {
     const clipped = handleClip_2();
     clipped?.forEach((value: FeatureCollection, key: string ) => {
         const newObj: GeoJSONItem = {
@@ -278,9 +280,8 @@ for (const selectedLineLayer of selectedLineLayers) {
     });
     setIsLoading(false)
     props.handleCloseModal();
-    const end = Date.now();
-    console.log(`Execution time: ${end - start} ms`);
-    
+    props.showAlert("success", "")
+  },10)
   };
 
   const handleChoseLayer1 = (event: ChangeEvent<HTMLInputElement>) => {
@@ -289,6 +290,12 @@ for (const selectedLineLayer of selectedLineLayers) {
   };
 
   return (
+    <>
+      {isLoading ? (
+    <Box sx={{modalStyle, height: '100px'}}>
+    <Loading/>
+    </Box>
+      ) : (
     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flexWrap: 'wrap', width: '100%' }}>
       {isLoading ? <CircularProgress/> : <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flexWrap: 'wrap', width: '100%' }}>
       <Typography sx={{ paddingBottom: '10px'}} variant="h6">Clipping Tool:</Typography>
@@ -349,7 +356,8 @@ for (const selectedLineLayer of selectedLineLayers) {
         </Button>
       </Box>
       </Box>}
-    </Box>
+    </Box>)}
+    </>
   );
 };
 

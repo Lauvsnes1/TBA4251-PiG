@@ -1,6 +1,6 @@
 import { ChangeEvent, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
-import { Box, Divider, Fade, List, ListItem, ListItemButton, ListItemText, Popper, Typography } from '@mui/material';
+import { AlertColor, Box, Divider, Fade, List, ListItem, ListItemButton, ListItemText, Popper, Typography } from '@mui/material';
 import { FeatureCollection } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem} from '../context/geoJSONContext';
 import { uid } from 'uid';
@@ -9,7 +9,7 @@ import PaletteIcon from '@mui/icons-material/Palette';
 import ColorPicker from './colorPicker';
 
 
-function FileInput(props: { handleCloseModal: () => void;}) {
+function FileInput(props: { handleCloseModal: () => void; showAlert: (status: AlertColor, message: string) => void}) {
   const [files, setFiles] = useState<File[]>([]);
   const [geoJSONs, setGeoJSONs] = useState<FeatureCollection[]>([])
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -51,6 +51,7 @@ function FileInput(props: { handleCloseModal: () => void;}) {
             resolve(isGeoJSON ? content : null);
           } catch (error) {
             reject(error);
+
           }
         };
         reader.readAsText(file);
@@ -77,10 +78,11 @@ function FileInput(props: { handleCloseModal: () => void;}) {
       }
       setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem])
       nameCounter ++;
+      props.showAlert("success", "File uploaded successfully")
      })
 
     } catch (error) {
-      console.error('Error reading file:', error);
+      props.showAlert("error", "error uploading file")
     }
   };
   
@@ -126,6 +128,7 @@ function FileInput(props: { handleCloseModal: () => void;}) {
           {geoJSONList.map((file) => {
             return(
             <div key={file.id} style={{display: "flex", justifyContent: "space-between", flexDirection: "row", width: "100%"}}>
+              <Divider/>
             <ListItem divider>
               <ListItemButton>
                 <ListItemText primary={file.name}/>
