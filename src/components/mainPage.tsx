@@ -43,6 +43,8 @@ import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import DropDown from "./dropDown"
 import FeatureExtractor from './featureExtractor';
+import SVGVoronoi from '../icons/svgviewer-react-output';
+import Voronoi from './voronoi';
 
 const drawerWidth = 240;
 
@@ -120,7 +122,8 @@ export default function MainPage(props: {showAlert: (status: AlertColor, message
     {id: 4, name: "Intersect", icon: JoinInnerIcon,  component: <Intersect handleCloseModal={closeModal} showAlert={passAlert}/> },
     {id: 5, name: "Union", icon: JoinFullIcon, component: <Union handleCloseModal={closeModal} showAlert={passAlert}/>},
     {id: 6, name: "Difference", icon: RemoveIcon, component: <Difference handleCloseModal={closeModal} showAlert={passAlert}/>},
-    {id: 7, name: "Clip", icon: ContentCutIcon, component: <Clip handleCloseModal={closeModal} showAlert={passAlert} />}
+    {id: 7, name: "Clip", icon: ContentCutIcon, component: <Clip handleCloseModal={closeModal} showAlert={passAlert} />},
+    {id: 8, name: "Voronoi", icon: SVGVoronoi, component: <Voronoi handleCloseModal={closeModal} showAlert={passAlert} />}
   ]
 
   return (
