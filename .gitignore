@@ -15,7 +15,7 @@
 /src/helpers
 .env
 end.d.ts
-.prettierrc
+
 
 # misc
 .DS_Store
