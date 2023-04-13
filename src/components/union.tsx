@@ -51,8 +51,6 @@ function Union(props: {
       type: 'FeatureCollection',
       features: [],
     };
-    console.log('Layer1', selectedLayer1);
-    console.log('Layer2', selectedLayer2);
     if (selectedLayer1?.geoJSON && selectedLayer2?.geoJSON) {
       const layer1 = selectedLayer1.geoJSON;
       const layer2 = selectedLayer2.geoJSON;
