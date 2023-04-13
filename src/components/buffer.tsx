@@ -89,7 +89,7 @@ function Buffer(props: { handleCloseModal: () => void; showAlert: (status: Alert
        <Loading/>
        </Box>
       ) : (
-    <div style={{display: "flex", flexDirection: "column",  justifyContent: "center", flexWrap: 'wrap', width: '100%' }}>
+    <div style={{display: "flex", flexDirection: "column",  justifyContent: "center", flexWrap: 'wrap', width: '100%'}}>
         <Typography variant="h6"> Buffer Tool:</Typography>
       
         <TextField
@@ -128,7 +128,7 @@ function Buffer(props: { handleCloseModal: () => void; showAlert: (status: Alert
         />
       <div style={{flexDirection: 'row', justifyContent: 'space-around', display: 'flex', paddingTop: '10px'}}>
       <Button variant="outlined" color="error" onClick={props.handleCloseModal}>Cancel</Button>
-      <Button onClick={handleOk} variant="outlined">OK</Button>
+      <Button onClick={handleOk} variant="outlined" sx={{color: "#2975a0e6", borderColor: "#2975a0e6"}}>OK</Button>
       </div>
     </div>)}
     </>

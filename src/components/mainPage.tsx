@@ -1,6 +1,6 @@
 import React, { ElementType, useState} from 'react';
 import { useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
+import { Box, ThemeProvider} from '@mui/system';
 import Drawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
@@ -52,8 +52,6 @@ interface Tool {
   icon: ElementType;
   component: JSX.Element; 
 }
-
-
 
 export default function MainPage(props: {showAlert: (status: AlertColor, message: string) => void}) {
   const theme = useTheme();
@@ -126,10 +124,11 @@ export default function MainPage(props: {showAlert: (status: AlertColor, message
   ]
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <ThemeProvider theme={theme}>
+    <Box sx={{ display: 'flex', backgroundColor: "#fafafa" }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open} >
-        <Toolbar>
+      <AppBar position="fixed" open={open} sx={{backgroundColor: "#2975a0e6"}} >
+        <Toolbar >
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -139,7 +138,7 @@ export default function MainPage(props: {showAlert: (status: AlertColor, message
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h5" noWrap component="div">
             QGEE's
           </Typography>
         </Toolbar>
@@ -159,13 +158,13 @@ export default function MainPage(props: {showAlert: (status: AlertColor, message
         open={open}        
       >
         <DrawerHeader style={{justifyContent: "space-between"}}>
-        <Typography > Tools</Typography>
+        <Typography variant="h6" sx={{paddingLeft: "10px", fontWeight: 'bold'}} > Tools</Typography>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <List>
+        <List disablePadding sx={{paddingTop: 0}}>
           {tools.map((element, index) => (
             <ListItem key={element.name} disablePadding>
               <ListItemButton onClick={() => showModal(element.id)}>
@@ -177,18 +176,19 @@ export default function MainPage(props: {showAlert: (status: AlertColor, message
             </ListItem>
           ))}
         </List>
-        <Divider />
-        <Typography>
+        <Typography variant='h6' sx={{marginLeft: "10px", fontWeight: 'bold', paddingInline: "8px", paddingBottom: "12px"}}>
           Layers
         </Typography>
         <Divider/> 
-        <List>
+        <List disablePadding sx={{paddingTop: 0}} >
           {geoJSONList.map((layer) => (
             <div key={layer.id}>
             <Stack spacing={10} direction="row">
-            <ListItem key={layer.id} disablePadding >
-              <ListItemButton key={layer.id} >
-                <ListItemText primary={layer.name}  />
+            <ListItem divider key={layer.id} disablePadding sx={{paddingLeft: "6px"}}>
+              <ListItemButton key={layer.id} sx={{paddingTop: 0, paddingBottom: 0,}}>
+                <ListItemText>
+                  <Typography sx={{fontSize: 12}} > {layer.name}</Typography>
+                </ListItemText>
                 <ListItemIcon style={{justifyContent: "space-between", alignContent: "space-between", alignItems: "center"}}>
                   <div>
                   <DropDown layer={layer} />
@@ -216,9 +216,7 @@ export default function MainPage(props: {showAlert: (status: AlertColor, message
         </List>
         <DrawerHeader />
       </Drawer>
-      
-      <Main open={open} > 
-
+      <Main open={open}> 
       <Modal
         open={modal}
         onClose={() => setModal(false)}
@@ -234,6 +232,7 @@ export default function MainPage(props: {showAlert: (status: AlertColor, message
         <BaseMap/>
       </Main>
     </Box>
+    </ThemeProvider>
   );
 }
 
