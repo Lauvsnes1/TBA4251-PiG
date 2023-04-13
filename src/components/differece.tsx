@@ -13,6 +13,7 @@ import booleanOverlap from '@turf/boolean-overlap';
 import flatten from '@turf/flatten';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
+import { flattenFeatures } from '../utils/flattenFeatures';
 
 function Difference(props: {
   handleCloseModal: () => void;
@@ -38,8 +39,6 @@ function Difference(props: {
   }
 
   function handleDifference() {
-    console.log('Selected Layer 1:', selectedLayer1);
-    console.log('Selected Layer 2:', selectedLayer2);
     const differenceList: FeatureCollection = {
       type: 'FeatureCollection',
       features: [],
@@ -48,39 +47,7 @@ function Difference(props: {
       const layer1 = selectedLayer1.geoJSON;
       const layer2 = selectedLayer2.geoJSON;
 
-      const flattened1: FeatureCollection = {
-        type: 'FeatureCollection',
-        features: [],
-      };
-
-      const flattened2: FeatureCollection = {
-        type: 'FeatureCollection',
-        features: [],
-      };
-
-      //Flatten if there are MultiPolygons(to make dissolve work)
-      layer1.features.forEach((feature) => {
-        if (feature.geometry.type === 'MultiPolygon') {
-          const tempGeom = flatten(feature.geometry);
-          tempGeom.features.forEach((poly) => {
-            flattened1.features.push(poly);
-            console.log('pushing feature:', poly);
-          });
-        } else {
-          flattened1.features.push(feature);
-        }
-      });
-      layer2.features.forEach((feature) => {
-        if (feature.geometry.type === 'MultiPolygon') {
-          const tempGeom = flatten(feature.geometry);
-          tempGeom.features.forEach((poly) => {
-            flattened2.features.push(poly);
-            console.log('pushing feature:', poly);
-          });
-        } else {
-          flattened2.features.push(feature);
-        }
-      });
+      const { flattened1, flattened2 } = flattenFeatures(layer1, layer2);
 
       const dissolved1 = dissolve(flattened1 as FeatureCollection<Polygon, Properties>);
       const dissolved2 = dissolve(flattened2 as FeatureCollection<Polygon, Properties>);

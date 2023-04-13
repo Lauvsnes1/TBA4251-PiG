@@ -32,7 +32,6 @@ function Buffer(props: {
     for (let i = 0; i < 6; i++) {
       hexColor += hexChars[Math.floor(Math.random() * 16)];
     }
-
     return hexColor;
   }
   const handleBufferSelect = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -42,14 +41,23 @@ function Buffer(props: {
   const handleBuffer = () => {
     //Flatten if there are MultiPolygons(to make dissolve work)
     let isPoly = false;
+    const flattened: FeatureCollection = {
+      type: 'FeatureCollection',
+      features: [],
+    };
     selectedLayer?.geoJSON.features.forEach((feature) => {
       if (feature.geometry.type === 'MultiPolygon') {
         isPoly = true;
-        flatten(feature.geometry);
+        const tempGeom = flatten(feature.geometry);
+        tempGeom.features.forEach((poly) => {
+          flattened.features.push(poly);
+        });
+      } else {
+        flattened.features.push(feature);
       }
     });
     if (isPoly) {
-      dissolve(selectedLayer?.geoJSON as FeatureCollection<Polygon, Properties>);
+      dissolve(flattened as FeatureCollection<Polygon, Properties>);
     }
     const buffered = buffer(selectedLayer?.geoJSON as FeatureCollection, bufferRadius, {
       units: 'meters',
