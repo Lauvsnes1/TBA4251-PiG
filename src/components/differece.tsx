@@ -11,6 +11,7 @@ import booleanOverlap from '@turf/boolean-overlap';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import { flattenFeatures } from '../utils/flattenAndDissolve';
+import { generateColor } from '../utils/genereateColor';
 
 function Difference(props: {
   handleCloseModal: () => void;
@@ -22,18 +23,6 @@ function Difference(props: {
   const [isLoading, setIsLoading] = useState(false);
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
-
-  function getRandomColor(): string {
-    const hexChars = '0123456789ABCDEF';
-    let hexColor = '#';
-
-    // generate a random hex color code
-    for (let i = 0; i < 6; i++) {
-      hexColor += hexChars[Math.floor(Math.random() * 16)];
-    }
-
-    return hexColor;
-  }
 
   function handleDifference() {
     const differenceList: FeatureCollection = {
@@ -85,7 +74,7 @@ function Difference(props: {
         id: uid(),
         name: name,
         visible: true,
-        color: getRandomColor(),
+        color: generateColor(),
         opacity: 0.5,
         geoJSON: differenced as FeatureCollection,
       };

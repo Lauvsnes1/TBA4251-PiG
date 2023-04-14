@@ -18,6 +18,7 @@ import { uid } from 'uid';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PaletteIcon from '@mui/icons-material/Palette';
 import ColorPicker from './colorPicker';
+import { generateColor } from '../utils/genereateColor';
 
 function FileInput(props: {
   handleCloseModal: () => void;
@@ -82,7 +83,7 @@ function FileInput(props: {
           id: uid(),
           name: name,
           visible: true,
-          color: getRandomColor(),
+          color: generateColor(),
           opacity: 0.5,
           geoJSON: json as FeatureCollection,
         };
@@ -94,18 +95,6 @@ function FileInput(props: {
       props.showAlert('error', 'error uploading file');
     }
   };
-
-  function getRandomColor(): string {
-    const hexChars = '0123456789ABCDEF';
-    let hexColor = '#';
-
-    // generate a random hex color code
-    for (let i = 0; i < 6; i++) {
-      hexColor += hexChars[Math.floor(Math.random() * 16)];
-    }
-
-    return hexColor;
-  }
 
   const handleShowColorPicker = (event: React.MouseEvent<HTMLElement>, layer: GeoJSONItem) => {
     setSelectedLayer(layer);

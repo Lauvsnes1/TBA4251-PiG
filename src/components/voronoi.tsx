@@ -12,6 +12,7 @@ import { uid } from 'uid';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import { BBox } from '@turf/helpers';
+import { generateColor } from '../utils/genereateColor';
 
 function Voronoi(props: {
   handleCloseModal: () => void;
@@ -22,18 +23,6 @@ function Voronoi(props: {
   const [name, setName] = useState<string>('voronoi');
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
-
-  function getRandomColor(): string {
-    const hexChars = '0123456789ABCDEF';
-    let hexColor = '#';
-
-    // generate a random hex color code
-    for (let i = 0; i < 6; i++) {
-      hexColor += hexChars[Math.floor(Math.random() * 16)];
-    }
-
-    return hexColor;
-  }
 
   function handleVoronoi() {
     const finalVoronoi: FeatureCollection = {
@@ -70,7 +59,7 @@ function Voronoi(props: {
         id: uid(),
         name: name,
         visible: true,
-        color: getRandomColor(),
+        color: generateColor(),
         opacity: 0.5,
         geoJSON: voronoiPolygon as FeatureCollection<Geometry, GeoJsonProperties>,
       };

@@ -32,6 +32,7 @@ import booleanDisjoint from '@turf/boolean-disjoint';
 import buffer from '@turf/buffer';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
+import { generateColor } from '../utils/genereateColor';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -75,17 +76,6 @@ function Clip(props: {
     console.log('layers selected:', layerNames);
   };
 
-  function getRandomColor(): string {
-    const hexChars = '0123456789ABCDEF';
-    let hexColor = '#';
-
-    // generate a random hex color code
-    for (let i = 0; i < 6; i++) {
-      hexColor += hexChars[Math.floor(Math.random() * 16)];
-    }
-
-    return hexColor;
-  }
   const findAllLayers = () => {
     const selectedPolygonLayers: GeoJSONItem[] = [];
     const selectedLineStringLayers: GeoJSONItem[] = [];
@@ -297,7 +287,7 @@ function Clip(props: {
           id: uid(),
           name: generateClipName(key),
           visible: true,
-          color: getRandomColor(),
+          color: generateColor(),
           opacity: 0.5,
           geoJSON: value as FeatureCollection,
         };

@@ -11,6 +11,7 @@ import booleanOverlap from '@turf/boolean-overlap';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import { flattenFeatures } from '../utils/flattenAndDissolve';
+import { generateColor } from '../utils/genereateColor';
 
 function Intersect(props: {
   handleCloseModal: () => void;
@@ -22,18 +23,6 @@ function Intersect(props: {
   const [name, setName] = useState<string>('');
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
-
-  function getRandomColor(): string {
-    const hexChars = '0123456789ABCDEF';
-    let hexColor = '#';
-
-    // generate a random hex color code
-    for (let i = 0; i < 6; i++) {
-      hexColor += hexChars[Math.floor(Math.random() * 16)];
-    }
-
-    return hexColor;
-  }
 
   function handleIntersection() {
     const intersections: FeatureCollection = {
@@ -79,7 +68,7 @@ function Intersect(props: {
         id: uid(),
         name: name,
         visible: true,
-        color: getRandomColor(),
+        color: generateColor(),
         opacity: 0.5,
         geoJSON: intersected as FeatureCollection,
       };

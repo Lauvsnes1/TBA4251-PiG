@@ -16,6 +16,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { uid } from 'uid';
 import { modalStyle } from './styledComponents';
 import Loading from './loading';
+import { generateColor } from '../utils/genereateColor';
 
 function FeatureExtractor(props: {
   handleCloseModal: () => void;
@@ -53,18 +54,6 @@ function FeatureExtractor(props: {
     // convert the Set to an array and update the state
     setUniqueProperties(Array.from(uniqueProperties));
   }, [selectedLayer]);
-
-  function getRandomColor(): string {
-    const hexChars = '0123456789ABCDEF';
-    let hexColor = '#';
-
-    // generate a random hex color code
-    for (let i = 0; i < 6; i++) {
-      hexColor += hexChars[Math.floor(Math.random() * 16)];
-    }
-
-    return hexColor;
-  }
 
   const handleChoseProperty = (event: SelectChangeEvent) => {
     setSelectedProperty(event.target.value);
@@ -210,7 +199,7 @@ function FeatureExtractor(props: {
           id: uid(),
           name: selectedLayer?.name + '_ext',
           visible: true,
-          color: getRandomColor(),
+          color: generateColor(),
           opacity: 0.5,
           geoJSON: extract as FeatureCollection,
         };

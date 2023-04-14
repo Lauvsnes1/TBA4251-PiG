@@ -12,6 +12,7 @@ import dissolve from '@turf/dissolve';
 import { Properties } from '@turf/helpers';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
+import { generateColor } from '../utils/genereateColor';
 
 function Buffer(props: {
   handleCloseModal: () => void;
@@ -24,16 +25,6 @@ function Buffer(props: {
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
 
-  function getRandomColor(): string {
-    const hexChars = '0123456789ABCDEF';
-    let hexColor = '#';
-
-    // generate a random hex color code
-    for (let i = 0; i < 6; i++) {
-      hexColor += hexChars[Math.floor(Math.random() * 16)];
-    }
-    return hexColor;
-  }
   const handleBufferSelect = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setBufferRadius(Number(e.target.value));
   };
@@ -73,7 +64,7 @@ function Buffer(props: {
         id: uid(),
         name: name,
         visible: true,
-        color: getRandomColor(),
+        color: generateColor(),
         opacity: 0.5,
         geoJSON: buffered as FeatureCollection,
       };

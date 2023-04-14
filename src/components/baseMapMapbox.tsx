@@ -12,6 +12,7 @@ import { Button, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { modalStyle } from './styledComponents';
+import { generateColor } from '../utils/genereateColor';
 
 const accessToken: string | any = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 mapboxgl.accessToken = accessToken;
@@ -52,18 +53,6 @@ function BaseMap() {
       setName('');
     }
   };
-
-  function getRandomColor(): string {
-    const hexChars = '0123456789ABCDEF';
-    let hexColor = '#';
-
-    // generate a random hex color code
-    for (let i = 0; i < 6; i++) {
-      hexColor += hexChars[Math.floor(Math.random() * 16)];
-    }
-
-    return hexColor;
-  }
 
   const determineType = (layer: GeoJSONItem): { type: string; paint?: mapboxgl.AnyPaint } => {
     const type = layer.geoJSON.features[0].geometry.type;
@@ -130,7 +119,7 @@ function BaseMap() {
           id: uid(),
           name: uid(),
           visible: true,
-          color: getRandomColor(),
+          color: generateColor(),
           opacity: 0.5,
           geoJSON: data as FeatureCollection,
         };
