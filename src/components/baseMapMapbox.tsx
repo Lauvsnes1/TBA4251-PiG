@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl, { CirclePaint, FillPaint, LinePaint } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
-import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
+import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import { uid } from 'uid';
 import { FeatureCollection } from 'geojson';
@@ -12,6 +12,7 @@ import { Button, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { modalStyle } from './styledComponents';
+import { generateColor } from '../utils/genereateColor';
 
 const accessToken: string | any = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 mapboxgl.accessToken = accessToken;
@@ -25,76 +26,63 @@ function BaseMap() {
   const [lng, setLng] = useState(10.421906);
   const [lat, setLat] = useState(63.446827);
   const [zoom, setZoom] = useState(12);
-  const [editModal, setEditModal] = useState(false)
-  const [name, setName] = useState("")
+  const [editModal, setEditModal] = useState(false);
+  const [name, setName] = useState('');
 
   const handleShowEditModal = () => {
-    setEditModal(true)
-  }
+    setEditModal(true);
+  };
   const closeEditModal = () => {
-    setEditModal(false)
-  }
+    setEditModal(false);
+  };
   const handleClose = () => {
     setAnchorEl(null);
   };
   const handleEditName = () => {
-    if(selectedLayer){
-    const newObj: GeoJSONItem = {...selectedLayer, name: name}
-    setGeoJSONList(prevList => {
-      const index = prevList.findIndex(item => item.id === selectedLayer?.id);
-      const updatedList = [...prevList]; // create a copy of the original list
-      updatedList[index] = newObj; // replace the layer with the new object
-      return updatedList;
-    })
-    closeEditModal()
-    handleClose()
-    setSelectedLayer(undefined)
-    setName("");
-  }
- 
-  }
-  
-  function getRandomColor(): string {
-    const hexChars = '0123456789ABCDEF';
-    let hexColor = '#';
-
-    // generate a random hex color code
-    for (let i = 0; i < 6; i++) {
-      hexColor += hexChars[Math.floor(Math.random() * 16)];
+    if (selectedLayer) {
+      const newObj: GeoJSONItem = { ...selectedLayer, name: name };
+      setGeoJSONList((prevList) => {
+        const index = prevList.findIndex((item) => item.id === selectedLayer?.id);
+        const updatedList = [...prevList]; // create a copy of the original list
+        updatedList[index] = newObj; // replace the layer with the new object
+        return updatedList;
+      });
+      closeEditModal();
+      handleClose();
+      setSelectedLayer(undefined);
+      setName('');
     }
+  };
 
-    return hexColor;
-  }
- 
-  const determineType = (layer: GeoJSONItem): { type: string, paint?: mapboxgl.AnyPaint } => {
+  const determineType = (layer: GeoJSONItem): { type: string; paint?: mapboxgl.AnyPaint } => {
     const type = layer.geoJSON.features[0].geometry.type;
     switch (type) {
-      case "Point":
+      case 'Point':
         return {
-          type: "circle",
+          type: 'circle',
           paint: {
-            "circle-radius": 5,
-            "circle-color": layer.color,
+            'circle-radius': 5,
+            'circle-color': layer.color,
           },
         };
-      case "LineString":
+      case 'LineString':
         return {
-          type: "line",
+          type: 'line',
           paint: {
             'line-color': layer.color,
             'line-width': 2,
-          }
+          },
         };
-      case "Polygon":
+      case 'Polygon':
         return {
-          type: "fill",
-          paint: { 'fill-color': layer.color, 'fill-opacity': layer.opacity }
+          type: 'fill',
+          paint: { 'fill-color': layer.color, 'fill-opacity': layer.opacity },
         };
-        case "MultiPolygon":
-          return {
-            type: "fill",
-            paint: { 'fill-color': layer.color, 'fill-opacity': layer.opacity }
-          };
+      case 'MultiPolygon':
+        return {
+          type: 'fill',
+          paint: { 'fill-color': layer.color, 'fill-opacity': layer.opacity },
+        };
       default:
         throw new Error(`Unsupported geometry type: ${type}`);
     }
@@ -102,7 +90,7 @@ function BaseMap() {
 
   const determineVisibility = (layer: GeoJSONItem) => {
     return layer.visible ? 'visible' : 'none';
-  }
+  };
 
   useEffect(() => {
     if (!mapContainer.current) {
@@ -113,44 +101,40 @@ function BaseMap() {
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v10',
       center: [lng, lat],
-      zoom: zoom
+      zoom: zoom,
     });
-
 
     const draw = new MapboxDraw({
       displayControlsDefault: false,
       // Select which mapbox-gl-draw control buttons to add to the map.
       controls: {
-      polygon: true,
-      trash: true
+        polygon: true,
+        trash: true,
       },
-      });
-      const createDrawing = () => {
-        const data = draw.getAll();
-        if(data.features.length > 0){
-          const newObj: GeoJSONItem = {
-            id: uid(),
-            name: uid(),
-            visible: true,
-            color: getRandomColor(),
-            opacity: 0.5,
-            geoJSON: data as FeatureCollection
-          };
-          setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
-          handleShowEditModal()
-          setSelectedLayer(newObj)
-        }
-        
+    });
+    const createDrawing = () => {
+      const data = draw.getAll();
+      if (data.features.length > 0) {
+        const newObj: GeoJSONItem = {
+          id: uid(),
+          name: uid(),
+          visible: true,
+          color: generateColor(),
+          opacity: 0.5,
+          geoJSON: data as FeatureCollection,
+        };
+        setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+        handleShowEditModal();
+        setSelectedLayer(newObj);
       }
+    };
 
-    map.addControl(draw, "bottom-left");
+    map.addControl(draw, 'bottom-left');
     map.on('draw.create', createDrawing);
     map.on('draw.update', createDrawing);
-    
-
 
     map.on('load', () => {
-      geoJSONList.forEach(layer => {
+      geoJSONList.forEach((layer) => {
         map.addSource(layer.id, {
           type: 'geojson',
           data: layer.geoJSON,
@@ -188,7 +172,6 @@ function BaseMap() {
         }
         map.setLayoutProperty(layer.name, 'visibility', determineVisibility(layer));
       });
-
     });
 
     //to keep persistent position
@@ -196,48 +179,54 @@ function BaseMap() {
       setLng(Number(map.getCenter().lng.toFixed(4)));
       setLat(Number(map.getCenter().lat.toFixed(4)));
       setZoom(Number(map.getZoom().toFixed(2)));
-
     });
 
     return () => {
       map.remove();
-
     };
-  
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [geoJSONList]);
 
   return (
-    <div >
-    <div
-      ref={mapContainer}
-      className="map-container"
-      style={{
-        position: 'absolute',
-        top: '0',
-        bottom: '0',
-        width: '100vw',
-        height: '100vh',
-        border: 3,
-        borderRadius: 8,
-        borderColor: 'primary.main'
-      }}
-    />
-    <Modal
-    open={editModal}
-    onClose={() => setEditModal(false)}
-    aria-labelledby="modal-modal-title"
-    aria-describedby="modal-modal-description"
-  >
-    <Box sx={modalStyle} >
-      <Typography>Select name for your costum layer:</Typography>
-    <TextField style={{paddingTop: '10px'}}id="outlined-basic" label="Name" variant="outlined" value={name} placeholder={name} onChange={(e) => setName(e.target.value)}/>
-    <Button style={{marginTop: '10px'}}variant='outlined' onClick={handleEditName}>
-      OK
-    </Button>
-    </Box>
-  </Modal>
-  </div>
+    <div>
+      <div
+        ref={mapContainer}
+        className="map-container"
+        style={{
+          position: 'absolute',
+          top: '0',
+          bottom: '0',
+          width: '100vw',
+          height: '100vh',
+          border: 3,
+          borderRadius: 8,
+          borderColor: 'primary.main',
+        }}
+      />
+      <Modal
+        open={editModal}
+        onClose={() => setEditModal(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={modalStyle}>
+          <Typography>Select name for your costum layer:</Typography>
+          <TextField
+            style={{ paddingTop: '10px' }}
+            id="outlined-basic"
+            label="Name"
+            variant="outlined"
+            value={name}
+            placeholder={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Button style={{ marginTop: '10px' }} variant="outlined" onClick={handleEditName}>
+            OK
+          </Button>
+        </Box>
+      </Modal>
+    </div>
   );
 }
 
