@@ -194,6 +194,7 @@ function FeatureExtractor(props: {
       const extract = handleExtract();
       if (extract.features.length === 0) {
         props.showAlert('warning', 'no features matching you query');
+        setIsLoading(false);
       } else {
         const newObj: GeoJSONItem = {
           id: uid(),
@@ -279,7 +280,7 @@ function FeatureExtractor(props: {
                 variant="filled"
                 labelId="demo-simple-select-helper-label"
                 id="demo-simple-select-helper"
-                //value={age}
+                //value={operation}
                 label="Operation"
                 onChange={handleChoseOperation}
                 defaultValue=""

@@ -63,20 +63,30 @@ function Intersect(props: {
   const handleOk = () => {
     setIsLoading(true);
     setTimeout(() => {
-      const intersected = handleIntersection();
-      const newObj: GeoJSONItem = {
-        id: uid(),
-        name: createUniqueName(name),
-        visible: true,
-        color: generateColor(),
-        opacity: 0.5,
-        geoJSON: intersected as FeatureCollection,
-      };
-      setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
-      setIsLoading(false);
-      //pass state up to close modal
-      props.handleCloseModal();
-      props.showAlert('success', '');
+      try {
+        const intersected = handleIntersection();
+        if (intersected.features.length > 0) {
+          const newObj: GeoJSONItem = {
+            id: uid(),
+            name: createUniqueName(name),
+            visible: true,
+            color: generateColor(),
+            opacity: 0.5,
+            geoJSON: intersected as FeatureCollection,
+          };
+          setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+          setIsLoading(false);
+          //pass state up to close modal
+          props.handleCloseModal();
+          props.showAlert('success', '');
+        } else {
+          setIsLoading(false);
+          props.showAlert('warning', 'No Intersect');
+        }
+      } catch {
+        setIsLoading(false);
+        props.showAlert('error', 'Invalid Input');
+      }
     }, 10);
   };
 

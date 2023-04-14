@@ -20,7 +20,7 @@ function Buffer(props: {
 }) {
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem>();
   const [name, setName] = useState<string>('buffered');
-  const [bufferRadius, setBufferRadius] = useState<number>(0);
+  const [bufferRadius, setBufferRadius] = useState<number>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
@@ -59,19 +59,24 @@ function Buffer(props: {
   const handleOk = () => {
     setIsLoading(true);
     setTimeout(() => {
-      let buffered = handleBuffer();
-      const newObj: GeoJSONItem = {
-        id: uid(),
-        name: createUniqueName(name),
-        visible: true,
-        color: generateColor(),
-        opacity: 0.5,
-        geoJSON: buffered as FeatureCollection,
-      };
-      setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
-      setIsLoading(false);
-      props.handleCloseModal();
-      props.showAlert('success', '');
+      try {
+        let buffered = handleBuffer();
+        const newObj: GeoJSONItem = {
+          id: uid(),
+          name: createUniqueName(name),
+          visible: true,
+          color: generateColor(),
+          opacity: 0.5,
+          geoJSON: buffered as FeatureCollection,
+        };
+        setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+        setIsLoading(false);
+        props.handleCloseModal();
+        props.showAlert('success', '');
+      } catch {
+        setIsLoading(false);
+        props.showAlert('error', 'Invalid input');
+      }
     }, 10);
   };
   const handleChoseLayer = (event: ChangeEvent<HTMLInputElement>) => {
