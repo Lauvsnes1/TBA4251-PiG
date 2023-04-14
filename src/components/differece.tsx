@@ -72,7 +72,7 @@ function Difference(props: {
       let differenced = handleDifference();
       const newObj: GeoJSONItem = {
         id: uid(),
-        name: name,
+        name: createUniqueName(name),
         visible: true,
         color: generateColor(),
         opacity: 0.5,
@@ -117,6 +117,18 @@ function Difference(props: {
       props.showAlert('warning', 'Please select a polygon layer');
     }
   };
+
+  function createUniqueName(name: string) {
+    let count = 0;
+    const baseName = name;
+    const names = geoJSONList.map((item) => item.name);
+
+    while (names.includes(name)) {
+      count++;
+      name = `${baseName}_${count}`;
+    }
+    return name;
+  }
 
   return (
     <>

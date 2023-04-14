@@ -62,7 +62,7 @@ function Buffer(props: {
       let buffered = handleBuffer();
       const newObj: GeoJSONItem = {
         id: uid(),
-        name: name,
+        name: createUniqueName(name),
         visible: true,
         color: generateColor(),
         opacity: 0.5,
@@ -84,6 +84,18 @@ function Buffer(props: {
       setSelectedLayer(undefined);
     }
   };
+
+  function createUniqueName(name: string) {
+    let count = 0;
+    const baseName = name;
+    const names = geoJSONList.map((item) => item.name);
+
+    while (names.includes(name)) {
+      count++;
+      name = `${baseName}_${count}`;
+    }
+    return name;
+  }
 
   return (
     <>
