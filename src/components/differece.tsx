@@ -7,13 +7,10 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { uid } from 'uid';
 import differnce from '@turf/difference';
-import dissolve from '@turf/dissolve';
-import { Properties } from '@turf/helpers';
 import booleanOverlap from '@turf/boolean-overlap';
-import flatten from '@turf/flatten';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
-import { flattenFeatures } from '../utils/flattenFeatures';
+import { flattenFeatures } from '../utils/flattenAndDissolve';
 
 function Difference(props: {
   handleCloseModal: () => void;
@@ -47,14 +44,11 @@ function Difference(props: {
       const layer1 = selectedLayer1.geoJSON;
       const layer2 = selectedLayer2.geoJSON;
 
-      const { flattened1, flattened2 } = flattenFeatures(layer1, layer2);
+      const { processed1, processed2 } = flattenFeatures(layer1, layer2);
 
-      const dissolved1 = dissolve(flattened1 as FeatureCollection<Polygon, Properties>);
-      const dissolved2 = dissolve(flattened2 as FeatureCollection<Polygon, Properties>);
-
-      dissolved1.features.forEach((feature1) => {
+      processed1.features.forEach((feature1) => {
         let feature1Added: boolean = false;
-        dissolved2.features.forEach((feature2) => {
+        processed2.features.forEach((feature2) => {
           if (booleanOverlap(feature1, feature2)) {
             const diff = differnce(feature1, feature2);
             if (

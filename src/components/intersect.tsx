@@ -8,12 +8,9 @@ import MenuItem from '@mui/material/MenuItem';
 import { uid } from 'uid';
 import intersect from '@turf/intersect';
 import booleanOverlap from '@turf/boolean-overlap';
-import dissolve from '@turf/dissolve';
-import flatten from '@turf/flatten';
-import { Properties } from '@turf/helpers';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
-import { flattenFeatures } from '../utils/flattenFeatures';
+import { flattenFeatures } from '../utils/flattenAndDissolve';
 
 function Intersect(props: {
   handleCloseModal: () => void;
@@ -48,13 +45,10 @@ function Intersect(props: {
       const layer1 = selectedLayer1?.geoJSON;
       const layer2 = selectedLayer2?.geoJSON;
 
-      const { flattened1, flattened2 } = flattenFeatures(layer1, layer2);
+      const { processed1, processed2 } = flattenFeatures(layer1, layer2);
 
-      const dissolved1 = dissolve(flattened1 as FeatureCollection<Polygon, Properties>);
-      const dissolved2 = dissolve(flattened2 as FeatureCollection<Polygon, Properties>);
-
-      dissolved1.features.forEach((feature1) => {
-        dissolved2.features.forEach((feature2) => {
+      processed1.features.forEach((feature1) => {
+        processed2.features.forEach((feature2) => {
           if (booleanOverlap(feature1, feature2)) {
             if (feature1.geometry.type === 'Polygon' && feature2.geometry.type === 'Polygon') {
               const intersection = intersect(feature1.geometry, feature2.geometry);

@@ -1,27 +1,16 @@
 import React, { useState, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
-import { AlertColor, Box, Modal, Typography } from '@mui/material';
-import {
-  Feature,
-  FeatureCollection,
-  GeoJsonProperties,
-  Geometry,
-  MultiPolygon,
-  Polygon,
-} from 'geojson';
+import { AlertColor, Box, Typography } from '@mui/material';
+import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { uid } from 'uid';
 import union from '@turf/union';
 import booleanOverlap from '@turf/boolean-overlap';
-import dissolve from '@turf/dissolve';
-import { Properties } from '@turf/helpers';
-import flatten from '@turf/flatten';
-import flattenEach from '@turf/meta';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
-import { flattenFeatures } from '../utils/flattenFeatures';
+import { flattenFeatures } from '../utils/flattenAndDissolve';
 
 function Union(props: {
   handleCloseModal: () => void;
@@ -56,14 +45,11 @@ function Union(props: {
       const layer1 = selectedLayer1.geoJSON;
       const layer2 = selectedLayer2.geoJSON;
 
-      const { flattened1, flattened2 } = flattenFeatures(layer1, layer2);
+      const { processed1, processed2 } = flattenFeatures(layer1, layer2);
 
-      const dissolved1 = dissolve(flattened1 as FeatureCollection<Polygon, Properties>);
-      const dissolved2 = dissolve(flattened2 as FeatureCollection<Polygon, Properties>);
-
-      dissolved1.features.forEach((feature1) => {
+      processed1.features.forEach((feature1) => {
         let feature1Added: boolean = false;
-        dissolved2.features.forEach((feature2) => {
+        processed2.features.forEach((feature2) => {
           if (booleanOverlap(feature1, feature2)) {
             //Overlap
             const unions = union(feature1, feature2);

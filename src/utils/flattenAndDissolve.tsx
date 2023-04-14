@@ -1,11 +1,16 @@
-import { FeatureCollection } from 'geojson';
+import { FeatureCollection, Polygon } from 'geojson';
 import flatten from '@turf/flatten';
+import dissolve from '@turf/dissolve';
+import { Properties } from '@turf/helpers';
 
 export function flattenFeatures(
   layer1: FeatureCollection,
   layer2: FeatureCollection,
   debug = false
-): { flattened1: FeatureCollection; flattened2: FeatureCollection } {
+): {
+  processed1: FeatureCollection<Polygon, Properties>;
+  processed2: FeatureCollection<Polygon, Properties>;
+} {
   const flattened1: FeatureCollection = {
     type: 'FeatureCollection',
     features: [],
@@ -39,6 +44,8 @@ export function flattenFeatures(
       flattened2.features.push(feature);
     }
   });
+  const processed1 = dissolve(flattened1 as FeatureCollection<Polygon, Properties>);
+  const processed2 = dissolve(flattened2 as FeatureCollection<Polygon, Properties>);
 
-  return { flattened1, flattened2 };
+  return { processed1, processed2 };
 }
