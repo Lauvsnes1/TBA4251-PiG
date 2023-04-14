@@ -22,7 +22,7 @@ function BaseMap() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem>();
   //const [center, setCenter] = useState<LngLatLike | undefined>([, ])
-  const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
+  const { geoJSONList, setGeoJSONList, baseMap } = useGeoJSONContext();
   const [lng, setLng] = useState(10.421906);
   const [lat, setLat] = useState(63.446827);
   const [zoom, setZoom] = useState(12);
@@ -99,7 +99,7 @@ function BaseMap() {
 
     const map = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v10',
+      style: baseMap,
       center: [lng, lat],
       zoom: zoom,
     });
@@ -186,7 +186,7 @@ function BaseMap() {
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [geoJSONList]);
+  }, [geoJSONList, baseMap]);
 
   return (
     <div>

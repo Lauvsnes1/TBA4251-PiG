@@ -45,6 +45,7 @@ import DropDown from './dropDown';
 import FeatureExtractor from './featureExtractor';
 import SVGVoronoi from '../icons/svgviewer-react-output';
 import Voronoi from './voronoi';
+import Settings from './settings';
 
 const drawerWidth = 240;
 
@@ -177,20 +178,27 @@ export default function MainPage(props: {
     <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex', backgroundColor: '#fafafa' }}>
         <CssBaseline />
-        <AppBar position="fixed" open={open} sx={{ backgroundColor: '#2975a0e6' }}>
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={{ mr: 2, ...(open && { display: 'none' }) }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h5" noWrap component="div">
-              QGEE's
-            </Typography>
+        <AppBar position="fixed" open={open} sx={{ display: 'flex', backgroundColor: '#2975a0e6' }}>
+          <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Box sx={{ diplay: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
+                sx={{ mr: 2, ...(open && { display: 'none' }) }}
+              >
+                <MenuIcon />
+              </IconButton>
+            </Box>
+            <Box>
+              <Typography variant="h5" noWrap component="div">
+                QGEE's
+              </Typography>
+            </Box>
+            <Box>
+              <Settings />
+            </Box>
           </Toolbar>
         </AppBar>
         <Drawer
