@@ -55,19 +55,24 @@ function Voronoi(props: {
     setIsLoading(true);
     setTimeout(() => {
       const voronoiPolygon = handleVoronoi();
-      const newObj: GeoJSONItem = {
-        id: uid(),
-        name: name,
-        visible: true,
-        color: generateColor(),
-        opacity: 0.5,
-        geoJSON: voronoiPolygon as FeatureCollection<Geometry, GeoJsonProperties>,
-      };
-      setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
-      setIsLoading(false);
-      //pass state up to close modal
-      props.handleCloseModal();
-      props.showAlert('success', '');
+      if (voronoiPolygon.features.length > 0) {
+        const newObj: GeoJSONItem = {
+          id: uid(),
+          name: name,
+          visible: true,
+          color: generateColor(),
+          opacity: 0.5,
+          geoJSON: voronoiPolygon as FeatureCollection<Geometry, GeoJsonProperties>,
+        };
+        setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+        setIsLoading(false);
+        //pass state up to close modal
+        props.handleCloseModal();
+        props.showAlert('success', '');
+      } else {
+        setIsLoading(false);
+        props.showAlert('error', 'Please select a valid layer');
+      }
     }, 10);
   };
 

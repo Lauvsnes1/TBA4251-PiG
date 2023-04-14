@@ -299,11 +299,21 @@ function Clip(props: {
     }, 10);
   };
 
-  const handleChoseLayer1 = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChoseLayer = (event: ChangeEvent<HTMLInputElement>) => {
+    let isPoly = true;
     const chosenLayer: GeoJSONItem = geoJSONList.find(
       (layer) => layer.id === event.target.value
     ) as GeoJSONItem;
-    setSelectedMainLayer(chosenLayer);
+    chosenLayer.geoJSON.features.forEach((feature) => {
+      if (feature.geometry.type !== 'Polygon' && feature.geometry.type !== 'MultiPolygon') {
+        isPoly = false;
+      }
+    });
+    if (isPoly) {
+      setSelectedMainLayer(chosenLayer);
+    } else {
+      props.showAlert('warning', 'Please select a polygon layer');
+    }
   };
 
   return (
@@ -374,7 +384,7 @@ function Clip(props: {
                 id="Selected-buffer-layer"
                 select
                 label="Select layer to fit"
-                onChange={handleChoseLayer1}
+                onChange={handleChoseLayer}
                 variant="filled"
                 defaultValue=""
               >

@@ -84,19 +84,38 @@ function Difference(props: {
       props.showAlert('success', '');
     }, 10);
   };
-
   const handleChoseLayer1 = (event: ChangeEvent<HTMLInputElement>) => {
+    let isPoly = true;
     const chosenLayer: GeoJSONItem = geoJSONList.find(
       (layer) => layer.id === event.target.value
     ) as GeoJSONItem;
-    setSelectedLayer1(chosenLayer);
+    chosenLayer.geoJSON.features.forEach((feature) => {
+      if (feature.geometry.type !== 'Polygon' && feature.geometry.type !== 'MultiPolygon') {
+        isPoly = false;
+      }
+    });
+    if (isPoly) {
+      setSelectedLayer1(chosenLayer);
+    } else {
+      props.showAlert('warning', 'Please select a polygon layer');
+    }
   };
 
   const handleChoseLayer2 = (event: ChangeEvent<HTMLInputElement>) => {
+    let isPoly = true;
     const chosenLayer: GeoJSONItem = geoJSONList.find(
       (layer) => layer.id === event.target.value
     ) as GeoJSONItem;
-    setSelectedLayer2(chosenLayer);
+    chosenLayer.geoJSON.features.forEach((feature) => {
+      if (feature.geometry.type !== 'Polygon' && feature.geometry.type !== 'MultiPolygon') {
+        isPoly = false;
+      }
+    });
+    if (isPoly) {
+      setSelectedLayer2(chosenLayer);
+    } else {
+      props.showAlert('warning', 'Please select a polygon layer');
+    }
   };
 
   return (

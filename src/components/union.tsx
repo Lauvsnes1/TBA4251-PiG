@@ -65,42 +65,66 @@ function Union(props: {
           }
         });
       });
-      console.log(unionsLst);
-      return unionsLst;
     }
+    return unionsLst;
   };
 
   const handleOk = () => {
     setIsloading(true);
     setTimeout(() => {
-      let unioned = excecuteUnion();
-      const newObj: GeoJSONItem = {
-        id: uid(),
-        name: name,
-        visible: true,
-        color: generateColor(),
-        opacity: 0.5,
-        geoJSON: unioned as FeatureCollection,
-      };
-      setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
-      setIsloading(false);
-      props.handleCloseModal();
-      props.showAlert('success', '');
+      const unioned = excecuteUnion();
+      if (unioned?.features.length > 0) {
+        const newObj: GeoJSONItem = {
+          id: uid(),
+          name: name,
+          visible: true,
+          color: generateColor(),
+          opacity: 0.5,
+          geoJSON: unioned as FeatureCollection,
+        };
+        setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+        setIsloading(false);
+        props.handleCloseModal();
+        props.showAlert('success', '');
+      } else {
+        setIsloading(false);
+        props.showAlert('error', 'Invalid input');
+      }
     }, 10);
   };
 
   const handleChoseLayer1 = (event: ChangeEvent<HTMLInputElement>) => {
+    let isPoly = true;
     const chosenLayer: GeoJSONItem = geoJSONList.find(
       (layer) => layer.id === event.target.value
     ) as GeoJSONItem;
-    setSelectedLayer1(chosenLayer);
+    chosenLayer.geoJSON.features.forEach((feature) => {
+      if (feature.geometry.type !== 'Polygon' && feature.geometry.type !== 'MultiPolygon') {
+        isPoly = false;
+      }
+    });
+    if (isPoly) {
+      setSelectedLayer1(chosenLayer);
+    } else {
+      props.showAlert('warning', 'Please select a polygon layer');
+    }
   };
 
   const handleChoseLayer2 = (event: ChangeEvent<HTMLInputElement>) => {
+    let isPoly = true;
     const chosenLayer: GeoJSONItem = geoJSONList.find(
       (layer) => layer.id === event.target.value
     ) as GeoJSONItem;
-    setSelectedLayer2(chosenLayer);
+    chosenLayer.geoJSON.features.forEach((feature) => {
+      if (feature.geometry.type !== 'Polygon' && feature.geometry.type !== 'MultiPolygon') {
+        isPoly = false;
+      }
+    });
+    if (isPoly) {
+      setSelectedLayer2(chosenLayer);
+    } else {
+      props.showAlert('warning', 'Please select a polygon layer');
+    }
   };
 
   return (
