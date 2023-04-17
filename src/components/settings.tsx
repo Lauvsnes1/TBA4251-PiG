@@ -4,9 +4,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Modal from '@mui/material/Modal';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
 import NavDay from '../mapsImg/nav-day.png';
 import NavNight from '../mapsImg/nav-night.png';
 import Light from '../mapsImg/light.png';
@@ -16,16 +14,9 @@ import SateliteStreet from '../mapsImg/Satelite-street.png';
 import Satelite from '../mapsImg/satelite.png';
 import Streets from '../mapsImg/streets.png';
 
-import { GeoJSONItem, useGeoJSONContext } from '../context/geoJSONContext';
-import {
-  Button,
-  ImageList,
-  ImageListItem,
-  ImageListItemBar,
-  List,
-  ListSubheader,
-} from '@mui/material';
-import { mapModalStyle, modalStyle } from './styledComponents';
+import { useGeoJSONContext } from '../context/geoJSONContext';
+import { ImageList, ImageListItem, ImageListItemBar, ListSubheader } from '@mui/material';
+import { mapModalStyle } from './styledComponents';
 
 const ITEM_HEIGHT = 48;
 
@@ -38,7 +29,6 @@ interface mapOption {
 
 export default function Settings() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [editModal, setEditModal] = useState(false);
   const [editMapModal, setEditMapModal] = useState(false);
   const { setBaseMap } = useGeoJSONContext();
 
@@ -108,19 +98,8 @@ export default function Settings() {
     setBaseMap(mapAPI);
   };
 
-  const handleShowEditModal = () => {
-    setEditModal(true);
-  };
-  const closeEditModal = () => {
-    setEditModal(false);
-    setOpen(false);
-  };
   const handleShowDeleteModal = () => {
     setEditMapModal(true);
-  };
-  const closeDeleteModal = () => {
-    setEditMapModal(false);
-    setOpen(false);
   };
 
   return (
@@ -192,20 +171,6 @@ export default function Settings() {
                 </div>
               ))}
             </ImageList>
-            {/* {mapOptions.map((option, index) => (
-              <Box
-                sx={{
-                  display: 'flex',
-                  border: 'dashed',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'column',
-                }}
-              >
-                <Typography>{option.name}</Typography>
-                <img src={option.photo} />
-              </Box>
-            ))} */}
           </Box>
         </Modal>
       </Menu>
