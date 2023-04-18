@@ -19,7 +19,7 @@ function Difference(props: {
 }) {
   const [selectedLayer1, setSelectedLayer1] = useState<GeoJSONItem>();
   const [selectedLayer2, setSelectedLayer2] = useState<GeoJSONItem>();
-  const [name, setName] = useState<string>('');
+  const [name, setName] = useState<string>('difference');
   const [isLoading, setIsLoading] = useState(false);
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
@@ -62,26 +62,36 @@ function Difference(props: {
           }
         });
       });
-      return differenceList;
     }
+    return differenceList;
   }
 
   const handleOk = () => {
     setIsLoading(true);
     setTimeout(() => {
-      let differenced = handleDifference();
-      const newObj: GeoJSONItem = {
-        id: uid(),
-        name: createUniqueName(name),
-        visible: true,
-        color: generateColor(),
-        opacity: 0.5,
-        geoJSON: differenced as FeatureCollection,
-      };
-      setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
-      setIsLoading(false);
-      props.handleCloseModal();
-      props.showAlert('success', '');
+      try {
+        let differenced = handleDifference();
+        if (differenced?.features.length > 0) {
+          const newObj: GeoJSONItem = {
+            id: uid(),
+            name: createUniqueName(name),
+            visible: true,
+            color: generateColor(),
+            opacity: 0.5,
+            geoJSON: differenced as FeatureCollection,
+          };
+          setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+          setIsLoading(false);
+          props.handleCloseModal();
+          props.showAlert('success', '');
+        } else {
+          setIsLoading(false);
+          props.showAlert('error', 'Invalid Input');
+        }
+      } catch {
+        setIsLoading(false);
+        props.showAlert('error', 'Invalid Input');
+      }
     }, 10);
   };
   const handleChoseLayer1 = (event: ChangeEvent<HTMLInputElement>) => {
@@ -184,6 +194,7 @@ function Difference(props: {
             onChange={(e) => setName(e.target.value)}
             style={{ paddingTop: '10px' }}
             variant="filled"
+            defaultValue={name}
           />
           <div
             style={{

@@ -12,6 +12,8 @@ export type GeoJSONItem = {
 
 type GeoJSONContextType = {
   geoJSONList: Array<GeoJSONItem>;
+  baseMap: string;
+  setBaseMap: (selected: string) => void;
   setGeoJSONList: (
     selected: GeoJSONItem[] | ((prevSelected: GeoJSONItem[]) => GeoJSONItem[])
   ) => void;
@@ -19,6 +21,8 @@ type GeoJSONContextType = {
 
 const GeoJSONContext = createContext<GeoJSONContextType>({
   geoJSONList: [],
+  baseMap: '',
+  setBaseMap: () => null,
   setGeoJSONList: () => {},
 });
 
@@ -30,9 +34,10 @@ type Props = {
 
 const GeoJSONProvider: React.FC<Props> = ({ children }) => {
   const [geoJSONList, setGeoJSONList] = useState<GeoJSONItem[]>([]);
+  const [baseMap, setBaseMap] = useState<string>('mapbox://styles/mapbox/light-v11');
 
   return (
-    <GeoJSONContext.Provider value={{ geoJSONList, setGeoJSONList }}>
+    <GeoJSONContext.Provider value={{ geoJSONList, setGeoJSONList, baseMap, setBaseMap }}>
       {children}
     </GeoJSONContext.Provider>
   );
