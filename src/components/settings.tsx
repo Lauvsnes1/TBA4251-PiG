@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { makeStyles } from '@mui/styles';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
+import Tooltip from '@mui/material/Tooltip';
 import NavDay from '../mapsImg/nav-day.png';
 import NavNight from '../mapsImg/nav-night.png';
 import Light from '../mapsImg/light.png';
@@ -13,7 +15,7 @@ import Outdoors from '../mapsImg/outdoors.png';
 import SateliteStreet from '../mapsImg/Satelite-street.png';
 import Satelite from '../mapsImg/satelite.png';
 import Streets from '../mapsImg/streets.png';
-
+import '../App.css';
 import { useGeoJSONContext } from '../context/geoJSONContext';
 import { ImageList, ImageListItem, ImageListItemBar, ListSubheader } from '@mui/material';
 import { mapModalStyle } from './styledComponents';
@@ -27,13 +29,20 @@ interface mapOption {
   apiString: string;
 }
 
+const useStyles = makeStyles({
+  hovered: {
+    backgroundColor: '#f2f2f2',
+    boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+  },
+});
+
 export default function Settings() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [editMapModal, setEditMapModal] = useState(false);
   const { setBaseMap } = useGeoJSONContext();
-
+  const [hoveredItemId, setHoveredItemId] = useState<number | null>(null);
+  const classes = useStyles();
   const [open, setOpen] = useState(false);
-
   const mapOptions: mapOption[] = [
     {
       id: 1,
@@ -84,6 +93,14 @@ export default function Settings() {
       apiString: 'mapbox://styles/mapbox/outdoors-v12',
     },
   ];
+
+  const handleItemMouseEnter = (id: number) => {
+    setHoveredItemId(id);
+  };
+
+  const handleItemMouseLeave = () => {
+    setHoveredItemId(null);
+  };
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -150,25 +167,33 @@ export default function Settings() {
                 </ListSubheader>
               </ImageListItem>
               {mapOptions.map((item) => (
-                <div onClick={() => handleChangeMap(item.apiString)}>
-                  <ImageListItem key={item.img} sx={{ border: 'dashed', margin: 1 }}>
-                    <img
-                      src={`${item.img}?w=248&fit=crop&auto=format`}
-                      srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                      alt={item.title}
-                      loading="lazy"
-                    />
-                    <ImageListItemBar
-                      title={item.title}
-                      actionIcon={
-                        <IconButton
-                          sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
-                          aria-label={`info about ${item.title}`}
-                        ></IconButton>
-                      }
-                    />
-                  </ImageListItem>
-                </div>
+                <Tooltip title={item.title}>
+                  <div
+                    id={String(item.id)}
+                    onClick={() => handleChangeMap(item.apiString)}
+                    className={item.id === hoveredItemId ? classes.hovered : ''}
+                    onMouseEnter={() => handleItemMouseEnter(item.id)}
+                    onMouseLeave={handleItemMouseLeave}
+                  >
+                    <ImageListItem key={item.img} sx={{ border: 'dashed', margin: 1 }}>
+                      <img
+                        src={`${item.img}?w=248&fit=crop&auto=format`}
+                        srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                        alt={item.title}
+                        loading="lazy"
+                      />
+                      <ImageListItemBar
+                        title={item.title}
+                        actionIcon={
+                          <IconButton
+                            sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
+                            aria-label={`info about ${item.title}`}
+                          ></IconButton>
+                        }
+                      />
+                    </ImageListItem>
+                  </div>
+                </Tooltip>
               ))}
             </ImageList>
           </Box>
