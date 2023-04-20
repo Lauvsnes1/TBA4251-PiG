@@ -25,7 +25,6 @@ function FileInput(props: {
   showAlert: (status: AlertColor, message: string) => void;
 }) {
   const [files, setFiles] = useState<File[]>([]);
-  const [uploadedFiles, setUploadedFiles] = useState<FileList | null>();
   const [geoJSONs, setGeoJSONs] = useState<FeatureCollection[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -40,21 +39,16 @@ function FileInput(props: {
   };
   const handleOk = () => {
     //pass state up to close modal
-    handleFileChange();
+
     props.handleCloseModal();
   };
 
-  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    setUploadedFiles(e.target.files);
-  };
-
-  const handleFileChange = async () => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const uploadedFiles = e.target.files;
     if (!uploadedFiles) {
       return;
     }
-
     const promises = Array.from(uploadedFiles).map((file) => {
-      setFiles((prevList) => [...prevList, file as File]);
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => {
@@ -74,11 +68,11 @@ function FileInput(props: {
       const files = await Promise.all(promises);
       console.log('Files:', files);
       const geoJSONs = files.filter((file) => file !== null);
+      setFiles(geoJSONs as File[]);
       let nameCounter: number = 0;
       geoJSONs.forEach((json) => {
         setGeoJSONs((prevGeoJSONs) => [...prevGeoJSONs, json as FeatureCollection]);
         const name: string = uploadedFiles[nameCounter].name.split('.')[0]; //To remove ".geoJSON"
-
         const newObj: GeoJSONItem = {
           id: uid(),
           name: name,
@@ -208,7 +202,7 @@ function FileInput(props: {
         multiple
         type="file"
         ref={inputRef}
-        onChange={handleFileUpload}
+        onChange={handleFileChange}
         style={{ display: 'none' }}
       />
       <Button sx={{ color: '#2975a0' }} onClick={handleOk}>
