@@ -6,7 +6,6 @@ import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
-import Tooltip from '@mui/material/Tooltip';
 import NavDay from '../mapsImg/nav-day.png';
 import NavNight from '../mapsImg/nav-night.png';
 import Light from '../mapsImg/light.png';
@@ -32,7 +31,7 @@ interface mapOption {
 const useStyles = makeStyles({
   hovered: {
     backgroundColor: '#f2f2f2',
-    boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+    boxShadow: '0 0 5px rgba(0, 0, 0, 0.8)',
   },
 });
 
@@ -48,19 +47,20 @@ export default function Settings() {
       id: 1,
       title: 'Navigation Day',
       img: NavDay,
-      apiString: 'mapbox://styles/mapbox/satellite-v9',
+      apiString: 'mapbox://styles/mapbox/navigation-day-v1',
     },
     {
       id: 2,
-      title: 'Navigation Night',
-      img: NavNight,
-      apiString: 'mapbox://styles/mapbox/navigation-night-v1',
+      title: 'Outdoors',
+      img: Outdoors,
+      apiString: 'mapbox://styles/mapbox/outdoors-v12',
     },
+
     {
       id: 3,
-      title: 'Light',
-      img: Light,
-      apiString: 'mapbox://styles/mapbox/light-v11',
+      title: 'Streets',
+      img: Streets,
+      apiString: 'mapbox://styles/mapbox/streets-v12',
     },
     {
       id: 4,
@@ -82,15 +82,15 @@ export default function Settings() {
     },
     {
       id: 7,
-      title: 'Streets',
-      img: Streets,
-      apiString: 'mapbox://styles/mapbox/streets-v12',
+      title: 'Light',
+      img: Light,
+      apiString: 'mapbox://styles/mapbox/light-v11',
     },
     {
       id: 8,
-      title: 'Outdoors',
-      img: Outdoors,
-      apiString: 'mapbox://styles/mapbox/outdoors-v12',
+      title: 'Navigation Night',
+      img: NavNight,
+      apiString: 'mapbox://styles/mapbox/navigation-night-v1',
     },
   ];
 
@@ -113,6 +113,7 @@ export default function Settings() {
   const handleChangeMap = (mapAPI: string) => {
     console.log('pressed! with:', mapAPI);
     setBaseMap(mapAPI);
+    handleClose();
   };
 
   const handleShowDeleteModal = () => {
@@ -167,33 +168,32 @@ export default function Settings() {
                 </ListSubheader>
               </ImageListItem>
               {mapOptions.map((item) => (
-                <Tooltip title={item.title}>
-                  <div
-                    id={String(item.id)}
-                    onClick={() => handleChangeMap(item.apiString)}
-                    className={item.id === hoveredItemId ? classes.hovered : ''}
-                    onMouseEnter={() => handleItemMouseEnter(item.id)}
-                    onMouseLeave={handleItemMouseLeave}
-                  >
-                    <ImageListItem key={item.img} sx={{ border: 'dashed', margin: 1 }}>
-                      <img
-                        src={`${item.img}?w=248&fit=crop&auto=format`}
-                        srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                        alt={item.title}
-                        loading="lazy"
-                      />
-                      <ImageListItemBar
-                        title={item.title}
-                        actionIcon={
-                          <IconButton
-                            sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
-                            aria-label={`info about ${item.title}`}
-                          ></IconButton>
-                        }
-                      />
-                    </ImageListItem>
-                  </div>
-                </Tooltip>
+                <div
+                  key={item.id}
+                  id={String(item.id)}
+                  onClick={() => handleChangeMap(item.apiString)}
+                  className={item.id === hoveredItemId ? classes.hovered : ''}
+                  onMouseEnter={() => handleItemMouseEnter(item.id)}
+                  onMouseLeave={handleItemMouseLeave}
+                >
+                  <ImageListItem key={item.img} sx={{ margin: 1 }}>
+                    <img
+                      src={`${item.img}?w=248&fit=crop&auto=format`}
+                      srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                      alt={item.title}
+                      loading="lazy"
+                    />
+                    <ImageListItemBar
+                      title={item.title}
+                      actionIcon={
+                        <IconButton
+                          sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
+                          aria-label={`info about ${item.title}`}
+                        ></IconButton>
+                      }
+                    />
+                  </ImageListItem>
+                </div>
               ))}
             </ImageList>
           </Box>
