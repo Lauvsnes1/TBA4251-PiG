@@ -36,7 +36,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Settings() {
+export default function Settings(props: { handleTutorial: () => void }) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [editMapModal, setEditMapModal] = useState(false);
   const { setBaseMap } = useGeoJSONContext();
@@ -94,6 +94,12 @@ export default function Settings() {
     },
   ];
 
+  const startTutorial = () => {
+    setAnchorEl(null);
+    setOpen(false);
+    props.handleTutorial();
+  };
+
   const handleItemMouseEnter = (id: number) => {
     setHoveredItemId(id);
   };
@@ -113,6 +119,7 @@ export default function Settings() {
   const handleChangeMap = (mapAPI: string) => {
     console.log('pressed! with:', mapAPI);
     setBaseMap(mapAPI);
+    handleClose();
   };
 
   const handleShowDeleteModal = () => {
@@ -147,6 +154,7 @@ export default function Settings() {
         }}
       >
         <MenuItem onClick={handleShowDeleteModal}>{'Edit basemap'}</MenuItem>
+        <MenuItem onClick={startTutorial}>{'Start tutorial'}</MenuItem>
 
         <Modal
           style={{ justifyContent: 'center', alignContent: 'center', display: 'flex' }}
@@ -167,8 +175,9 @@ export default function Settings() {
                 </ListSubheader>
               </ImageListItem>
               {mapOptions.map((item) => (
-                <Tooltip title={item.title}>
+                <Tooltip title={item.title} key={item.id}>
                   <div
+                    key={item.id}
                     id={String(item.id)}
                     onClick={() => handleChangeMap(item.apiString)}
                     className={item.id === hoveredItemId ? classes.hovered : ''}

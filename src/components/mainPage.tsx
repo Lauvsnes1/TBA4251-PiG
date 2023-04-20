@@ -30,6 +30,7 @@ import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
 import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
+import Joyride from 'react-joyride';
 
 import BaseMap from './baseMapMapbox';
 import ColorPicker from './colorPicker';
@@ -46,6 +47,8 @@ import FeatureExtractor from './featureExtractor';
 import SVGVoronoi from '../icons/svgviewer-react-output';
 import Voronoi from './voronoi';
 import Settings from './settings';
+import { steps } from '../context/steps';
+import { LngLat, LngLatLike } from 'mapbox-gl';
 
 const drawerWidth = 240;
 
@@ -64,10 +67,11 @@ export default function MainPage(props: {
   const [openPop, setOpenPop] = useState<boolean>(false);
   const [modal, setModal] = useState<boolean>(false);
   const [modalComponent, setModalComponent] = useState<JSX.Element>();
-
+  const [runTutorial, setRunTutorial] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem | null>(null);
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
+  const [lngLat, setLngLat] = useState<LngLatLike>({ lng: 10.421906, lat: 63.446827 });
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -77,6 +81,15 @@ export default function MainPage(props: {
     setOpen(false);
   };
 
+  const handleTutorial = () => {
+    console.log('Start tutorial');
+    setOpen(true);
+    setRunTutorial(true);
+  };
+
+  const setCenter = (lngLat: LngLatLike) => {
+    setLngLat(lngLat);
+  };
   const toggleVisibility = (layer: GeoJSONItem) => {
     const newObj: GeoJSONItem = { ...layer, visible: !layer.visible };
     setGeoJSONList((prevList) => {
@@ -126,7 +139,7 @@ export default function MainPage(props: {
   const tools: Tool[] = [
     {
       id: 1,
-      name: 'Load data',
+      name: 'Load-data',
       icon: FileUploadIcon,
       component: <FileInput handleCloseModal={closeModal} showAlert={passAlert} />,
     },
@@ -178,10 +191,20 @@ export default function MainPage(props: {
     <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex', backgroundColor: '#fafafa' }}>
         <CssBaseline />
+        <Joyride
+          steps={steps}
+          run={runTutorial}
+          continuous
+          scrollToFirstStep
+          hideCloseButton
+          showProgress
+          showSkipButton
+        />
         <AppBar position="fixed" open={open} sx={{ display: 'flex', backgroundColor: '#2975a0e6' }}>
           <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Box sx={{ diplay: 'flex', alignItems: 'center', flexDirection: 'row' }}>
               <IconButton
+                id="icon-btn"
                 color="inherit"
                 aria-label="open drawer"
                 onClick={handleDrawerOpen}
@@ -192,12 +215,12 @@ export default function MainPage(props: {
               </IconButton>
             </Box>
             <Box>
-              <Typography variant="h5" noWrap component="div">
+              <Typography id="logo" variant="h5" noWrap component="div">
                 QGEE's
               </Typography>
             </Box>
             <Box>
-              <Settings />
+              <Settings handleTutorial={handleTutorial} />
             </Box>
           </Toolbar>
         </AppBar>
@@ -227,7 +250,7 @@ export default function MainPage(props: {
           <Divider />
           <List disablePadding sx={{ paddingTop: 0 }}>
             {tools.map((element, index) => (
-              <ListItem key={element.name} disablePadding>
+              <ListItem id={element.name} key={element.name} disablePadding>
                 <ListItemButton onClick={() => showModal(element.id)}>
                   <ListItemIcon>
                     <element.icon />

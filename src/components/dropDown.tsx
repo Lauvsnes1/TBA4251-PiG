@@ -7,19 +7,25 @@ import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import center from '@turf/center';
 
 import { GeoJSONItem, useGeoJSONContext } from '../context/geoJSONContext';
 import { Button } from '@mui/material';
 import { modalStyle } from './styledComponents';
+import { AllGeoJSON } from '@turf/helpers';
+import { LngLatLike } from 'mapbox-gl';
 
 const ITEM_HEIGHT = 48;
 
-export default function LongMenu(props: { layer: GeoJSONItem }) {
+export default function LongMenu(props: {
+  layer: GeoJSONItem;
+  //setLngLat: (lnglat: LngLatLike) => void;
+}) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [name, setName] = useState('');
-  const { setGeoJSONList } = useGeoJSONContext();
+  const { setGeoJSONList, setLngLat } = useGeoJSONContext();
 
   const [open, setOpen] = useState(false);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -67,6 +73,13 @@ export default function LongMenu(props: { layer: GeoJSONItem }) {
     handleClose();
   };
 
+  const handleZoomToLayer = () => {
+    const c = center(props.layer.geoJSON.features[0].geometry as AllGeoJSON);
+    console.log('Center: ', c);
+    setLngLat({ lng: c.geometry.coordinates[0], lat: c.geometry.coordinates[1] });
+    handleClose();
+  };
+
   return (
     <div style={{ display: 'contents' }}>
       <IconButton
@@ -94,6 +107,7 @@ export default function LongMenu(props: { layer: GeoJSONItem }) {
           },
         }}
       >
+        <MenuItem onClick={handleZoomToLayer}> {'Zoom to layer'}</MenuItem>
         <MenuItem onClick={handleShowEditModal}>{'Edit name'}</MenuItem>
         <MenuItem onClick={handleShowDeleteModal}>{'Delete'}</MenuItem>
 
