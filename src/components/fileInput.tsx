@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import {
   AlertColor,
@@ -30,6 +30,7 @@ function FileInput(props: {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem | null>(null);
   const [openPop, setOpenPop] = useState<boolean>(false);
+  const [uploadedF, setUploadedF] = useState<FileList>();
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
 
@@ -42,53 +43,72 @@ function FileInput(props: {
 
     props.handleCloseModal();
   };
-
-  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    const uploadedFiles = e.target.files;
-    if (!uploadedFiles) {
-      return;
-    }
-    const promises = Array.from(uploadedFiles).map((file) => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          try {
-            const content = JSON.parse(reader.result as string);
-            const isGeoJSON = content.type === 'FeatureCollection';
-            resolve(isGeoJSON ? content : null);
-          } catch (error) {
-            reject(error);
-          }
-        };
-        reader.readAsText(file);
+  const handleUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    console.log(files);
+    let isJsons = true;
+    if (files) {
+      Array.from(files).forEach((file) => {
+        if (file.type !== 'application/json') {
+          isJsons = false;
+        }
       });
-    });
-
-    try {
-      const files = await Promise.all(promises);
-      console.log('Files:', files);
-      const geoJSONs = files.filter((file) => file !== null);
-      setFiles(geoJSONs as File[]);
-      let nameCounter: number = 0;
-      geoJSONs.forEach((json) => {
-        setGeoJSONs((prevGeoJSONs) => [...prevGeoJSONs, json as FeatureCollection]);
-        const name: string = uploadedFiles[nameCounter].name.split('.')[0]; //To remove ".geoJSON"
-        const newObj: GeoJSONItem = {
-          id: uid(),
-          name: name,
-          visible: true,
-          color: generateColor(),
-          opacity: 0.5,
-          geoJSON: json as FeatureCollection,
-        };
-        setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
-        nameCounter++;
-        props.showAlert('success', 'File uploaded successfully');
-      });
-    } catch (error) {
-      props.showAlert('error', 'error uploading file');
+      if (isJsons) {
+        setUploadedF(files);
+      } else {
+        props.showAlert('error', 'Unsupported file type');
+      }
     }
   };
+
+  useEffect(() => {
+    if (!uploadedF) {
+      return;
+    }
+    const upload = async () => {
+      const promises = Array.from(uploadedF).map((file) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const content = JSON.parse(reader.result as string);
+              const isGeoJSON = content.type === 'FeatureCollection';
+              resolve(isGeoJSON ? content : null);
+            } catch (error) {
+              reject(error);
+            }
+          };
+          reader.readAsText(file);
+        });
+      });
+
+      try {
+        const files = await Promise.all(promises);
+        console.log('Files:', files);
+        const geoJSONs = files.filter((file) => file !== null);
+        setFiles(geoJSONs as File[]);
+        let nameCounter: number = 0;
+        geoJSONs.forEach((json) => {
+          setGeoJSONs((prevGeoJSONs) => [...prevGeoJSONs, json as FeatureCollection]);
+          const name: string = uploadedF[nameCounter].name.split('.')[0]; //To remove ".geoJSON"
+          const newObj: GeoJSONItem = {
+            id: uid(),
+            name: name,
+            visible: true,
+            color: generateColor(),
+            opacity: 0.5,
+            geoJSON: json as FeatureCollection,
+          };
+          setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+          nameCounter++;
+          props.showAlert('success', 'File uploaded successfully');
+        });
+      } catch (error) {
+        props.showAlert('error', 'error uploading file');
+      }
+    };
+    upload();
+  }, [uploadedF]);
 
   const handleShowColorPicker = (event: React.MouseEvent<HTMLElement>, layer: GeoJSONItem) => {
     setSelectedLayer(layer);
@@ -202,7 +222,7 @@ function FileInput(props: {
         multiple
         type="file"
         ref={inputRef}
-        onChange={handleFileChange}
+        onChange={handleUpload}
         style={{ display: 'none' }}
       />
       <Button sx={{ color: '#2975a0' }} onClick={handleOk}>
