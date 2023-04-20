@@ -167,7 +167,7 @@ function Buffer(props: {
             <Button
               onClick={handleOk}
               variant="outlined"
-              sx={{ color: '#2975a0e6', borderColor: '#2975a0e6' }}
+              sx={{ color: '#2975a0', borderColor: '#2975a0' }}
             >
               OK
             </Button>

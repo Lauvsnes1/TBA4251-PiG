@@ -25,6 +25,7 @@ function FileInput(props: {
   showAlert: (status: AlertColor, message: string) => void;
 }) {
   const [files, setFiles] = useState<File[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<FileList | null>();
   const [geoJSONs, setGeoJSONs] = useState<FeatureCollection[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -39,19 +40,20 @@ function FileInput(props: {
   };
   const handleOk = () => {
     //pass state up to close modal
+    handleFileChange();
     props.handleCloseModal();
-    //console.log("List after ok press:", files)
-    console.log('List of Local GeoJSONS after ok', geoJSONs);
-    console.log('List of Global GeoJSONS after ok', geoJSONList);
   };
 
-  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) {
+  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    setUploadedFiles(e.target.files);
+  };
+
+  const handleFileChange = async () => {
+    if (!uploadedFiles) {
       return;
     }
-    const list = e.target.files;
 
-    const promises = Array.from(list).map((file) => {
+    const promises = Array.from(uploadedFiles).map((file) => {
       setFiles((prevList) => [...prevList, file as File]);
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -70,14 +72,12 @@ function FileInput(props: {
 
     try {
       const files = await Promise.all(promises);
+      console.log('Files:', files);
       const geoJSONs = files.filter((file) => file !== null);
       let nameCounter: number = 0;
       geoJSONs.forEach((json) => {
-        console.log('Jason:', json, 'type:', typeof json);
-        console.log('GLOBAL Before:', geoJSONList);
-        //Local
         setGeoJSONs((prevGeoJSONs) => [...prevGeoJSONs, json as FeatureCollection]);
-        const name: string = list[nameCounter].name.split('.')[0]; //To remove ".geoJSON"
+        const name: string = uploadedFiles[nameCounter].name.split('.')[0]; //To remove ".geoJSON"
 
         const newObj: GeoJSONItem = {
           id: uid(),
@@ -115,6 +115,16 @@ function FileInput(props: {
     });
   };
 
+  const filesToDisplay = (layer: GeoJSONItem) => {
+    //To check which files to display in the modal
+    //A bit cheating as it only checks the first geometry to be equal
+    if (geoJSONs.find((geoJSON) => geoJSON.features[0] === layer.geoJSON.features[0])) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   return (
     <div
       style={{
@@ -126,73 +136,84 @@ function FileInput(props: {
       }}
     >
       <Typography variant="h6"> File uploader:</Typography>
-      <Button onClick={handleUploadClick}>{'Click to Upload file(s)'}</Button>
+      <Button
+        sx={{ marginTop: 1 }}
+        variant="contained"
+        style={{ backgroundColor: '#2975a0' }}
+        onClick={handleUploadClick}
+      >
+        {'Click to Upload file(s)'}
+      </Button>
       <List dense={true} style={{ width: '100%' }}>
         {geoJSONList.map((file) => {
-          return (
-            <div
-              key={file.id}
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-                width: '100%',
-              }}
-            >
-              <Divider />
-              <ListItem divider>
-                <ListItemButton>
-                  <ListItemText primary={file.name} />
-                  <div
-                    style={{
-                      flexDirection: 'row',
-                      display: 'flex',
-                      width: '20%',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <div onClick={(e) => handleShowColorPicker(e, file)}>
-                      <PaletteIcon htmlColor={file.color} key={file.id} />
-                    </div>
-                    <div onClick={() => handleDelete(file.id)}>
-                      <DeleteIcon />
-                    </div>
-                  </div>
-                  {selectedLayer === file && (
-                    <Popper
-                      id={file.id}
-                      open={openPop}
-                      anchorEl={anchorEl}
-                      transition
-                      style={{ zIndex: 2000 }}
+          if (filesToDisplay(file)) {
+            return (
+              <div
+                key={file.id}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  width: '100%',
+                }}
+              >
+                <Divider />
+                <ListItem divider>
+                  <ListItemButton>
+                    <ListItemText primary={file.name} />
+                    <div
+                      style={{
+                        flexDirection: 'row',
+                        display: 'flex',
+                        width: '20%',
+                        justifyContent: 'space-between',
+                      }}
                     >
-                      {({ TransitionProps }) => (
-                        <Fade {...TransitionProps} timeout={100}>
-                          <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }}>
-                            <ColorPicker
-                              handleCloseColorPicker={handleCloseColorPicker}
-                              layer={file}
-                            />
-                          </Box>
-                        </Fade>
-                      )}
-                    </Popper>
-                  )}
-                </ListItemButton>
-              </ListItem>
-              <Divider />
-            </div>
-          );
+                      <div onClick={(e) => handleShowColorPicker(e, file)}>
+                        <PaletteIcon htmlColor={file.color} key={file.id} />
+                      </div>
+                      <div onClick={() => handleDelete(file.id)}>
+                        <DeleteIcon />
+                      </div>
+                    </div>
+                    {selectedLayer === file && (
+                      <Popper
+                        id={file.id}
+                        open={openPop}
+                        anchorEl={anchorEl}
+                        transition
+                        style={{ zIndex: 2000 }}
+                      >
+                        {({ TransitionProps }) => (
+                          <Fade {...TransitionProps} timeout={100}>
+                            <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }}>
+                              <ColorPicker
+                                handleCloseColorPicker={handleCloseColorPicker}
+                                layer={file}
+                              />
+                            </Box>
+                          </Fade>
+                        )}
+                      </Popper>
+                    )}
+                  </ListItemButton>
+                </ListItem>
+                <Divider />
+              </div>
+            );
+          }
         })}
       </List>
       <input
         multiple
         type="file"
         ref={inputRef}
-        onChange={handleFileChange}
+        onChange={handleFileUpload}
         style={{ display: 'none' }}
       />
-      <Button onClick={handleOk}>OK</Button>
+      <Button sx={{ color: '#2975a0' }} onClick={handleOk}>
+        Submit
+      </Button>
     </div>
   );
 }

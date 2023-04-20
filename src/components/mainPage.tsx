@@ -240,6 +240,8 @@ export default function MainPage(props: {
           <Typography
             variant="h6"
             sx={{
+              display: 'flex',
+              alignContent: 'flex-start',
               marginLeft: '10px',
               fontWeight: 'bold',
               paddingInline: '8px',
