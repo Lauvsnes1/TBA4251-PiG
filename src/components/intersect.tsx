@@ -30,6 +30,7 @@ function Intersect(props: {
       features: [],
     };
 
+    //Check that two layers are selected
     if (selectedLayer1?.geoJSON && selectedLayer2?.geoJSON) {
       const layer1 = selectedLayer1?.geoJSON;
       const layer2 = selectedLayer2?.geoJSON;

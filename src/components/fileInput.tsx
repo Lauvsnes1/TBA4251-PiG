@@ -40,10 +40,11 @@ function FileInput(props: {
   };
   const handleOk = () => {
     //pass state up to close modal
-
     props.handleCloseModal();
   };
+
   const handleUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    //Check that every file type is a geoJSON/json
     const files = e.target.files;
     console.log(files);
     let isJsons = true;
