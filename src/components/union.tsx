@@ -24,8 +24,7 @@ function Union(props: {
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
 
-  const excecuteUnion = () => {
-    setIsloading(true);
+  const executeUnion = () => {
     const unionsLst: FeatureCollection = {
       type: 'FeatureCollection',
       features: [],
@@ -40,9 +39,9 @@ function Union(props: {
         let feature1Added: boolean = false;
         processed2?.features.forEach((feature2) => {
           if (booleanOverlap(feature1, feature2)) {
-            //Overlap
+            // Overlap
             const unions = union(feature1, feature2);
-            //Check that it is not null and has no overlapping fractions
+            // Check that it is not null and has no overlapping fractions
             if (
               unions !== null &&
               unionsLst.features.every((feat) => !booleanOverlap(unions, feat))
@@ -53,17 +52,14 @@ function Union(props: {
                 geometry: unions.geometry,
               };
               unionsLst.features.push(unionFeature);
+              feature1Added = true;
             }
           }
-          //Check that it is not added before and has no overlapping fractions of already existing features
-          else if (
-            !feature1Added &&
-            unionsLst.features.every((feat) => !booleanOverlap(feature1, feat))
-          ) {
-            unionsLst.features.push(feature1);
-            feature1Added = true;
-          }
         });
+
+        if (!feature1Added && unionsLst.features.every((feat) => !booleanOverlap(feature1, feat))) {
+          unionsLst.features.push(feature1);
+        }
       });
     }
     return unionsLst;
@@ -72,7 +68,7 @@ function Union(props: {
   const handleOk = () => {
     setIsloading(true);
     setTimeout(() => {
-      const unioned = excecuteUnion();
+      const unioned = executeUnion();
       if (unioned?.features.length > 0) {
         const newObj: GeoJSONItem = {
           id: uid(),
@@ -141,13 +137,11 @@ function Union(props: {
 
   return (
     <>
-      {isLoading ? ( // Check if isLoading is true
-        // If it is, render the loading component
+      {isLoading ? (
         <Box sx={{ modalStyle, height: '100px' }}>
           <Loading />
         </Box>
       ) : (
-        // Otherwise, render the original code
         <div
           style={{
             display: 'flex',

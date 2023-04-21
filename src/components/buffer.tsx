@@ -31,22 +31,23 @@ function Buffer(props: {
   };
 
   const handleBuffer = () => {
-    //Flatten if there are MultiPolygons(to make dissolve work)
-    let isPoly = false;
+    let isMultiPoly = false;
     const layer = selectedLayer?.geoJSON as FeatureCollection<Geometry, GeoJsonProperties>;
+    //Check each feature in layer if its MultiPolygon
     layer.features.forEach((feature) => {
       if (feature.geometry.type === 'MultiPolygon') {
-        isPoly = true;
+        isMultiPoly = true;
       }
     });
-    if (isPoly) {
+    if (isMultiPoly) {
+      //if its a multiPolygon, flatten and dissolve
       const processed = processData(layer);
       const buffered = buffer(processed.processed1 as FeatureCollection, bufferRadius, {
         units: 'meters',
       });
       return buffered;
     } else {
-      const buffered = buffer(selectedLayer?.geoJSON as FeatureCollection, bufferRadius, {
+      const buffered = buffer(layer as FeatureCollection, bufferRadius, {
         units: 'meters',
       });
       return buffered;
@@ -55,6 +56,7 @@ function Buffer(props: {
 
   const handleOk = () => {
     setIsLoading(true);
+    // we delay the operation with 10ms to make the loading work
     setTimeout(() => {
       try {
         let buffered = handleBuffer();
@@ -66,6 +68,7 @@ function Buffer(props: {
           opacity: 0.5,
           geoJSON: buffered as FeatureCollection,
         };
+        //update global list with the new object
         setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
         setIsLoading(false);
         props.handleCloseModal();
@@ -135,7 +138,7 @@ function Buffer(props: {
           </TextField>
           <TextField
             id="outlined-error"
-            label="Buffer radius in m"
+            label="Buffer radius in [m]"
             onChange={(e) => handleBufferSelect(e)}
             style={{ paddingTop: '10px' }}
             variant="filled"

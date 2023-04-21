@@ -49,7 +49,7 @@ function FileInput(props: {
     let isJsons = true;
     if (files) {
       Array.from(files).forEach((file) => {
-        if (file.type !== 'application/json') {
+        if (file.type !== 'application/json' && file.type !== 'application/geojson') {
           isJsons = false;
         }
       });

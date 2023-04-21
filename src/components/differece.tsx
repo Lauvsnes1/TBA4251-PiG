@@ -52,7 +52,7 @@ function Difference(props: {
               differenceList.features.push(diffFeature);
             }
           }
-          //Check that it is not added before and has no overlapping fractions of already existing features
+          //Check that it has no overlapping fractions or existis in list
           else if (
             !feature1Added &&
             differenceList.features.every((feat) => !booleanOverlap(feature1, feat))
