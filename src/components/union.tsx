@@ -38,7 +38,7 @@ function Union(props: {
 
       processed1.features.forEach((feature1) => {
         let feature1Added: boolean = false;
-        processed2.features.forEach((feature2) => {
+        processed2?.features.forEach((feature2) => {
           if (booleanOverlap(feature1, feature2)) {
             //Overlap
             const unions = union(feature1, feature2);

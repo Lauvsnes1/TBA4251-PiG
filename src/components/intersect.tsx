@@ -37,7 +37,7 @@ function Intersect(props: {
       const { processed1, processed2 } = processData(layer1, layer2);
 
       processed1.features.forEach((feature1) => {
-        processed2.features.forEach((feature2) => {
+        processed2?.features.forEach((feature2) => {
           if (booleanOverlap(feature1, feature2)) {
             if (feature1.geometry.type === 'Polygon' && feature2.geometry.type === 'Polygon') {
               const intersection = intersect(feature1.geometry, feature2.geometry);

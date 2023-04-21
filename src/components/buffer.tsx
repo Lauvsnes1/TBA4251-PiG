@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
 import { AlertColor, Box, Typography } from '@mui/material';
-import { FeatureCollection, Polygon } from 'geojson';
+import { Feature, FeatureCollection, GeoJsonProperties, Geometry, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
@@ -13,6 +13,7 @@ import { Properties } from '@turf/helpers';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import { generateColor } from '../utils/genereateColor';
+import processData from '../utils/flattenAndDissolve';
 
 function Buffer(props: {
   handleCloseModal: () => void;
@@ -32,28 +33,24 @@ function Buffer(props: {
   const handleBuffer = () => {
     //Flatten if there are MultiPolygons(to make dissolve work)
     let isPoly = false;
-    const flattened: FeatureCollection = {
-      type: 'FeatureCollection',
-      features: [],
-    };
-    selectedLayer?.geoJSON.features.forEach((feature) => {
+    const layer = selectedLayer?.geoJSON as FeatureCollection<Geometry, GeoJsonProperties>;
+    layer.features.forEach((feature) => {
       if (feature.geometry.type === 'MultiPolygon') {
         isPoly = true;
-        const tempGeom = flatten(feature.geometry);
-        tempGeom.features.forEach((poly) => {
-          flattened.features.push(poly);
-        });
-      } else {
-        flattened.features.push(feature);
       }
     });
     if (isPoly) {
-      dissolve(flattened as FeatureCollection<Polygon, Properties>);
+      const processed = processData(layer);
+      const buffered = buffer(processed.processed1 as FeatureCollection, bufferRadius, {
+        units: 'meters',
+      });
+      return buffered;
+    } else {
+      const buffered = buffer(selectedLayer?.geoJSON as FeatureCollection, bufferRadius, {
+        units: 'meters',
+      });
+      return buffered;
     }
-    const buffered = buffer(selectedLayer?.geoJSON as FeatureCollection, bufferRadius, {
-      units: 'meters',
-    });
-    return buffered;
   };
 
   const handleOk = () => {
