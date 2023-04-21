@@ -3,7 +3,7 @@ import flatten from '@turf/flatten';
 import dissolve from '@turf/dissolve';
 import { Properties } from '@turf/helpers';
 
-export function flattenFeatures(
+export default function processData(
   layer1: FeatureCollection,
   layer2: FeatureCollection,
   debug = false

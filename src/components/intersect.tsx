@@ -10,7 +10,7 @@ import intersect from '@turf/intersect';
 import booleanOverlap from '@turf/boolean-overlap';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
-import { flattenFeatures } from '../utils/flattenAndDissolve';
+import processData from '../utils/flattenAndDissolve';
 import { generateColor } from '../utils/genereateColor';
 
 function Intersect(props: {
@@ -25,40 +25,42 @@ function Intersect(props: {
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
 
   function handleIntersection() {
-    const intersections: FeatureCollection = {
+    const finalIntersections: FeatureCollection = {
       type: 'FeatureCollection',
       features: [],
     };
-
     //Check that two layers are selected
     if (selectedLayer1?.geoJSON && selectedLayer2?.geoJSON) {
       const layer1 = selectedLayer1?.geoJSON;
       const layer2 = selectedLayer2?.geoJSON;
 
-      const { processed1, processed2 } = flattenFeatures(layer1, layer2);
+      const { processed1, processed2 } = processData(layer1, layer2);
 
       processed1.features.forEach((feature1) => {
         processed2.features.forEach((feature2) => {
           if (booleanOverlap(feature1, feature2)) {
             if (feature1.geometry.type === 'Polygon' && feature2.geometry.type === 'Polygon') {
               const intersection = intersect(feature1.geometry, feature2.geometry);
+              // Check that there is an intersection at that its not added before
               if (
                 intersection !== null &&
-                intersections.features.every((feat) => !booleanOverlap(intersection, feat))
+                finalIntersections.features.every((feat) => !booleanOverlap(intersection, feat))
               ) {
                 const intersectionFeature: Feature<Polygon | MultiPolygon> = {
                   type: 'Feature',
-                  properties: { ...feature1.properties, ...feature2.properties }, // combine properties from both input features
+                  // combine properties from both input features
+                  properties: { ...feature1.properties, ...feature2.properties },
                   geometry: intersection.geometry,
                 };
-                intersections.features.push(intersectionFeature);
+                //add to final list of intersections
+                finalIntersections.features.push(intersectionFeature);
               }
             }
           }
         });
       });
     }
-    return intersections;
+    return finalIntersections;
   }
 
   const handleOk = () => {
@@ -129,7 +131,6 @@ function Intersect(props: {
     let count = 0;
     const baseName = name;
     const names = geoJSONList.map((item) => item.name);
-
     while (names.includes(name)) {
       count++;
       name = `${baseName}_${count}`;
