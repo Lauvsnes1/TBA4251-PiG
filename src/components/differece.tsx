@@ -10,7 +10,7 @@ import differnce from '@turf/difference';
 import booleanOverlap from '@turf/boolean-overlap';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
-import { flattenFeatures } from '../utils/flattenAndDissolve';
+import processData from '../utils/flattenAndDissolve';
 import { generateColor } from '../utils/genereateColor';
 
 function Difference(props: {
@@ -33,11 +33,11 @@ function Difference(props: {
       const layer1 = selectedLayer1.geoJSON;
       const layer2 = selectedLayer2.geoJSON;
 
-      const { processed1, processed2 } = flattenFeatures(layer1, layer2);
+      const { processed1, processed2 } = processData(layer1, layer2);
 
       processed1.features.forEach((feature1) => {
         let feature1Added: boolean = false;
-        processed2.features.forEach((feature2) => {
+        processed2?.features.forEach((feature2) => {
           if (booleanOverlap(feature1, feature2)) {
             const diff = differnce(feature1, feature2);
             if (
@@ -52,7 +52,7 @@ function Difference(props: {
               differenceList.features.push(diffFeature);
             }
           }
-          //Check that it is not added before and has no overlapping fractions of already existing features
+          //Check that it has no overlapping fractions or existis in list
           else if (
             !feature1Added &&
             differenceList.features.every((feat) => !booleanOverlap(feature1, feat))
