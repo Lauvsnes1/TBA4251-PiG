@@ -197,7 +197,7 @@ function FeatureExtractor(props: {
         setIsLoading(false);
       } else {
         const newObj: GeoJSONItem = {
-          id: uid(),
+          id: 'costum_' + uid(),
           name: selectedLayer?.name + '_ext',
           visible: true,
           color: generateColor(),

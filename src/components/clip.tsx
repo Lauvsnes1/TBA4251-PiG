@@ -284,7 +284,7 @@ function Clip(props: {
       const clipped = handleClip_2();
       clipped?.forEach((value: FeatureCollection, key: string) => {
         const newObj: GeoJSONItem = {
-          id: uid(),
+          id: 'costum_' + uid(),
           name: generateClipName(key),
           visible: true,
           color: generateColor(),

@@ -71,7 +71,7 @@ function Union(props: {
       const unioned = executeUnion();
       if (unioned?.features.length > 0) {
         const newObj: GeoJSONItem = {
-          id: uid(),
+          id: 'costum_' + uid(),
           name: createUniqueName(name),
           visible: true,
           color: generateColor(),

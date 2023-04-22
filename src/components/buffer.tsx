@@ -61,7 +61,7 @@ function Buffer(props: {
       try {
         let buffered = handleBuffer();
         const newObj: GeoJSONItem = {
-          id: uid(),
+          id: 'costum_' + uid(),
           name: createUniqueName(name),
           visible: true,
           color: generateColor(),

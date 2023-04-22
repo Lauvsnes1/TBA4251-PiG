@@ -74,7 +74,7 @@ function Difference(props: {
         let differenced = handleDifference();
         if (differenced?.features.length > 0) {
           const newObj: GeoJSONItem = {
-            id: uid(),
+            id: 'costum_' + uid(),
             name: createUniqueName(name),
             visible: true,
             color: generateColor(),

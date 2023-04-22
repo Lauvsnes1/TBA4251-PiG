@@ -41,6 +41,72 @@ function BaseMap() {
     setAnchorEl(null);
   };
 
+  const fillMap = () => {
+    if (!mapContainer.current) {
+      return;
+    }
+    if (map) {
+      geoJSONList.forEach((layer) => {
+        const { type, paint } = determineType(layer);
+        console.log('Sources', map.getStyle().layers);
+        if (!map.getSource(layer.id)) {
+          map.addSource(layer.id, {
+            type: 'geojson',
+            data: layer.geoJSON,
+          });
+
+          switch (type) {
+            case 'fill':
+              map.addLayer({
+                id: layer.id,
+                type: type,
+                source: layer.id,
+                paint: paint as FillPaint,
+              });
+              break;
+            case 'circle':
+              map.addLayer({
+                id: layer.id,
+                type: type,
+                source: layer.id,
+                paint: paint as CirclePaint,
+              });
+              break;
+            case 'line':
+              map.addLayer({
+                id: layer.id,
+                type: type,
+                source: layer.id,
+                paint: paint as LinePaint,
+              });
+              break;
+            default:
+              throw new Error(`Unsupported layer type: ${type}`);
+          }
+        } else {
+          const geoJSONSource = map.getSource(layer.id) as mapboxgl.GeoJSONSource;
+          geoJSONSource.setData(layer.geoJSON);
+          console.log('layer processing:', layer);
+          switch (type) {
+            case 'fill':
+              map.setPaintProperty(layer.id, 'fill-color', layer.color);
+              map.setPaintProperty(layer.id, 'fill-opacity', layer.opacity);
+              break;
+            case 'line':
+              map.setPaintProperty(layer.id, 'line-color', layer.color);
+              //map.setPaintProperty(layer.id, 'line-opacity', layer.opacity);
+              break;
+            case 'circle':
+              map.setPaintProperty(layer.id, 'circle-color', layer.color);
+              //map.setPaintProperty(layer.id, 'circle-opacity', layer.opacity);
+              break;
+          }
+        }
+        map.setLayoutProperty(layer.id, 'visibility', determineVisibility(layer));
+      });
+    }
+  };
+
   const handleEditName = () => {
     if (selectedLayer) {
       const newObj: GeoJSONItem = { ...selectedLayer, name: name };
@@ -159,72 +225,7 @@ function BaseMap() {
       //mapInit.on('draw.update', createDrawing);
 
       setMap(mapInit);
-    };
-
-    const fillMap = () => {
-      if (!mapContainer.current) {
-        return;
-      }
-      if (map) {
-        geoJSONList.forEach((layer) => {
-          const { type, paint } = determineType(layer);
-          console.log('Sources', map.getStyle().layers);
-          if (!map.getSource(layer.id)) {
-            map.addSource(layer.id, {
-              type: 'geojson',
-              data: layer.geoJSON,
-            });
-
-            switch (type) {
-              case 'fill':
-                map.addLayer({
-                  id: layer.id,
-                  type: type,
-                  source: layer.id,
-                  paint: paint as FillPaint,
-                });
-                break;
-              case 'circle':
-                map.addLayer({
-                  id: layer.id,
-                  type: type,
-                  source: layer.id,
-                  paint: paint as CirclePaint,
-                });
-                break;
-              case 'line':
-                map.addLayer({
-                  id: layer.id,
-                  type: type,
-                  source: layer.id,
-                  paint: paint as LinePaint,
-                });
-                break;
-              default:
-                throw new Error(`Unsupported layer type: ${type}`);
-            }
-          } else {
-            const geoJSONSource = map.getSource(layer.id) as mapboxgl.GeoJSONSource;
-            geoJSONSource.setData(layer.geoJSON);
-            console.log('layer processing:', layer);
-            switch (type) {
-              case 'fill':
-                map.setPaintProperty(layer.id, 'fill-color', layer.color);
-                map.setPaintProperty(layer.id, 'fill-opacity', layer.opacity);
-                break;
-              case 'line':
-                map.setPaintProperty(layer.id, 'line-color', layer.color);
-                map.setPaintProperty(layer.id, 'line-opacity', layer.opacity);
-                break;
-              case 'circle':
-                map.setPaintProperty(layer.id, 'circle-color', layer.color);
-                map.setPaintProperty(layer.id, 'circle-opacity', layer.opacity);
-                break;
-            }
-          }
-          map.setLayoutProperty(layer.id, 'visibility', determineVisibility(layer));
-        });
-      }
+      mapRef.current = mapInit;
     };
 
     !map && attachMap();
@@ -236,7 +237,8 @@ function BaseMap() {
     if (!mapRef.current) {
       return;
     }
-    mapRef.current.setStyle(baseMap);
+    map?.setStyle(baseMap);
+    map?.on('styledata', () => fillMap());
   }, [baseMap]);
 
   //delete layers
