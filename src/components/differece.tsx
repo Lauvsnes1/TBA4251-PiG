@@ -46,7 +46,8 @@ function Difference(props: {
             ) {
               const diffFeature: Feature<Polygon | MultiPolygon> = {
                 type: 'Feature',
-                properties: { ...feature1.properties, ...feature2.properties }, // combine properties from both input features
+                // combine properties from both input features
+                properties: { ...feature1.properties, ...feature2.properties },
                 geometry: diff.geometry,
               };
               differenceList.features.push(diffFeature);

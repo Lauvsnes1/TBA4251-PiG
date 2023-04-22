@@ -96,7 +96,7 @@ function FileInput(props: {
           //We take the name of the file except the file type at the end
           const name: string = uploadedFiles[nameCounter].name.split('.')[0];
           const newObj: GeoJSONItem = {
-            id: uid(),
+            id: 'costum_' + uid(),
             name: name,
             visible: true,
             color: generateColor(),
