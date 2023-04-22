@@ -231,6 +231,7 @@ function BaseMap() {
 
           setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
 
+          draw.deleteAll();
           //handleShowEditModal();
           //setSelectedLayer(newObj);
         }
