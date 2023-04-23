@@ -47,7 +47,7 @@ function BaseMap() {
     if (map) {
       geoJSONList.forEach((layer) => {
         const { type, paint } = determineType(layer);
-        console.log('Sources', map.getStyle().layers);
+        //console.log('Sources', map.getStyle().layers);
         if (!map.getSource(layer.id)) {
           map.addSource(layer.id, {
             type: 'geojson',
@@ -85,8 +85,6 @@ function BaseMap() {
         } else {
           const geoJSONSource = map.getSource(layer.id) as mapboxgl.GeoJSONSource;
           geoJSONSource.setData(layer.geoJSON);
-          console.log('layer processing:', layer);
-          console.log('maps style', map.getStyle());
           map.once('sourcedata', () => {
             switch (type) {
               case 'fill':
@@ -247,7 +245,7 @@ function BaseMap() {
 
     !map && attachMap();
     map && fillMap();
-  }, [map, geoJSONList]);
+  }, [geoJSONList]);
 
   //update baseMap style
   useEffect(() => {
@@ -255,7 +253,8 @@ function BaseMap() {
       return;
     }
     map?.setStyle(baseMap);
-    map?.on('styledata', () => fillMap());
+    //fill map once after style is changed
+    map?.once('styledata', () => fillMap());
   }, [baseMap]);
 
   //delete layers
