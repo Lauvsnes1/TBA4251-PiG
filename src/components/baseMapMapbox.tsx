@@ -4,15 +4,14 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
-import { uid } from 'uid';
 import { FeatureCollection } from 'geojson';
 import Modal from '@mui/material/Modal';
-
 import { Button, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { modalStyle } from './styledComponents';
 import { generateColor } from '../utils/genereateColor';
+import generateId from '../utils/generateId';
 
 const accessToken: string | any = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 mapboxgl.accessToken = accessToken;
@@ -208,7 +207,7 @@ function BaseMap() {
       const createDrawing = () => {
         const data = draw.getAll();
         if (data.features.length > 0) {
-          const uniqueName = `costum_${uid()}`;
+          const uniqueName = generateId();
           const newObj: GeoJSONItem = {
             id: uniqueName,
             name: uniqueName,
@@ -232,8 +231,9 @@ function BaseMap() {
           setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
 
           draw.deleteAll();
-          //handleShowEditModal();
-          //setSelectedLayer(newObj);
+          // handleShowEditModal();
+          // setSelectedLayer(newObj);
+          // fillMap();
         }
       };
 
@@ -268,7 +268,7 @@ function BaseMap() {
         const typedLayer = layer as { source?: unknown };
         const source = typedLayer.source as string;
         if (source !== undefined) {
-          return !currentLayers.includes(source) && source.startsWith('costum_');
+          return !currentLayers.includes(source) && source.startsWith('custom_');
         }
       });
 

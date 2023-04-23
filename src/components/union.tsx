@@ -5,13 +5,13 @@ import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
-import { uid } from 'uid';
 import union from '@turf/union';
 import booleanOverlap from '@turf/boolean-overlap';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
 import { generateColor } from '../utils/genereateColor';
+import generateId from '../utils/generateId';
 
 function Union(props: {
   handleCloseModal: () => void;
@@ -71,7 +71,7 @@ function Union(props: {
       const unioned = executeUnion();
       if (unioned?.features.length > 0) {
         const newObj: GeoJSONItem = {
-          id: 'costum_' + uid(),
+          id: generateId(),
           name: createUniqueName(name),
           visible: true,
           color: generateColor(),

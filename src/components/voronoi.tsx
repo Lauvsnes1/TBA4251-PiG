@@ -7,12 +7,12 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import voronoi from '@turf/voronoi';
 import bbox from '@turf/bbox';
-import { uid } from 'uid';
 
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import { BBox } from '@turf/helpers';
 import { generateColor } from '../utils/genereateColor';
+import generateId from '../utils/generateId';
 
 function Voronoi(props: {
   handleCloseModal: () => void;
@@ -57,7 +57,7 @@ function Voronoi(props: {
       const voronoiPolygon = handleVoronoi();
       if (voronoiPolygon.features.length > 0) {
         const newObj: GeoJSONItem = {
-          id: 'costum_' + uid(),
+          id: generateId(),
           name: createUniqueName(name),
           visible: true,
           color: generateColor(),

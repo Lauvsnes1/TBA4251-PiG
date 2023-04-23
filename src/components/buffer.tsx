@@ -1,19 +1,16 @@
 import React, { useState, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
 import { AlertColor, Box, Typography } from '@mui/material';
-import { Feature, FeatureCollection, GeoJsonProperties, Geometry, Polygon } from 'geojson';
+import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
-import { uid } from 'uid';
 import buffer from '@turf/buffer';
-import flatten from '@turf/flatten';
-import dissolve from '@turf/dissolve';
-import { Properties } from '@turf/helpers';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import { generateColor } from '../utils/genereateColor';
 import processData from '../utils/flattenAndDissolve';
+import generateId from '../utils/generateId';
 
 function Buffer(props: {
   handleCloseModal: () => void;
@@ -61,7 +58,7 @@ function Buffer(props: {
       try {
         let buffered = handleBuffer();
         const newObj: GeoJSONItem = {
-          id: 'costum_' + uid(),
+          id: generateId(),
           name: createUniqueName(name),
           visible: true,
           color: generateColor(),
