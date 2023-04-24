@@ -38,7 +38,7 @@ function Dissolve(props: {
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
 
-  const handleChoseLayer1 = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChoseLayer = (event: ChangeEvent<HTMLInputElement>) => {
     let isPoly = true;
     const chosenLayer: GeoJSONItem = geoJSONList.find(
       (layer) => layer.id === event.target.value
@@ -168,7 +168,7 @@ function Dissolve(props: {
             id="Selected-buffer-layer"
             select
             label="Select layer one"
-            onChange={handleChoseLayer1}
+            onChange={handleChoseLayer}
             variant="filled"
             defaultValue={''}
           >
@@ -194,11 +194,6 @@ function Dissolve(props: {
               label="dissolve on property"
             />
             <Box sx={{ flexDirection: 'column' }}>
-              {/* <Typography variant="subtitle1" fontSize={1}>
-                <InputLabel sx={{ fontSize: 12 }} id="demo-multiple-chip-label">
-                  Select Property
-                </InputLabel>
-              </Typography> */}
               <Select
                 sx={{ width: '200px' }}
                 disabled={!isChecked}
@@ -206,7 +201,7 @@ function Dissolve(props: {
                 value={selectedProperty}
                 onChange={(e) => setSelectedProperty(e.target.value)}
                 displayEmpty
-                inputProps={{ 'aria-label': 'Without label' }}
+                inputProps={{ 'aria-label': 'Select property' }}
                 defaultValue=""
               >
                 <MenuItem value=""></MenuItem>

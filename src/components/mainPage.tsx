@@ -15,48 +15,25 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
-import ScienceIcon from '@mui/icons-material/Science';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import PaletteIcon from '@mui/icons-material/Palette';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import JoinInnerIcon from '@mui/icons-material/JoinInner';
-import JoinFullIcon from '@mui/icons-material/JoinFull';
-import RemoveIcon from '@mui/icons-material/Remove';
-import ContentCutIcon from '@mui/icons-material/ContentCut';
 import { AlertColor } from '@mui/material/Alert';
 import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
 import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
-
+import getToolsList from '../data/tools';
 import BaseMap from './baseMapMapbox';
 import ColorPicker from './colorPicker';
-import FileInput from './fileInput';
-import Buffer from './buffer';
-import Intersect from './intersect';
-import Union from './union';
-import Difference from './differece';
-import Clip from './clip';
 import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import DropDown from './dropDown';
-import FeatureExtractor from './featureExtractor';
-import SVGVoronoi from '../icons/svgviewer-react-output';
-import Voronoi from './voronoi';
+
 import Settings from './settings';
 import { makeStyles } from '@mui/styles';
-import Dissolve from './dissolve';
 
 const drawerWidth = 240;
-
-interface Tool {
-  id: number;
-  name: string;
-  icon: ElementType;
-  component: JSX.Element;
-}
 
 const useStyles = makeStyles({
   hovered: {
@@ -161,62 +138,7 @@ export default function MainPage(props: {
     setTriggerZoom(!triggerZoom);
   };
 
-  const tools: Tool[] = [
-    {
-      id: 1,
-      name: 'Load data',
-      icon: FileUploadIcon,
-      component: <FileInput handleCloseModal={closeModal} showAlert={passAlert} />,
-    },
-    {
-      id: 2,
-      name: 'Feature extracor',
-      icon: ScienceIcon,
-      component: <FeatureExtractor handleCloseModal={closeModal} showAlert={passAlert} />,
-    },
-    {
-      id: 3,
-      name: 'Buffer',
-      icon: RemoveCircleIcon,
-      component: <Buffer handleCloseModal={closeModal} showAlert={passAlert} />,
-    },
-    {
-      id: 4,
-      name: 'Intersect',
-      icon: JoinInnerIcon,
-      component: <Intersect handleCloseModal={closeModal} showAlert={passAlert} />,
-    },
-    {
-      id: 5,
-      name: 'Union',
-      icon: JoinFullIcon,
-      component: <Union handleCloseModal={closeModal} showAlert={passAlert} />,
-    },
-    {
-      id: 6,
-      name: 'Difference',
-      icon: RemoveIcon,
-      component: <Difference handleCloseModal={closeModal} showAlert={passAlert} />,
-    },
-    {
-      id: 7,
-      name: 'Clip',
-      icon: ContentCutIcon,
-      component: <Clip handleCloseModal={closeModal} showAlert={passAlert} />,
-    },
-    {
-      id: 9,
-      name: 'Dissolve',
-      icon: RemoveIcon,
-      component: <Dissolve handleCloseModal={closeModal} showAlert={passAlert} />,
-    },
-    {
-      id: 9,
-      name: 'Voronoi',
-      icon: SVGVoronoi,
-      component: <Voronoi handleCloseModal={closeModal} showAlert={passAlert} />,
-    },
-  ];
+  const tools = getToolsList(closeModal, passAlert);
 
   return (
     <ThemeProvider theme={theme}>
@@ -261,8 +183,7 @@ export default function MainPage(props: {
         >
           <DrawerHeader style={{ justifyContent: 'space-between' }}>
             <Typography variant="h6" sx={{ paddingLeft: '10px', fontWeight: 'bold' }}>
-              {' '}
-              Tools
+              {'Tools '}
             </Typography>
             <IconButton onClick={handleDrawerClose}>
               {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
