@@ -46,6 +46,7 @@ import FeatureExtractor from './featureExtractor';
 import SVGVoronoi from '../icons/svgviewer-react-output';
 import Voronoi from './voronoi';
 import Settings from './settings';
+import { makeStyles } from '@mui/styles';
 
 const drawerWidth = 240;
 
@@ -55,6 +56,13 @@ interface Tool {
   icon: ElementType;
   component: JSX.Element;
 }
+
+const useStyles = makeStyles({
+  hovered: {
+    backgroundColor: '#f2f2f2',
+    boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+  },
+});
 
 export default function MainPage(props: {
   showAlert: (status: AlertColor, message: string) => void;
@@ -70,6 +78,8 @@ export default function MainPage(props: {
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
   const [allVisible, setAllVisible] = useState(true);
   const [triggerZoom, setTriggerZoom] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const classes = useStyles();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -87,12 +97,23 @@ export default function MainPage(props: {
     });
   };
 
-  const toggleAllVisibility = () => {
-    setAllVisible(!allVisible);
+  const toggleOffAllVisibility = () => {
+    setAllVisible(false);
     setGeoJSONList((prevList) => {
       return prevList.map((layer) => {
         // Toggle visibility for each layer
-        const newObj = { ...layer, visible: !layer.visible };
+        const newObj = { ...layer, visible: false };
+        return newObj;
+      });
+    });
+  };
+
+  const toggleOnAllVisibility = () => {
+    setAllVisible(true);
+    setGeoJSONList((prevList) => {
+      return prevList.map((layer) => {
+        // Toggle visibility for each layer
+        const newObj = { ...layer, visible: true };
         return newObj;
       });
     });
@@ -269,9 +290,19 @@ export default function MainPage(props: {
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', paddingRight: 2 }}>
               {allVisible ? (
-                <VisibilityIcon onClick={toggleAllVisibility} />
+                <VisibilityIcon
+                  onClick={toggleOffAllVisibility}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                  className={isHovered ? classes.hovered : ''}
+                />
               ) : (
-                <VisibilityOffIcon onClick={toggleAllVisibility} />
+                <VisibilityOffIcon
+                  onClick={toggleOnAllVisibility}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                  className={isHovered ? classes.hovered : ''}
+                />
               )}
             </Box>
           </Box>
