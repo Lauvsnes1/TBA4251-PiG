@@ -236,7 +236,7 @@ function BaseMap() {
     setMap(mapInit);
     mapRef.current = mapInit;
   };
-  const updateLayers = () => {
+  const removeLayers = () => {
     const currentLayers = geoJSONList.map((layer) => layer.id);
 
     // Find the removed layers which exist on map but not in global list
@@ -276,7 +276,7 @@ function BaseMap() {
 
   //delete layers
   useEffect(() => {
-    updateLayers();
+    removeLayers();
   }, [geoJSONList]);
 
   return (
