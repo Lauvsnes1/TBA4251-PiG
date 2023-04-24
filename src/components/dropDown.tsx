@@ -14,7 +14,10 @@ import { modalStyle } from './styledComponents';
 
 const ITEM_HEIGHT = 48;
 
-export default function LongMenu(props: { layer: GeoJSONItem }) {
+export default function LongMenu(props: {
+  layer: GeoJSONItem;
+  zoomToLayer: (layer: GeoJSONItem) => void;
+}) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
@@ -67,6 +70,11 @@ export default function LongMenu(props: { layer: GeoJSONItem }) {
     handleClose();
   };
 
+  function handleZoomToLayer(event: React.MouseEvent<HTMLLIElement, MouseEvent>): void {
+    props.zoomToLayer(props.layer);
+    setOpen(false);
+  }
+
   return (
     <div style={{ display: 'contents' }}>
       <IconButton
@@ -96,6 +104,7 @@ export default function LongMenu(props: { layer: GeoJSONItem }) {
       >
         <MenuItem onClick={handleShowEditModal}>{'Edit name'}</MenuItem>
         <MenuItem onClick={handleShowDeleteModal}>{'Delete'}</MenuItem>
+        <MenuItem onClick={handleZoomToLayer}>{'Zoom to layer'}</MenuItem>
 
         <Modal
           open={editModal}

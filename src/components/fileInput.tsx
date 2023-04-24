@@ -50,7 +50,7 @@ function FileInput(props: {
     if (files) {
       Array.from(files).forEach((file) => {
         if (file.type !== 'application/json' && file.type !== 'application/geojson') {
-          isJsons = false;
+          //isJsons = false;
         }
       });
       if (isJsons) {
@@ -79,6 +79,7 @@ function FileInput(props: {
               resolve(isGeoJSON ? content : null);
             } catch (error) {
               reject(error);
+              props.showAlert('error', 'Unsupported file type');
             }
           };
           reader.readAsText(file);

@@ -68,15 +68,15 @@ export default function MainPage(props: {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem | null>(null);
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
+  const [allVisible, setAllVisible] = useState(true);
+  const [triggerZoom, setTriggerZoom] = useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
   const toggleVisibility = (layer: GeoJSONItem) => {
     const newObj: GeoJSONItem = { ...layer, visible: !layer.visible };
     setGeoJSONList((prevList) => {
@@ -84,6 +84,17 @@ export default function MainPage(props: {
       const updatedList = [...prevList]; // create a copy of the original list
       updatedList[index] = newObj; // replace the layer with the new object
       return updatedList;
+    });
+  };
+
+  const toggleAllVisibility = () => {
+    setAllVisible(!allVisible);
+    setGeoJSONList((prevList) => {
+      return prevList.map((layer) => {
+        // Toggle visibility for each layer
+        const newObj = { ...layer, visible: !layer.visible };
+        return newObj;
+      });
     });
   };
 
@@ -121,6 +132,11 @@ export default function MainPage(props: {
   };
   const passAlert = (status: AlertColor, message: string) => {
     props.showAlert(status, message);
+  };
+
+  const zoomToLayer = (layer: GeoJSONItem) => {
+    setSelectedLayer(layer);
+    setTriggerZoom(!triggerZoom);
   };
 
   const tools: Tool[] = [
@@ -237,19 +253,28 @@ export default function MainPage(props: {
               </ListItem>
             ))}
           </List>
-          <Typography
-            variant="h6"
-            sx={{
-              display: 'flex',
-              alignContent: 'flex-start',
-              marginLeft: '10px',
-              fontWeight: 'bold',
-              paddingInline: '8px',
-              paddingBottom: '12px',
-            }}
-          >
-            Layers
-          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Typography
+              variant="h6"
+              sx={{
+                display: 'flex',
+                alignContent: 'flex-start',
+                marginLeft: '10px',
+                fontWeight: 'bold',
+                paddingInline: '8px',
+                paddingBottom: '12px',
+              }}
+            >
+              Layers
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', paddingRight: 2 }}>
+              {allVisible ? (
+                <VisibilityIcon onClick={toggleAllVisibility} />
+              ) : (
+                <VisibilityOffIcon onClick={toggleAllVisibility} />
+              )}
+            </Box>
+          </Box>
           <Divider />
           <List disablePadding sx={{ paddingTop: 0 }}>
             {geoJSONList.map((layer) => (
@@ -268,7 +293,7 @@ export default function MainPage(props: {
                         }}
                       >
                         <div>
-                          <DropDown layer={layer} />
+                          <DropDown layer={layer} zoomToLayer={zoomToLayer} />
                         </div>
                         <div onClick={(e) => handleShowColorPicker(e, layer)}>
                           <PaletteIcon htmlColor={layer.color} key={layer.id} />
@@ -319,7 +344,7 @@ export default function MainPage(props: {
               {modalComponent}
             </Box>
           </Modal>
-          <BaseMap />
+          <BaseMap layer={selectedLayer} triggerZoom={triggerZoom} />
         </Main>
       </Box>
     </ThemeProvider>

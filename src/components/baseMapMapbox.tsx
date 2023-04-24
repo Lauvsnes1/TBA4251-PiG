@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import mapboxgl, { CirclePaint, FillPaint, LinePaint } from 'mapbox-gl';
+import mapboxgl, { CirclePaint, FillPaint, LinePaint, LngLatLike } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
@@ -12,11 +12,13 @@ import TextField from '@mui/material/TextField';
 import { modalStyle } from './styledComponents';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
+import center from '@turf/center';
+import { AllGeoJSON } from '@turf/helpers';
 
 const accessToken: string | any = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 mapboxgl.accessToken = accessToken;
 
-function BaseMap() {
+function BaseMap(props: { triggerZoom: boolean; layer: GeoJSONItem | null }) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem>();
@@ -254,6 +256,27 @@ function BaseMap() {
       console.log('removed', layer);
     });
   };
+  const zoomToLayer = (layer: any) => {
+    if (map) {
+      map.flyTo(layer);
+    }
+  };
+  useEffect(() => {
+    console.log('Kjører useEffect');
+    if (props.layer) {
+      const centeroid = center(props.layer?.geoJSON as AllGeoJSON);
+      const shift: number = -0.025; //To compensate for drawer on the left
+      if (centeroid) {
+        map?.flyTo({
+          center: [centeroid.geometry.coordinates[0] - shift, centeroid.geometry.coordinates[1]],
+          essential: true,
+          zoom: 12,
+          speed: 0.8,
+          curve: 1,
+        });
+      }
+    }
+  }, [props.triggerZoom]);
 
   useEffect(() => {
     !map && attachMap();
