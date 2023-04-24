@@ -30,7 +30,7 @@ function BaseMap() {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [map, setMap] = useState<mapboxgl.Map>();
 
-  const handleShowEditModal = () => {
+  const openEditModal = () => {
     setEditModal(true);
   };
   const closeEditModal = () => {
@@ -46,8 +46,9 @@ function BaseMap() {
     }
     if (map) {
       geoJSONList.forEach((layer) => {
+        console.log('layer', layer);
         const { type, paint } = determineType(layer);
-        //console.log('Sources', map.getStyle().layers);
+        console.log('Sources', map.getStyle().layers);
         if (!map.getSource(layer.id)) {
           map.addSource(layer.id, {
             type: 'geojson',
@@ -117,12 +118,6 @@ function BaseMap() {
         return updatedList;
       });
       // Update the map with the new layer name
-      if (map) {
-        // Check if the layer exists before removing it
-        if (map?.getLayer(selectedLayer.id)) {
-          map?.removeLayer(selectedLayer.id);
-        }
-      }
       closeEditModal();
       handleClose();
       setSelectedLayer(undefined);
@@ -130,7 +125,9 @@ function BaseMap() {
     }
   };
 
-  const determineType = (layer: GeoJSONItem): { type: string; paint?: mapboxgl.AnyPaint } => {
+  const determineType = (
+    layer: GeoJSONItem
+  ): { type: 'fill' | 'circle' | 'line'; paint?: mapboxgl.AnyPaint } => {
     const type = layer.geoJSON.features[0].geometry.type;
     switch (type) {
       case 'Point':
@@ -182,68 +179,88 @@ function BaseMap() {
     }
   };
 
-  useEffect(() => {
-    const attachMap = () => {
-      if (!mapContainer.current) {
-        return;
-      }
-      const mapInit = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: baseMap,
-        center: [lng, lat],
-        zoom: zoom,
-      });
-
-      const draw = new MapboxDraw({
-        displayControlsDefault: false,
-        controls: {
-          polygon: true,
-          trash: true,
-        },
-      });
-
-      const createDrawing = () => {
-        const data = draw.getAll();
-        if (data.features.length > 0) {
-          const uniqueName = generateId();
-          const newObj: GeoJSONItem = {
-            id: uniqueName,
-            name: uniqueName,
-            visible: true,
-            color: generateColor(),
-            opacity: 0.5,
-            geoJSON: data as FeatureCollection,
-          };
-          map?.addSource(newObj.id, {
-            type: 'geojson',
-            data: newObj.geoJSON,
-          });
-          map?.addLayer({
-            id: newObj.id,
-            type: 'fill',
-            source: newObj.id,
-            paint: { 'fill-color': newObj.color, 'fill-opacity': newObj.opacity } as FillPaint,
-          });
-          console.log('ADDED');
-
-          setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
-
-          draw.deleteAll();
-          // handleShowEditModal();
-          // setSelectedLayer(newObj);
-          // fillMap();
-        }
+  const createDrawing = (draw: MapboxDraw) => {
+    const data = draw.getAll();
+    if (data.features.length > 0) {
+      const uniqueName = generateId();
+      const newObj: GeoJSONItem = {
+        id: uniqueName,
+        name: uniqueName,
+        visible: true,
+        color: generateColor(),
+        opacity: 0.5,
+        geoJSON: data as FeatureCollection,
       };
+      map?.addSource(newObj.id, {
+        type: 'geojson',
+        data: newObj.geoJSON,
+      });
+      map?.addLayer({
+        id: newObj.id,
+        type: 'fill',
+        source: newObj.id,
+        paint: { 'fill-color': newObj.color, 'fill-opacity': newObj.opacity } as FillPaint,
+      });
+      setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+      draw.deleteAll();
+      setTimeout(() => {
+        openEditModal();
+        setSelectedLayer(newObj);
+      }, 100);
+    }
+  };
 
-      mapInit.addControl(draw, 'bottom-left');
-      mapInit.on('draw.create', createDrawing);
-      mapInit.on('draw.update', createDrawing);
+  const attachMap = () => {
+    if (!mapContainer.current) {
+      return;
+    }
+    const mapInit = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: baseMap,
+      center: [lng, lat],
+      zoom: zoom,
+    });
 
-      setMap(mapInit);
-      mapRef.current = mapInit;
-    };
+    const draw = new MapboxDraw({
+      displayControlsDefault: false,
+      controls: {
+        polygon: true,
+        trash: true,
+      },
+    });
 
+    mapInit.addControl(draw, 'bottom-left');
+    mapInit.on('draw.create', () => createDrawing(draw));
+    mapInit.on('draw.update', () => createDrawing(draw));
+
+    setMap(mapInit);
+    mapRef.current = mapInit;
+  };
+  const updateLayers = () => {
+    const currentLayers = geoJSONList.map((layer) => layer.id);
+
+    // Find the removed layers which exist on map but not in global list
+    const layersToRemove = map?.getStyle().layers.filter((layer) => {
+      const typedLayer = layer as { source?: unknown };
+      const source = typedLayer.source as string;
+      if (source !== undefined) {
+        //custom prefix separates the layers from mapbox predefined layers
+        return !currentLayers.includes(source) && source.startsWith('custom_');
+      }
+    });
+
+    layersToRemove?.forEach((layer) => {
+      removeLayerAndSource(layer.id);
+      console.log('removed', layer);
+    });
+  };
+
+  useEffect(() => {
     !map && attachMap();
+    // map && fillMap();
+  }, []);
+
+  useEffect(() => {
     map && fillMap();
   }, [geoJSONList]);
 
@@ -259,25 +276,6 @@ function BaseMap() {
 
   //delete layers
   useEffect(() => {
-    const updateLayers = () => {
-      const currentLayers = geoJSONList.map((layer) => layer.id);
-      console.log('currentLayers', currentLayers);
-      // Find the removed layers
-      const layersToRemove = map?.getStyle().layers.filter((layer) => {
-        const typedLayer = layer as { source?: unknown };
-        const source = typedLayer.source as string;
-        if (source !== undefined) {
-          return !currentLayers.includes(source) && source.startsWith('custom_');
-        }
-      });
-
-      console.log('Layers to remove', layersToRemove);
-
-      layersToRemove?.forEach((layer) => {
-        removeLayerAndSource(layer.id);
-        console.log('removed', layer);
-      });
-    };
     updateLayers();
   }, [geoJSONList]);
 
