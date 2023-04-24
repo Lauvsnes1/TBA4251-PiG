@@ -47,6 +47,7 @@ import SVGVoronoi from '../icons/svgviewer-react-output';
 import Voronoi from './voronoi';
 import Settings from './settings';
 import { makeStyles } from '@mui/styles';
+import Dissolve from './dissolve';
 
 const drawerWidth = 240;
 
@@ -204,7 +205,13 @@ export default function MainPage(props: {
       component: <Clip handleCloseModal={closeModal} showAlert={passAlert} />,
     },
     {
-      id: 8,
+      id: 9,
+      name: 'Dissolve',
+      icon: RemoveIcon,
+      component: <Dissolve handleCloseModal={closeModal} showAlert={passAlert} />,
+    },
+    {
+      id: 9,
       name: 'Voronoi',
       icon: SVGVoronoi,
       component: <Voronoi handleCloseModal={closeModal} showAlert={passAlert} />,
