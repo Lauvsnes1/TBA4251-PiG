@@ -227,7 +227,9 @@ function BaseMap(props: { triggerZoom: boolean; layer: GeoJSONItem | null }) {
       displayControlsDefault: false,
       controls: {
         polygon: true,
+        point: true,
         trash: true,
+        line_string: true,
       },
     });
 
@@ -255,11 +257,6 @@ function BaseMap(props: { triggerZoom: boolean; layer: GeoJSONItem | null }) {
       removeLayerAndSource(layer.id);
       console.log('removed', layer);
     });
-  };
-  const zoomToLayer = (layer: any) => {
-    if (map) {
-      map.flyTo(layer);
-    }
   };
   useEffect(() => {
     console.log('Kjører useEffect');
