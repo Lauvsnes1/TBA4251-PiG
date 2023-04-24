@@ -1,23 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
-import mapboxgl, { CirclePaint, FillPaint, LinePaint } from 'mapbox-gl';
+import mapboxgl, { CirclePaint, FillPaint, LinePaint, LngLatLike } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
-import { uid } from 'uid';
 import { FeatureCollection } from 'geojson';
 import Modal from '@mui/material/Modal';
-
 import { Button, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { modalStyle } from './styledComponents';
 import { generateColor } from '../utils/genereateColor';
+import generateId from '../utils/generateId';
+import center from '@turf/center';
+import { AllGeoJSON } from '@turf/helpers';
 
 const accessToken: string | any = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 mapboxgl.accessToken = accessToken;
 
-function BaseMap() {
+function BaseMap(props: { triggerZoom: boolean; layer: GeoJSONItem | null }) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem>();
@@ -28,8 +29,10 @@ function BaseMap() {
   const [zoom, setZoom] = useState(12);
   const [editModal, setEditModal] = useState(false);
   const [name, setName] = useState('');
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const [map, setMap] = useState<mapboxgl.Map>();
 
-  const handleShowEditModal = () => {
+  const openEditModal = () => {
     setEditModal(true);
   };
   const closeEditModal = () => {
@@ -38,6 +41,75 @@ function BaseMap() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const fillMap = () => {
+    if (!mapContainer.current) {
+      return;
+    }
+    if (map) {
+      geoJSONList.forEach((layer) => {
+        console.log('layer', layer);
+        const { type, paint } = determineType(layer);
+        console.log('Sources', map.getStyle().layers);
+        if (!map.getSource(layer.id)) {
+          map.addSource(layer.id, {
+            type: 'geojson',
+            data: layer.geoJSON,
+          });
+
+          switch (type) {
+            case 'fill':
+              map.addLayer({
+                id: layer.id,
+                type: type,
+                source: layer.id,
+                paint: paint as FillPaint,
+              });
+              break;
+            case 'circle':
+              map.addLayer({
+                id: layer.id,
+                type: type,
+                source: layer.id,
+                paint: paint as CirclePaint,
+              });
+              break;
+            case 'line':
+              map.addLayer({
+                id: layer.id,
+                type: type,
+                source: layer.id,
+                paint: paint as LinePaint,
+              });
+              break;
+            default:
+              throw new Error(`Unsupported layer type: ${type}`);
+          }
+        } else {
+          const geoJSONSource = map.getSource(layer.id) as mapboxgl.GeoJSONSource;
+          geoJSONSource.setData(layer.geoJSON);
+          map.once('sourcedata', () => {
+            switch (type) {
+              case 'fill':
+                map.setPaintProperty(layer.id, 'fill-color', layer.color);
+                map.setPaintProperty(layer.id, 'fill-opacity', layer.opacity);
+                break;
+              case 'line':
+                map.setPaintProperty(layer.id, 'line-color', layer.color);
+                //map.setPaintProperty(layer.id, 'line-opacity', layer.opacity);
+                break;
+              case 'circle':
+                map.setPaintProperty(layer.id, 'circle-color', layer.color);
+                //map.setPaintProperty(layer.id, 'circle-opacity', layer.opacity);
+                break;
+            }
+          });
+        }
+        map.setLayoutProperty(layer.id, 'visibility', determineVisibility(layer));
+      });
+    }
+  };
+
   const handleEditName = () => {
     if (selectedLayer) {
       const newObj: GeoJSONItem = { ...selectedLayer, name: name };
@@ -47,6 +119,7 @@ function BaseMap() {
         updatedList[index] = newObj; // replace the layer with the new object
         return updatedList;
       });
+      // Update the map with the new layer name
       closeEditModal();
       handleClose();
       setSelectedLayer(undefined);
@@ -54,7 +127,9 @@ function BaseMap() {
     }
   };
 
-  const determineType = (layer: GeoJSONItem): { type: string; paint?: mapboxgl.AnyPaint } => {
+  const determineType = (
+    layer: GeoJSONItem
+  ): { type: 'fill' | 'circle' | 'line'; paint?: mapboxgl.AnyPaint } => {
     const type = layer.geoJSON.features[0].geometry.type;
     switch (type) {
       case 'Point':
@@ -92,12 +167,56 @@ function BaseMap() {
     return layer.visible ? 'visible' : 'none';
   };
 
-  useEffect(() => {
-    if (!mapContainer.current) {
+  const removeLayerAndSource = (layerId: string) => {
+    if (!map) {
       return;
     }
 
-    const map = new mapboxgl.Map({
+    if (map.getLayer(layerId)) {
+      map.removeLayer(layerId);
+    }
+
+    if (map.getSource(layerId)) {
+      map.removeSource(layerId);
+    }
+  };
+
+  const createDrawing = (draw: MapboxDraw) => {
+    const data = draw.getAll();
+    if (data.features.length > 0) {
+      const uniqueName = generateId();
+      const newObj: GeoJSONItem = {
+        id: uniqueName,
+        name: uniqueName,
+        visible: true,
+        color: generateColor(),
+        opacity: 0.5,
+        geoJSON: data as FeatureCollection,
+      };
+      map?.addSource(newObj.id, {
+        type: 'geojson',
+        data: newObj.geoJSON,
+      });
+      map?.addLayer({
+        id: newObj.id,
+        type: 'fill',
+        source: newObj.id,
+        paint: { 'fill-color': newObj.color, 'fill-opacity': newObj.opacity } as FillPaint,
+      });
+      setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+      draw.deleteAll();
+      setTimeout(() => {
+        openEditModal();
+        setSelectedLayer(newObj);
+      }, 100);
+    }
+  };
+
+  const attachMap = () => {
+    if (!mapContainer.current) {
+      return;
+    }
+    const mapInit = new mapboxgl.Map({
       container: mapContainer.current,
       style: baseMap,
       center: [lng, lat],
@@ -106,87 +225,82 @@ function BaseMap() {
 
     const draw = new MapboxDraw({
       displayControlsDefault: false,
-      // Select which mapbox-gl-draw control buttons to add to the map.
       controls: {
         polygon: true,
         trash: true,
       },
     });
-    const createDrawing = () => {
-      const data = draw.getAll();
-      if (data.features.length > 0) {
-        const newObj: GeoJSONItem = {
-          id: uid(),
-          name: uid(),
-          visible: true,
-          color: generateColor(),
-          opacity: 0.5,
-          geoJSON: data as FeatureCollection,
-        };
-        setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
-        handleShowEditModal();
-        setSelectedLayer(newObj);
+
+    mapInit.addControl(draw, 'bottom-left');
+    mapInit.on('draw.create', () => createDrawing(draw));
+    mapInit.on('draw.update', () => createDrawing(draw));
+
+    setMap(mapInit);
+    mapRef.current = mapInit;
+  };
+  const removeLayers = () => {
+    const currentLayers = geoJSONList.map((layer) => layer.id);
+
+    // Find the removed layers which exist on map but not in global list
+    const layersToRemove = map?.getStyle().layers.filter((layer) => {
+      const typedLayer = layer as { source?: unknown };
+      const source = typedLayer.source as string;
+      if (source !== undefined) {
+        //custom prefix separates the layers from mapbox predefined layers
+        return !currentLayers.includes(source) && source.startsWith('custom_');
       }
-    };
+    });
 
-    map.addControl(draw, 'bottom-left');
-    map.on('draw.create', createDrawing);
-    map.on('draw.update', createDrawing);
-
-    map.on('load', () => {
-      geoJSONList.forEach((layer) => {
-        map.addSource(layer.id, {
-          type: 'geojson',
-          data: layer.geoJSON,
+    layersToRemove?.forEach((layer) => {
+      removeLayerAndSource(layer.id);
+      console.log('removed', layer);
+    });
+  };
+  const zoomToLayer = (layer: any) => {
+    if (map) {
+      map.flyTo(layer);
+    }
+  };
+  useEffect(() => {
+    console.log('Kjører useEffect');
+    if (props.layer) {
+      const centeroid = center(props.layer?.geoJSON as AllGeoJSON);
+      const shift: number = -0.025; //To compensate for drawer on the left
+      if (centeroid) {
+        map?.flyTo({
+          center: [centeroid.geometry.coordinates[0] - shift, centeroid.geometry.coordinates[1]],
+          essential: true,
+          zoom: 12,
+          speed: 0.8,
+          curve: 1,
         });
+      }
+    }
+  }, [props.triggerZoom]);
 
-        const { type, paint } = determineType(layer);
+  useEffect(() => {
+    !map && attachMap();
+    // map && fillMap();
+  }, []);
 
-        switch (type) {
-          case 'fill':
-            map.addLayer({
-              id: layer.name,
-              type: type,
-              source: layer.id,
-              paint: paint as FillPaint,
-            });
-            break;
-          case 'circle':
-            map.addLayer({
-              id: layer.name,
-              type: type,
-              source: layer.id,
-              paint: paint as CirclePaint,
-            });
-            break;
-          case 'line':
-            map.addLayer({
-              id: layer.name,
-              type: type,
-              source: layer.id,
-              paint: paint as LinePaint,
-            });
-            break;
-          default:
-            throw new Error(`Unsupported layer type: ${type}`);
-        }
-        map.setLayoutProperty(layer.name, 'visibility', determineVisibility(layer));
-      });
-    });
+  useEffect(() => {
+    map && fillMap();
+  }, [geoJSONList]);
 
-    //to keep persistent position
-    map.on('move', () => {
-      setLng(Number(map.getCenter().lng.toFixed(4)));
-      setLat(Number(map.getCenter().lat.toFixed(4)));
-      setZoom(Number(map.getZoom().toFixed(2)));
-    });
+  //update baseMap style
+  useEffect(() => {
+    if (!mapRef.current) {
+      return;
+    }
+    map?.setStyle(baseMap);
+    //fill map once after style is changed
+    map?.once('styledata', () => fillMap());
+  }, [baseMap]);
 
-    return () => {
-      map.remove();
-    };
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [geoJSONList, baseMap]);
+  //delete layers
+  useEffect(() => {
+    removeLayers();
+  }, [geoJSONList]);
 
   return (
     <div>

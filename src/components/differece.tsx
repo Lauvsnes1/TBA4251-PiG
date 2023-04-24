@@ -5,13 +5,13 @@ import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
-import { uid } from 'uid';
 import differnce from '@turf/difference';
 import booleanOverlap from '@turf/boolean-overlap';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
 import { generateColor } from '../utils/genereateColor';
+import generateId from '../utils/generateId';
 
 function Difference(props: {
   handleCloseModal: () => void;
@@ -46,7 +46,8 @@ function Difference(props: {
             ) {
               const diffFeature: Feature<Polygon | MultiPolygon> = {
                 type: 'Feature',
-                properties: { ...feature1.properties, ...feature2.properties }, // combine properties from both input features
+                // combine properties from both input features
+                properties: { ...feature1.properties, ...feature2.properties },
                 geometry: diff.geometry,
               };
               differenceList.features.push(diffFeature);
@@ -73,7 +74,7 @@ function Difference(props: {
         let differenced = handleDifference();
         if (differenced?.features.length > 0) {
           const newObj: GeoJSONItem = {
-            id: uid(),
+            id: generateId(),
             name: createUniqueName(name),
             visible: true,
             color: generateColor(),

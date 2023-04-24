@@ -14,7 +14,6 @@ import {
 } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
-import { uid } from 'uid';
 import { Theme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -33,6 +32,7 @@ import buffer from '@turf/buffer';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import { generateColor } from '../utils/genereateColor';
+import generateId from '../utils/generateId';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -284,7 +284,7 @@ function Clip(props: {
       const clipped = handleClip_2();
       clipped?.forEach((value: FeatureCollection, key: string) => {
         const newObj: GeoJSONItem = {
-          id: uid(),
+          id: generateId(),
           name: generateClipName(key),
           visible: true,
           color: generateColor(),

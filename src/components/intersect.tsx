@@ -5,13 +5,13 @@ import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
-import { uid } from 'uid';
 import intersect from '@turf/intersect';
 import booleanOverlap from '@turf/boolean-overlap';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
 import { generateColor } from '../utils/genereateColor';
+import generateId from '../utils/generateId';
 
 function Intersect(props: {
   handleCloseModal: () => void;
@@ -70,7 +70,7 @@ function Intersect(props: {
         const intersected = handleIntersection();
         if (intersected.features.length > 0) {
           const newObj: GeoJSONItem = {
-            id: uid(),
+            id: generateId(),
             name: createUniqueName(name),
             visible: true,
             color: generateColor(),

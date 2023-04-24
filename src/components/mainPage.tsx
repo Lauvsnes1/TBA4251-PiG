@@ -46,6 +46,7 @@ import FeatureExtractor from './featureExtractor';
 import SVGVoronoi from '../icons/svgviewer-react-output';
 import Voronoi from './voronoi';
 import Settings from './settings';
+import { makeStyles } from '@mui/styles';
 
 const drawerWidth = 240;
 
@@ -55,6 +56,13 @@ interface Tool {
   icon: ElementType;
   component: JSX.Element;
 }
+
+const useStyles = makeStyles({
+  hovered: {
+    backgroundColor: '#f2f2f2',
+    boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+  },
+});
 
 export default function MainPage(props: {
   showAlert: (status: AlertColor, message: string) => void;
@@ -68,15 +76,17 @@ export default function MainPage(props: {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem | null>(null);
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
+  const [allVisible, setAllVisible] = useState(true);
+  const [triggerZoom, setTriggerZoom] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const classes = useStyles();
 
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
   const toggleVisibility = (layer: GeoJSONItem) => {
     const newObj: GeoJSONItem = { ...layer, visible: !layer.visible };
     setGeoJSONList((prevList) => {
@@ -84,6 +94,28 @@ export default function MainPage(props: {
       const updatedList = [...prevList]; // create a copy of the original list
       updatedList[index] = newObj; // replace the layer with the new object
       return updatedList;
+    });
+  };
+
+  const toggleOffAllVisibility = () => {
+    setAllVisible(false);
+    setGeoJSONList((prevList) => {
+      return prevList.map((layer) => {
+        // Toggle visibility for each layer
+        const newObj = { ...layer, visible: false };
+        return newObj;
+      });
+    });
+  };
+
+  const toggleOnAllVisibility = () => {
+    setAllVisible(true);
+    setGeoJSONList((prevList) => {
+      return prevList.map((layer) => {
+        // Toggle visibility for each layer
+        const newObj = { ...layer, visible: true };
+        return newObj;
+      });
     });
   };
 
@@ -121,6 +153,11 @@ export default function MainPage(props: {
   };
   const passAlert = (status: AlertColor, message: string) => {
     props.showAlert(status, message);
+  };
+
+  const zoomToLayer = (layer: GeoJSONItem) => {
+    setSelectedLayer(layer);
+    setTriggerZoom(!triggerZoom);
   };
 
   const tools: Tool[] = [
@@ -237,19 +274,38 @@ export default function MainPage(props: {
               </ListItem>
             ))}
           </List>
-          <Typography
-            variant="h6"
-            sx={{
-              display: 'flex',
-              alignContent: 'flex-start',
-              marginLeft: '10px',
-              fontWeight: 'bold',
-              paddingInline: '8px',
-              paddingBottom: '12px',
-            }}
-          >
-            Layers
-          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Typography
+              variant="h6"
+              sx={{
+                display: 'flex',
+                alignContent: 'flex-start',
+                marginLeft: '10px',
+                fontWeight: 'bold',
+                paddingInline: '8px',
+                paddingBottom: '12px',
+              }}
+            >
+              Layers
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', paddingRight: 2 }}>
+              {allVisible ? (
+                <VisibilityIcon
+                  onClick={toggleOffAllVisibility}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                  className={isHovered ? classes.hovered : ''}
+                />
+              ) : (
+                <VisibilityOffIcon
+                  onClick={toggleOnAllVisibility}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                  className={isHovered ? classes.hovered : ''}
+                />
+              )}
+            </Box>
+          </Box>
           <Divider />
           <List disablePadding sx={{ paddingTop: 0 }}>
             {geoJSONList.map((layer) => (
@@ -268,7 +324,7 @@ export default function MainPage(props: {
                         }}
                       >
                         <div>
-                          <DropDown layer={layer} />
+                          <DropDown layer={layer} zoomToLayer={zoomToLayer} />
                         </div>
                         <div onClick={(e) => handleShowColorPicker(e, layer)}>
                           <PaletteIcon htmlColor={layer.color} key={layer.id} />
@@ -319,7 +375,7 @@ export default function MainPage(props: {
               {modalComponent}
             </Box>
           </Modal>
-          <BaseMap />
+          <BaseMap layer={selectedLayer} triggerZoom={triggerZoom} />
         </Main>
       </Box>
     </ThemeProvider>

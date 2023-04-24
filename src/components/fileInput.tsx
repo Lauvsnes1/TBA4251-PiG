@@ -14,11 +14,11 @@ import {
 } from '@mui/material';
 import { FeatureCollection } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
-import { uid } from 'uid';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PaletteIcon from '@mui/icons-material/Palette';
 import ColorPicker from './colorPicker';
 import { generateColor } from '../utils/genereateColor';
+import generateId from '../utils/generateId';
 
 function FileInput(props: {
   handleCloseModal: () => void;
@@ -50,7 +50,7 @@ function FileInput(props: {
     if (files) {
       Array.from(files).forEach((file) => {
         if (file.type !== 'application/json' && file.type !== 'application/geojson') {
-          isJsons = false;
+          //isJsons = false;
         }
       });
       if (isJsons) {
@@ -79,6 +79,7 @@ function FileInput(props: {
               resolve(isGeoJSON ? content : null);
             } catch (error) {
               reject(error);
+              props.showAlert('error', 'Unsupported file type');
             }
           };
           reader.readAsText(file);
@@ -96,7 +97,7 @@ function FileInput(props: {
           //We take the name of the file except the file type at the end
           const name: string = uploadedFiles[nameCounter].name.split('.')[0];
           const newObj: GeoJSONItem = {
-            id: uid(),
+            id: generateId(),
             name: name,
             visible: true,
             color: generateColor(),

@@ -13,10 +13,10 @@ import { FeatureCollection } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
-import { uid } from 'uid';
 import { modalStyle } from './styledComponents';
 import Loading from './loading';
 import { generateColor } from '../utils/genereateColor';
+import generateId from '../utils/generateId';
 
 function FeatureExtractor(props: {
   handleCloseModal: () => void;
@@ -197,7 +197,7 @@ function FeatureExtractor(props: {
         setIsLoading(false);
       } else {
         const newObj: GeoJSONItem = {
-          id: uid(),
+          id: generateId(),
           name: selectedLayer?.name + '_ext',
           visible: true,
           color: generateColor(),
