@@ -130,7 +130,7 @@ export default function Settings() {
         aria-haspopup="true"
         onClick={handleClick}
       >
-        <MoreVertIcon />
+        <MoreVertIcon sx={{ color: 'white' }} />
       </IconButton>
       <Menu
         id="long-menu"

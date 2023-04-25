@@ -1,4 +1,4 @@
-import React, { ElementType, useState } from 'react';
+import React, { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Box, ThemeProvider } from '@mui/system';
 import Drawer from '@mui/material/Drawer';
@@ -29,6 +29,7 @@ import ColorPicker from './colorPicker';
 import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import DropDown from './dropDown';
+import pac from '../data/pac.jpg';
 
 import Settings from './settings';
 import { makeStyles } from '@mui/styles';
@@ -138,7 +139,7 @@ export default function MainPage(props: {
     <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex', backgroundColor: '#fafafa' }}>
         <CssBaseline />
-        <AppBar position="fixed" open={open} sx={{ display: 'flex', backgroundColor: '#2975a0e6' }}>
+        <AppBar position="fixed" open={open} sx={{ display: 'flex', backgroundColor: '#2975a0' }}>
           <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Box sx={{ diplay: 'flex', alignItems: 'center', flexDirection: 'row' }}>
               <IconButton
@@ -151,7 +152,8 @@ export default function MainPage(props: {
                 <MenuIcon />
               </IconButton>
             </Box>
-            <Box>
+            <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+              <Box component="img" sx={{ heigth: 60, width: 60 }} src={pac} />
               <Typography variant="h5" noWrap component="div">
                 QGEE's
               </Typography>
