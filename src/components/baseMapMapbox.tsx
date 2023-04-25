@@ -192,6 +192,8 @@ function BaseMap(props: {
 
   const createDrawing = (draw: MapboxDraw) => {
     const data = draw.getAll();
+    const type = data.features[0].geometry.type;
+    console.log('type: ', type);
     if (data.features.length > 0) {
       const uniqueName = generateId();
       const newObj: GeoJSONItem = {
@@ -199,7 +201,8 @@ function BaseMap(props: {
         name: uniqueName,
         visible: true,
         color: generateColor(),
-        opacity: 0.5,
+        //opacity for line and point initialized with 1.0, polygon 0.5
+        opacity: type === 'Point' || type === 'LineString' ? 1.0 : 0.5,
         geoJSON: data as FeatureCollection,
       };
       map?.addSource(newObj.id, {
