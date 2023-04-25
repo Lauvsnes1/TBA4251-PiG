@@ -48,9 +48,7 @@ function BaseMap(props: { triggerZoom: boolean; layer: GeoJSONItem | null }) {
     }
     if (map) {
       geoJSONList.forEach((layer) => {
-        console.log('layer', layer);
         const { type, paint } = determineType(layer);
-        console.log('Sources', map.getStyle().layers);
         if (!map.getSource(layer.id)) {
           map.addSource(layer.id, {
             type: 'geojson',
@@ -227,7 +225,9 @@ function BaseMap(props: { triggerZoom: boolean; layer: GeoJSONItem | null }) {
       displayControlsDefault: false,
       controls: {
         polygon: true,
+        point: true,
         trash: true,
+        line_string: true,
       },
     });
 
@@ -256,13 +256,7 @@ function BaseMap(props: { triggerZoom: boolean; layer: GeoJSONItem | null }) {
       console.log('removed', layer);
     });
   };
-  const zoomToLayer = (layer: any) => {
-    if (map) {
-      map.flyTo(layer);
-    }
-  };
   useEffect(() => {
-    console.log('Kjører useEffect');
     if (props.layer) {
       const centeroid = center(props.layer?.geoJSON as AllGeoJSON);
       const shift: number = -0.025; //To compensate for drawer on the left
