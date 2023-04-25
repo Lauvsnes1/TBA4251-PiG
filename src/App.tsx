@@ -4,40 +4,44 @@ import Alert, { AlertColor } from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 
 function App() {
-  const [alertComponent, setAlertComponent] = useState<JSX.Element>();
-  const [alert, setAlert] = useState<boolean>(false);
+  const [alerts, setAlerts] = useState<JSX.Element[]>([]);
 
   const showAlert = (status: AlertColor, message: string) => {
-    const componentToRender: JSX.Element | undefined = (
+    const newAlert: JSX.Element = (
       <Alert
         severity={status}
         variant="filled"
         style={{
           position: 'fixed',
-          top: 600,
+          top: 600 - alerts.length * 85, // Updated to position alerts over each other
           left: 30,
           right: 750,
           zIndex: 9999,
           transition: 'opacity 0.7s ease-in-out',
-          // opacity: alert ? 1 : 0,
-          // pointerEvents: alert ? "auto" : "none",
         }}
       >
         <AlertTitle>{status}</AlertTitle>
         {message}
       </Alert>
     );
-    setAlertComponent(componentToRender);
-    setAlert(true);
+
+    // Add the new alert to the array of alerts
+    setAlerts([...alerts, newAlert]);
+
+    // Remove the alert after 3 seconds
     setTimeout(() => {
-      setAlert(false);
-    }, 3000);
+      setAlerts((currentAlerts) => currentAlerts.filter((alert) => alert !== newAlert));
+    }, 4000);
   };
 
   return (
     <div id="root" className="App">
       <MainPage showAlert={showAlert} />
-      <div>{alert ? alertComponent : <></>}</div>
+      <div>
+        {alerts.map((alert, index) => (
+          <React.Fragment key={index}>{alert}</React.Fragment>
+        ))}
+      </div>
     </div>
   );
 }

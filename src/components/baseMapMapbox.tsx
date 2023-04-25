@@ -6,7 +6,7 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import { FeatureCollection } from 'geojson';
 import Modal from '@mui/material/Modal';
-import { Button, Typography } from '@mui/material';
+import { AlertColor, Button, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { modalStyle } from './styledComponents';
@@ -18,7 +18,11 @@ import { AllGeoJSON } from '@turf/helpers';
 const accessToken: string | any = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 mapboxgl.accessToken = accessToken;
 
-function BaseMap(props: { triggerZoom: boolean; layer: GeoJSONItem | null }) {
+function BaseMap(props: {
+  triggerZoom: boolean;
+  layer: GeoJSONItem | null;
+  showAlert: (status: AlertColor, message: string) => void;
+}) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem>();
@@ -254,6 +258,7 @@ function BaseMap(props: { triggerZoom: boolean; layer: GeoJSONItem | null }) {
     layersToRemove?.forEach((layer) => {
       removeLayerAndSource(layer.id);
       console.log('removed', layer);
+      props.showAlert('info', 'layer removed');
     });
   };
   useEffect(() => {
