@@ -89,7 +89,8 @@ function Difference(props: {
           setIsLoading(false);
           props.showAlert('error', 'Invalid Input');
         }
-      } catch {
+      } catch (e) {
+        console.log(e);
         setIsLoading(false);
         props.showAlert('error', 'Invalid Input');
       }

@@ -86,7 +86,8 @@ function Intersect(props: {
           setIsLoading(false);
           props.showAlert('warning', 'No Intersect');
         }
-      } catch {
+      } catch (e) {
+        console.log(e);
         setIsLoading(false);
         props.showAlert('error', 'Invalid Input');
       }

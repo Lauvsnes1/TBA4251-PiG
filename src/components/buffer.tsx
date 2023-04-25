@@ -70,7 +70,8 @@ function Buffer(props: {
         setIsLoading(false);
         props.handleCloseModal();
         props.showAlert('success', '');
-      } catch {
+      } catch (e) {
+        console.log(e);
         setIsLoading(false);
         props.showAlert('error', 'Invalid input');
       }

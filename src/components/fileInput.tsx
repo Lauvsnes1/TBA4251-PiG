@@ -110,6 +110,7 @@ function FileInput(props: {
           props.showAlert('success', 'File uploaded successfully');
         });
       } catch (error) {
+        console.log(error);
         props.showAlert('error', 'error uploading file');
       }
     };

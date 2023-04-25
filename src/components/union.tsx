@@ -68,23 +68,29 @@ function Union(props: {
   const handleOk = () => {
     setIsloading(true);
     setTimeout(() => {
-      const unioned = executeUnion();
-      if (unioned?.features.length > 0) {
-        const newObj: GeoJSONItem = {
-          id: generateId(),
-          name: createUniqueName(name),
-          visible: true,
-          color: generateColor(),
-          opacity: 0.5,
-          geoJSON: unioned as FeatureCollection,
-        };
-        setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+      try {
+        const unioned = executeUnion();
+        if (unioned?.features.length > 0) {
+          const newObj: GeoJSONItem = {
+            id: generateId(),
+            name: createUniqueName(name),
+            visible: true,
+            color: generateColor(),
+            opacity: 0.5,
+            geoJSON: unioned as FeatureCollection,
+          };
+          setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+          setIsloading(false);
+          props.handleCloseModal();
+          props.showAlert('success', '');
+        } else {
+          setIsloading(false);
+          props.showAlert('error', 'Invalid input');
+        }
+      } catch (e) {
         setIsloading(false);
-        props.handleCloseModal();
-        props.showAlert('success', '');
-      } else {
-        setIsloading(false);
-        props.showAlert('error', 'Invalid input');
+        console.log(e);
+        props.showAlert('error', 'invalid Input');
       }
     }, 10);
   };

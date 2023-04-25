@@ -123,7 +123,8 @@ function Dissolve(props: {
           setIsLoading(false);
           props.showAlert('warning', 'No Intersect');
         }
-      } catch {
+      } catch (error) {
+        console.log(error);
         setIsLoading(false);
         props.showAlert('error', 'Invalid Input');
       }
