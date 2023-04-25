@@ -331,12 +331,12 @@ function BaseMap(props: {
         aria-describedby="modal-modal-description"
       >
         <Box sx={modalStyle}>
-          <Typography>Select name for your costum layer:</Typography>
+          <Typography>Select name for your custom layer:</Typography>
           <TextField
-            style={{ paddingTop: '10px' }}
+            style={{ marginTop: '10px' }}
             id="outlined-basic"
             label="Name"
-            variant="outlined"
+            variant="filled"
             value={name}
             placeholder={name}
             onChange={(e) => setName(e.target.value)}
