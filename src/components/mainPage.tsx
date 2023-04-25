@@ -299,7 +299,7 @@ export default function MainPage(props: {
               {modalComponent}
             </Box>
           </Modal>
-          <BaseMap layer={selectedLayer} triggerZoom={triggerZoom} />
+          <BaseMap layer={selectedLayer} triggerZoom={triggerZoom} showAlert={props.showAlert} />
         </Main>
       </Box>
     </ThemeProvider>
