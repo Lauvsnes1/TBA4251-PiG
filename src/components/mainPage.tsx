@@ -117,12 +117,6 @@ export default function MainPage(props: {
       const componentToRender: JSX.Element | undefined = tools.find(
         (comp) => comp.id === id
       )?.component;
-      console.log(
-        'Id pressed: ',
-        id,
-        'component found: ',
-        tools.find((comp) => comp.id === id)?.name
-      );
       setModalComponent(componentToRender);
     } catch {
       console.log('Tool not found');

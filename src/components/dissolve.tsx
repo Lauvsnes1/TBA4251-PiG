@@ -5,20 +5,16 @@ import {
   Box,
   FormControl,
   FormControlLabel,
-  InputLabel,
   Radio,
   Select,
   Typography,
 } from '@mui/material';
-import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
+import { FeatureCollection, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
-import intersect from '@turf/intersect';
-import booleanOverlap from '@turf/boolean-overlap';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
-import processData from '../utils/flattenAndDissolve';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import flatten from '@turf/flatten';
@@ -162,7 +158,6 @@ function Dissolve(props: {
           }}
         >
           <Typography variant="h6"> Dissolve Tool:</Typography>
-
           <TextField
             style={{ paddingTop: '10px' }}
             id="Selected-buffer-layer"
