@@ -53,6 +53,8 @@ function BaseMap(props: {
     if (map) {
       geoJSONList.forEach((layer) => {
         const { type, paint } = determineType(layer);
+
+        //layer does not exist on map
         if (!map.getSource(layer.id)) {
           map.addSource(layer.id, {
             type: 'geojson',
@@ -87,7 +89,9 @@ function BaseMap(props: {
             default:
               throw new Error(`Unsupported layer type: ${type}`);
           }
-        } else {
+        }
+        //layer exist on map, update style
+        else {
           const geoJSONSource = map.getSource(layer.id) as mapboxgl.GeoJSONSource;
           geoJSONSource.setData(layer.geoJSON);
           map.once('sourcedata', () => {
@@ -98,15 +102,16 @@ function BaseMap(props: {
                 break;
               case 'line':
                 map.setPaintProperty(layer.id, 'line-color', layer.color);
-                //map.setPaintProperty(layer.id, 'line-opacity', layer.opacity);
+                map.setPaintProperty(layer.id, 'line-opacity', layer.opacity);
                 break;
               case 'circle':
                 map.setPaintProperty(layer.id, 'circle-color', layer.color);
-                //map.setPaintProperty(layer.id, 'circle-opacity', layer.opacity);
+                map.setPaintProperty(layer.id, 'circle-opacity', layer.opacity);
                 break;
             }
           });
         }
+        //update visibility
         map.setLayoutProperty(layer.id, 'visibility', determineVisibility(layer));
       });
     }
@@ -140,6 +145,7 @@ function BaseMap(props: {
           paint: {
             'circle-radius': 5,
             'circle-color': layer.color,
+            'circle-opacity': 1,
           },
         };
       case 'LineString':
@@ -148,6 +154,7 @@ function BaseMap(props: {
           paint: {
             'line-color': layer.color,
             'line-width': 2,
+            'line-opacity': 1,
           },
         };
       case 'Polygon':
@@ -213,7 +220,6 @@ function BaseMap(props: {
       }, 100);
     }
   };
-
   const attachMap = () => {
     if (!mapContainer.current) {
       return;
@@ -242,6 +248,7 @@ function BaseMap(props: {
     setMap(mapInit);
     mapRef.current = mapInit;
   };
+
   const removeLayers = () => {
     const currentLayers = geoJSONList.map((layer) => layer.id);
 

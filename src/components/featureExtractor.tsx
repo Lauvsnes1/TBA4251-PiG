@@ -71,7 +71,7 @@ function FeatureExtractor(props: {
     };
     let target: number | string = selectedValue;
 
-    //If input is a number, convert for easier comparison
+    //If input is a number, convert to number for easier comparison
     if (!isNaN(+target)) {
       target = Number(target);
     }
@@ -90,7 +90,7 @@ function FeatureExtractor(props: {
                 Object.prototype.hasOwnProperty.call(feature.properties, key) &&
                 feature.properties[key] === target
               ) {
-                // if it does, return true to include the feature in the filtered array
+                // if it matches, return true to include the feature in the filtered array
                 return true;
               }
             }
@@ -142,7 +142,8 @@ function FeatureExtractor(props: {
                   propValue > Number(target) &&
                   feature.properties[key] != null
                 ) {
-                  // if the property is a number and is greater than the selected value, return true to include the feature in the filtered array
+                  // if the property is a number and is greater than the selected value,
+                  // return true to include the feature in the filtered array
                   return true;
                 }
               }
