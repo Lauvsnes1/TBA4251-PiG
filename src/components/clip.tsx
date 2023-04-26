@@ -82,7 +82,11 @@ function Clip(props: {
 
     layerNames.forEach((item) => {
       const matchingLayer = geoJSONList.find((layer) => layer.name === item);
-      if (matchingLayer && matchingLayer.geoJSON.features[0].geometry.type === 'Polygon') {
+      if (
+        matchingLayer &&
+        (matchingLayer.geoJSON.features[0].geometry.type === 'Polygon' ||
+          matchingLayer.geoJSON.features[0].geometry.type === 'MultiPolygon')
+      ) {
         selectedPolygonLayers.push(matchingLayer);
       }
       if (matchingLayer && matchingLayer.geoJSON.features[0].geometry.type === 'LineString') {
@@ -182,10 +186,10 @@ function Clip(props: {
       };
 
       const polyFeatures = polyLayer.geoJSON.features.filter(
-        (feature) => feature.geometry.type === 'Polygon'
+        (feature) => feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'
       );
       const mainFeatures = selectedMainLayer?.geoJSON?.features.filter(
-        (feature) => feature.geometry.type === 'Polygon'
+        (feature) => feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'
       );
       if (!mainFeatures || !polyFeatures) {
         return;
@@ -194,8 +198,8 @@ function Clip(props: {
       mainFeatures.forEach((mainFeature) => {
         polyFeatures.forEach((polyFeature) => {
           const clipped = intersect(
-            mainFeature.geometry as Polygon,
-            polyFeature.geometry as Polygon
+            mainFeature.geometry as Polygon | MultiPolygon,
+            polyFeature.geometry as Polygon | MultiPolygon
           ) as Feature<Polygon | MultiPolygon>;
           if (clipped) {
             const originalFeature = polyFeature as Feature<Polygon>; // cast to Polygon feature for access to properties
@@ -222,7 +226,7 @@ function Clip(props: {
         (feature) => feature.geometry.type === 'LineString'
       );
       const mainFeatures = selectedMainLayer?.geoJSON?.features.filter(
-        (feature) => feature.geometry.type === 'Polygon'
+        (feature) => feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'
       );
       if (!mainFeatures || !lineFeatures) {
         return;

@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from 'react';
-import mapboxgl, { CirclePaint, FillPaint, LinePaint, LngLatLike } from 'mapbox-gl';
+import mapboxgl, { CirclePaint, FillPaint, LinePaint } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
@@ -47,6 +48,7 @@ function BaseMap(props: {
   };
 
   const fillMap = () => {
+    console.log('GeoJSONList', geoJSONList);
     if (!mapContainer.current) {
       return;
     }
