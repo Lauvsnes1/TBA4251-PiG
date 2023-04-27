@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import {
@@ -16,9 +17,11 @@ import { FeatureCollection } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PaletteIcon from '@mui/icons-material/Palette';
+import booleanEqual from '@turf/boolean-equal';
 import ColorPicker from './colorPicker';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
+import { getType } from '@turf/invariant';
 
 function FileInput(props: {
   handleCloseModal: () => void;
@@ -96,13 +99,15 @@ function FileInput(props: {
         geoJSONs.forEach((json) => {
           setGeoJSONs((prevGeoJSONs) => [...prevGeoJSONs, json as FeatureCollection]); //Local list of geoJSONs
           //We take the name of the file except the file type at the end
+          const layerType = determineLayerType(json as FeatureCollection);
           const name: string = uploadedFiles[nameCounter].name.split('.')[0];
           const newObj: GeoJSONItem = {
             id: generateId(),
             name: name,
             visible: true,
             color: generateColor(),
-            opacity: 0.5,
+            //Give 1 in opacity to lines and points
+            opacity: layerType === 'Point' || layerType === 'LineString' ? 1 : 0.5,
             geoJSON: json as FeatureCollection,
           };
           //update global list
@@ -140,11 +145,11 @@ function FileInput(props: {
   const filesToDisplay = (layer: GeoJSONItem) => {
     //To check which files to display in the modal
     //A bit cheating as it only checks the first geometry to be equal
-    if (geoJSONs.find((geoJSON) => geoJSON.features[0] === layer.geoJSON.features[0])) {
-      return true;
-    } else {
-      return false;
-    }
+    return geoJSONs.find((geoJSON) => booleanEqual(geoJSON.features[0], layer.geoJSON.features[0]));
+  };
+
+  const determineLayerType = (layer: FeatureCollection) => {
+    return getType(layer.features[0]);
   };
 
   return (
