@@ -7,6 +7,7 @@ import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import { saveAs } from 'file-saver';
 
 import { GeoJSONItem, useGeoJSONContext } from '../context/geoJSONContext';
 import { Button } from '@mui/material';
@@ -75,6 +76,24 @@ export default function LongMenu(props: {
     setOpen(false);
   }
 
+  async function downloadGeoJSON(): Promise<void> {
+    try {
+      // Parse the response as JSON
+      const data = props.layer.geoJSON;
+
+      // Convert the JSON object to a string
+      const geoJSONString = JSON.stringify(data, null, 2);
+
+      // Create a Blob object with the GeoJSON string
+      const blob = new Blob([geoJSONString], { type: 'application/json;charset=utf-8' });
+
+      // Save the Blob as a file using the FileSaver library
+      saveAs(blob, props.layer.name);
+    } catch (error) {
+      console.error('Error downloading GeoJSON:', error);
+    }
+  }
+
   return (
     <div style={{ display: 'contents' }}>
       <IconButton
@@ -105,7 +124,7 @@ export default function LongMenu(props: {
         <MenuItem onClick={handleShowEditModal}>{'Edit name'}</MenuItem>
         <MenuItem onClick={handleShowDeleteModal}>{'Delete'}</MenuItem>
         <MenuItem onClick={handleZoomToLayer}>{'Zoom to layer'}</MenuItem>
-
+        <MenuItem onClick={downloadGeoJSON}>{'Download layer'}</MenuItem>
         <Modal
           open={editModal}
           onClose={() => setEditModal(false)}
