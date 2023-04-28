@@ -28,12 +28,14 @@ import lineSplit from '@turf/line-split';
 import booleanCrosses from '@turf/boolean-crosses';
 import booleanContains from '@turf/boolean-contains';
 import booleanDisjoint from '@turf/boolean-disjoint';
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import buffer from '@turf/buffer';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import determineOpacity from '../utils/determineOpacity';
+import { Point } from '@turf/helpers';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -80,6 +82,7 @@ function Clip(props: {
   const findAllLayers = () => {
     const selectedPolygonLayers: GeoJSONItem[] = [];
     const selectedLineStringLayers: GeoJSONItem[] = [];
+    const selectedPointLayers: GeoJSONItem[] = [];
 
     layerNames.forEach((item) => {
       const matchingLayer = geoJSONList.find((layer) => layer.name === item);
@@ -93,8 +96,15 @@ function Clip(props: {
       if (matchingLayer && matchingLayer.geoJSON.features[0].geometry.type === 'LineString') {
         selectedLineStringLayers.push(matchingLayer);
       }
+      if (
+        matchingLayer &&
+        (matchingLayer.geoJSON.features[0].geometry.type === 'Point' ||
+          matchingLayer.geoJSON.features[0].geometry.type === 'MultiPoint')
+      ) {
+        selectedPointLayers.push(matchingLayer);
+      }
     });
-    return [selectedPolygonLayers, selectedLineStringLayers];
+    return [selectedPolygonLayers, selectedLineStringLayers, selectedPointLayers];
   };
 
   function handleClip() {
@@ -176,9 +186,10 @@ function Clip(props: {
   function handleClip_2() {
     const totalClippedList = new Map<string, FeatureCollection>();
     //Find all selectedlayers
-    const [selectedPolyLayers, selectedLineLayers] = findAllLayers();
+    const [selectedPolyLayers, selectedLineLayers, selectedPointLayers] = findAllLayers();
     console.log('SelectedLayers', selectedPolyLayers);
     console.log('SelectedLineLayers', selectedLineLayers);
+    console.log('selectedPointLayers', selectedPointLayers);
 
     selectedPolyLayers.forEach((polyLayer) => {
       const clipps: FeatureCollection = {
@@ -266,6 +277,34 @@ function Clip(props: {
       });
 
       totalClippedList.set(selectedLineLayer.name, clipps);
+    });
+
+    selectedPointLayers.forEach((pointLayer) => {
+      const clipps: FeatureCollection = {
+        type: 'FeatureCollection',
+        features: [],
+      };
+
+      const pointFeatures = pointLayer.geoJSON.features.filter(
+        (feature) => feature.geometry.type === 'Point'
+      );
+      const mainFeatures = selectedMainLayer?.geoJSON?.features.filter(
+        (feature) => feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'
+      );
+      if (!mainFeatures || !pointFeatures) {
+        return;
+      }
+      mainFeatures.forEach((mainFeature) => {
+        const polygon = mainFeature.geometry as Polygon;
+        pointFeatures.forEach((pointFeature) => {
+          const point = pointFeature.geometry as Point;
+          if (booleanPointInPolygon(point, polygon)) {
+            console.log('point in polygon');
+            clipps.features.push(pointFeature);
+          }
+        });
+      });
+      totalClippedList.set(pointLayer.name, clipps);
     });
 
     return totalClippedList;
@@ -410,8 +449,8 @@ function Clip(props: {
                 <Button variant="outlined" color="error" onClick={props.handleCloseModal}>
                   Cancel
                 </Button>
-                <Button onClick={handleOk} variant="outlined" sx={{ backgroundColor: '#2975a0' }}>
-                  OK
+                <Button onClick={handleOk} variant="contained" sx={{ backgroundColor: '#2975a0' }}>
+                  {'OK'}
                 </Button>
               </Box>
             </Box>
