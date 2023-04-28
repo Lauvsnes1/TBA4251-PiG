@@ -15,6 +15,7 @@ import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import center from '@turf/center';
 import { AllGeoJSON } from '@turf/helpers';
+import determineOpacity from '../utils/determineOpacity';
 
 const accessToken: string | any = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 mapboxgl.accessToken = accessToken;
@@ -194,8 +195,6 @@ function BaseMap(props: {
 
   const createDrawing = (draw: MapboxDraw) => {
     const data = draw.getAll();
-    const type = data.features[0].geometry.type;
-    console.log('type: ', type);
     if (data.features.length > 0) {
       const uniqueName = generateId();
       const newObj: GeoJSONItem = {
@@ -203,8 +202,7 @@ function BaseMap(props: {
         name: uniqueName,
         visible: true,
         color: generateColor(),
-        //opacity for line and point initialized with 1.0, polygon 0.5
-        opacity: type === 'Point' || type === 'LineString' ? 1.0 : 0.5,
+        opacity: determineOpacity(data),
         geoJSON: data as FeatureCollection,
       };
       map?.addSource(newObj.id, {

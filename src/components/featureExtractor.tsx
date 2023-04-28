@@ -17,6 +17,7 @@ import { modalStyle } from './styledComponents';
 import Loading from './loading';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
+import determineOpacity from '../utils/determineOpacity';
 
 function FeatureExtractor(props: {
   handleCloseModal: () => void;
@@ -202,7 +203,7 @@ function FeatureExtractor(props: {
           name: selectedLayer?.name + '_ext',
           visible: true,
           color: generateColor(),
-          opacity: 0.5,
+          opacity: determineOpacity(extract),
           geoJSON: extract as FeatureCollection,
         };
 

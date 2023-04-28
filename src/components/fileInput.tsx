@@ -22,6 +22,7 @@ import ColorPicker from './colorPicker';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import { getType } from '@turf/invariant';
+import determineOpacity from '../utils/determineOpacity';
 
 function FileInput(props: {
   handleCloseModal: () => void;
@@ -99,21 +100,20 @@ function FileInput(props: {
         geoJSONs.forEach((json) => {
           setGeoJSONs((prevGeoJSONs) => [...prevGeoJSONs, json as FeatureCollection]); //Local list of geoJSONs
           //We take the name of the file except the file type at the end
-          const layerType = determineLayerType(json as FeatureCollection);
           const name: string = uploadedFiles[nameCounter].name.split('.')[0];
           const newObj: GeoJSONItem = {
             id: generateId(),
             name: name,
             visible: true,
             color: generateColor(),
-            //Give 1 in opacity to lines and points
-            opacity: layerType === 'Point' || layerType === 'LineString' ? 1 : 0.5,
+            opacity: determineOpacity(json as FeatureCollection),
             geoJSON: json as FeatureCollection,
           };
           //update global list
           setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
           nameCounter++;
           props.showAlert('success', 'File(s) uploaded successfully');
+          console.log('Sending alert success!!');
         });
       } catch (error) {
         console.log(error);

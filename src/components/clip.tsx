@@ -33,6 +33,7 @@ import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
+import determineOpacity from '../utils/determineOpacity';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -292,7 +293,7 @@ function Clip(props: {
           name: generateClipName(key),
           visible: true,
           color: generateColor(),
-          opacity: 0.5,
+          opacity: determineOpacity(value),
           geoJSON: value as FeatureCollection,
         };
         setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
