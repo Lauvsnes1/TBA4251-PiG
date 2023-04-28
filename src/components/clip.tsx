@@ -299,7 +299,6 @@ function Clip(props: {
         pointFeatures.forEach((pointFeature) => {
           const point = pointFeature.geometry as Point;
           if (booleanPointInPolygon(point, polygon)) {
-            console.log('point in polygon');
             clipps.features.push(pointFeature);
           }
         });
