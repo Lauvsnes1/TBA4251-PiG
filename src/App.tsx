@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import MainPage from './components/mainPage';
 import Alert, { AlertColor } from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import { uid } from 'uid';
 
 function App() {
   const [alerts, setAlerts] = useState<JSX.Element[]>([]);
@@ -9,6 +10,7 @@ function App() {
   const showAlert = (status: AlertColor, message: string) => {
     const newAlert: JSX.Element = (
       <Alert
+        key={uid()}
         severity={status}
         variant="filled"
         style={{
@@ -30,8 +32,8 @@ function App() {
 
     // Remove the alert after 3 seconds
     setTimeout(() => {
-      setAlerts((currentAlerts) => currentAlerts.filter((alert) => alert !== newAlert));
-    }, 4000);
+      setAlerts((currentAlerts) => currentAlerts.filter((alert) => alert.key !== newAlert.key));
+    }, 3000);
   };
 
   return (
