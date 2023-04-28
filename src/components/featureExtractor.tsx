@@ -24,12 +24,13 @@ function FeatureExtractor(props: {
   showAlert: (status: AlertColor, message: string) => void;
 }) {
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem>();
-  const [selectedValue, setSelectedValue] = useState<string | number>('');
-  const [operation, setOperation] = useState<string>();
+  const [selectedValues, setSelectedValues] = useState<(string | number)[]>([]);
+  const [selectedOperations, setSelectedOperations] = useState<string[]>([]);
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
   const [uniqueProperties, setUniqueProperties] = useState<string[]>([]);
-  const [selectedProperty, setSelectedProperty] = useState<string>('');
+  const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [numRules, setNumRules] = useState<number>(1);
 
   const operations: string[] = ['=', '≠', '<', '>'];
 
@@ -57,136 +58,167 @@ function FeatureExtractor(props: {
   }, [selectedLayer]);
 
   const handleChoseProperty = (event: SelectChangeEvent) => {
-    setSelectedProperty(event.target.value);
+    setSelectedProperties([...selectedProperties, event.target.value]);
   };
 
   const handleChoseOperation = (event: SelectChangeEvent) => {
-    setOperation(event.target.value);
+    setSelectedOperations([...selectedOperations, event.target.value]);
   };
 
+  // const handleSelectedValues = (
+  //   event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  // ) => {
+  //   const val = event.target.value;
+  //   if(typeof(val) === 'number'){
+  //     setSelectedValues([...selectedValues,])
+  //   }
+  //   else if(typeof(val) === 'string'){
+
+  //   }
+  // };
+
   const handleExtract = () => {
-    console.log('selectedLayer:', selectedLayer);
     const extracted: FeatureCollection = {
       type: 'FeatureCollection',
       features: [],
     };
-    let target: number | string = selectedValue;
 
-    //If input is a number, convert to number for easier comparison
-    if (!isNaN(+target)) {
-      target = Number(target);
-    }
-    switch (operation) {
-      case '=':
-        console.log('case: equal');
-        if (
-          selectedLayer &&
-          selectedLayer.geoJSON.features &&
-          selectedLayer.geoJSON.features.length > 0
-        ) {
-          const matchingFeatures = selectedLayer.geoJSON.features.filter((feature) => {
-            // loop through each property in the feature
-            for (const key in feature.properties) {
-              if (
-                Object.prototype.hasOwnProperty.call(feature.properties, key) &&
-                feature.properties[key] === target
-              ) {
-                // if it matches, return true to include the feature in the filtered array
-                return true;
-              }
-            }
-            // if none of the properties match, return false to exclude the feature from the filtered array
-            return false;
-          });
-          extracted.features = matchingFeatures;
-        }
-        break;
+    for (let i = 0; i < numRules; i++) {
+      //let target: number | string = selectedValues[i];
+      let test = document.getElementById(`rule-${i}-value`) as HTMLInputElement;
 
-      case '≠':
-        console.log('Case: not equals');
-        if (
-          selectedLayer &&
-          selectedLayer.geoJSON.features &&
-          selectedLayer.geoJSON.features.length > 0
-        ) {
-          const matchingFeatures = selectedLayer.geoJSON.features.filter((feature) => {
-            // loop through each property in the feature
-            for (const key in feature.properties) {
-              if (
-                Object.prototype.hasOwnProperty.call(feature.properties, key) &&
-                feature.properties[key] === target
-              ) {
-                // if it does, return true to include the feature in the filtered array
-                return false;
-              }
-            }
-            // if none of the properties match, return false to exclude the feature from the filtered array
-            return true;
-          });
-          extracted.features = matchingFeatures;
-        }
-        break;
-      case '>':
-        console.log('Case: greater');
-        if (
-          selectedLayer &&
-          selectedLayer.geoJSON.features &&
-          selectedLayer.geoJSON.features.length > 0
-        ) {
-          const matchingFeatures = selectedLayer.geoJSON.features.filter((feature) => {
-            // loop through each property in the feature
-            for (const key in feature.properties) {
-              if (Object.prototype.hasOwnProperty.call(feature.properties, key)) {
-                const propValue = feature.properties[key];
+      let target: number | string = selectedValues[i];
+
+      console.log('test:', test);
+      console.log(selectedValues);
+      //If input is a number, convert to number for easier comparison
+      if (!isNaN(+target)) {
+        target = Number(target);
+      }
+      switch (selectedOperations[i]) {
+        case '=':
+          console.log('case: equal');
+          if (
+            selectedLayer &&
+            selectedLayer.geoJSON.features &&
+            selectedLayer.geoJSON.features.length > 0
+          ) {
+            console.log(
+              'came here with layer:',
+              selectedLayer,
+              'operation:',
+              selectedOperations[i],
+              'target:',
+              target
+            );
+            const matchingFeatures = selectedLayer.geoJSON.features.filter((feature) => {
+              // loop through each property in the feature
+              for (const key in feature.properties) {
                 if (
-                  typeof propValue === 'number' &&
-                  propValue > Number(target) &&
-                  feature.properties[key] != null
+                  Object.prototype.hasOwnProperty.call(feature.properties, key) &&
+                  feature.properties[key] === target
                 ) {
-                  // if the property is a number and is greater than the selected value,
-                  // return true to include the feature in the filtered array
+                  // if it matches, return true to include the feature in the filtered array
                   return true;
                 }
               }
-            }
-            // if none of the properties match, return false to exclude the feature from the filtered array
-            return false;
-          });
-          extracted.features = matchingFeatures;
-        }
-        break;
-      case '<':
-        console.log('Case: less');
-        if (
-          selectedLayer &&
-          selectedLayer.geoJSON.features &&
-          selectedLayer.geoJSON.features.length > 0
-        ) {
-          const matchingFeatures = selectedLayer.geoJSON.features.filter((feature) => {
-            // loop through each property in the feature
-            for (const key in feature.properties) {
-              console.log('featureProp', feature.properties[key], 'and target:', target);
-              if (
-                Object.prototype.hasOwnProperty.call(feature.properties, key) &&
-                feature.properties[key] != null &&
-                feature.properties[key] < target
-              ) {
-                // if it is, return true to include the feature in the filtered array
-                return true;
+              // if none of the properties match, return false to exclude the feature from the filtered array
+              return false;
+            });
+            console.log('matching features are:', matchingFeatures);
+            matchingFeatures.forEach((feat) => extracted.features.push(feat));
+          }
+          break;
+
+        case '≠':
+          console.log('Case: not equals');
+          if (
+            selectedLayer &&
+            selectedLayer.geoJSON.features &&
+            selectedLayer.geoJSON.features.length > 0
+          ) {
+            const matchingFeatures = selectedLayer.geoJSON.features.filter((feature) => {
+              // loop through each property in the feature
+              for (const key in feature.properties) {
+                if (
+                  Object.prototype.hasOwnProperty.call(feature.properties, key) &&
+                  feature.properties[key] === target
+                ) {
+                  // if it does, return true to include the feature in the filtered array
+                  return false;
+                }
               }
-            }
-            // if none of the properties match, return false to exclude the feature from the filtered array
-            return false;
-          });
-          extracted.features = matchingFeatures;
-        }
-        break;
+              // if none of the properties match, return false to exclude the feature from the filtered array
+              return true;
+            });
+            matchingFeatures.forEach((feat) => extracted.features.push(feat));
+          }
+          break;
+        case '>':
+          console.log('Case: greater');
+          if (
+            selectedLayer &&
+            selectedLayer.geoJSON.features &&
+            selectedLayer.geoJSON.features.length > 0
+          ) {
+            const matchingFeatures = selectedLayer.geoJSON.features.filter((feature) => {
+              // loop through each property in the feature
+              for (const key in feature.properties) {
+                if (Object.prototype.hasOwnProperty.call(feature.properties, key)) {
+                  const propValue = feature.properties[key];
+                  if (
+                    typeof propValue === 'number' &&
+                    propValue > Number(target) &&
+                    feature.properties[key] != null
+                  ) {
+                    // if the property is a number and is greater than the selected value,
+                    // return true to include the feature in the filtered array
+                    return true;
+                  }
+                }
+              }
+              // if none of the properties match, return false to exclude the feature from the filtered array
+              return false;
+            });
+            matchingFeatures.forEach((feat) => extracted.features.push(feat));
+          }
+          break;
+        case '<':
+          console.log('Case: less');
+          if (
+            selectedLayer &&
+            selectedLayer.geoJSON.features &&
+            selectedLayer.geoJSON.features.length > 0
+          ) {
+            const matchingFeatures = selectedLayer.geoJSON.features.filter((feature) => {
+              // loop through each property in the feature
+              for (const key in feature.properties) {
+                console.log('featureProp', feature.properties[key], 'and target:', target);
+                if (
+                  Object.prototype.hasOwnProperty.call(feature.properties, key) &&
+                  feature.properties[key] != null &&
+                  feature.properties[key] < target
+                ) {
+                  // if it is, return true to include the feature in the filtered array
+                  return true;
+                }
+              }
+              // if none of the properties match, return false to exclude the feature from the filtered array
+              return false;
+            });
+            matchingFeatures.forEach((feat) => extracted.features.push(feat));
+          }
+          break;
 
-      default:
-        break;
+        default:
+          break;
+      }
     }
+    setNumRules(1);
+    setSelectedOperations([]);
+    setSelectedProperties([]);
+    setSelectedValues([]);
 
-    // update state with the extracted features
     return extracted;
   };
 
@@ -253,56 +285,76 @@ function FeatureExtractor(props: {
               </MenuItem>
             ))}
           </TextField>
-          <div style={{ flexDirection: 'row', display: 'flex', justifyContent: 'space-between' }}>
-            <FormControl sx={{ m: 1, width: 150 }}>
-              <Typography variant="subtitle1" fontSize={1}>
-                <InputLabel sx={{ fontSize: 12 }} id="demo-multiple-chip-label">
-                  Select Property
-                </InputLabel>
-              </Typography>
-              <Select
-                variant="filled"
-                value={selectedProperty}
-                onChange={handleChoseProperty}
-                displayEmpty
-                inputProps={{ 'aria-label': 'Without label' }}
-                defaultValue=""
-              >
-                <MenuItem value=""></MenuItem>
-                {uniqueProperties.map((prop) => (
-                  <MenuItem key={prop} value={prop}>
-                    {prop}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl sx={{ m: 1, minWidth: 80 }}>
-              <InputLabel id="demo-multiple-chip-label">Operation</InputLabel>
-              <Select
-                variant="filled"
-                labelId="demo-simple-select-helper-label"
-                id="demo-simple-select-helper"
-                //value={operation}
-                label="Operation"
-                onChange={handleChoseOperation}
-                defaultValue=""
-              >
-                {operations.map((operation) => (
-                  <MenuItem key={operation} value={operation}>
-                    {operation}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl sx={{ m: 1, width: 150 }}>
-              <TextField
-                variant="filled"
-                label="Value"
-                onChange={(e) => setSelectedValue(e.target.value)}
-                defaultValue=""
-              ></TextField>
-            </FormControl>
+          {Array.from({ length: numRules }).map((_, index) => (
+            <div
+              key={index}
+              id={`rule-${index}`}
+              style={{ flexDirection: 'row', display: 'flex', justifyContent: 'space-between' }}
+            >
+              <FormControl sx={{ mt: 1, width: 150 }}>
+                <Typography variant="subtitle1" fontSize={1}>
+                  <InputLabel sx={{ fontSize: 12 }} id="demo-multiple-chip-label">
+                    Select Property
+                  </InputLabel>
+                </Typography>
+                <Select
+                  variant="filled"
+                  //value={selectedProperties[index]}
+                  onChange={handleChoseProperty}
+                  displayEmpty
+                  inputProps={{ 'aria-label': 'Without label' }}
+                  defaultValue=""
+                >
+                  <MenuItem value=""></MenuItem>
+                  {uniqueProperties.map((prop) => (
+                    <MenuItem key={prop} value={prop}>
+                      {prop}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl sx={{ m: 1, minWidth: 80 }}>
+                <InputLabel id="demo-multiple-chip-label">Operation</InputLabel>
+                <Select
+                  variant="filled"
+                  labelId="demo-simple-select-helper-label"
+                  id="demo-simple-select-helper"
+                  //value={operation}
+                  label="Operation"
+                  onChange={handleChoseOperation}
+                  defaultValue=""
+                >
+                  {operations.map((operation) => (
+                    <MenuItem key={operation} value={operation}>
+                      {operation}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl sx={{ mt: 1, width: 150 }}>
+                <TextField
+                  id={`rule-${index}-value`}
+                  variant="filled"
+                  label="Value"
+                  onChange={(e) => {
+                    const newSelectedValues = [...selectedValues];
+                    newSelectedValues[index] = e.target.value;
+                    setSelectedValues(newSelectedValues);
+                  }}
+                ></TextField>
+              </FormControl>
+            </div>
+          ))}
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: '#2975a0' }}
+              onClick={() => setNumRules(numRules + 1)}
+            >
+              Add Rule
+            </Button>
           </div>
+
           <div
             style={{
               flexDirection: 'row',
@@ -314,7 +366,7 @@ function FeatureExtractor(props: {
             <Button variant="outlined" color="error" onClick={props.handleCloseModal}>
               Cancel
             </Button>
-            <Button variant="outlined" onClick={handleOk}>
+            <Button variant="outlined" onClick={handleOk} sx={{ color: '#2975a0' }}>
               OK
             </Button>
           </div>

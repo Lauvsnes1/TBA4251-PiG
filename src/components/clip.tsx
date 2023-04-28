@@ -410,7 +410,7 @@ function Clip(props: {
                 <Button variant="outlined" color="error" onClick={props.handleCloseModal}>
                   Cancel
                 </Button>
-                <Button onClick={handleOk} variant="outlined">
+                <Button onClick={handleOk} variant="outlined" sx={{ backgroundColor: '#2975a0' }}>
                   OK
                 </Button>
               </Box>

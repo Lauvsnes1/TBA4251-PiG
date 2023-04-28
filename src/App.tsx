@@ -5,12 +5,14 @@ import AlertTitle from '@mui/material/AlertTitle';
 import { uid } from 'uid';
 
 function App() {
-  const [alerts, setAlerts] = useState<JSX.Element[]>([]);
+  const [alerts, setAlerts] = useState<{ id: string; element: JSX.Element }[]>([]);
 
   const showAlert = (status: AlertColor, message: string) => {
+    const id = uid();
+
     const newAlert: JSX.Element = (
       <Alert
-        key={uid()}
+        key={id}
         severity={status}
         variant="filled"
         style={{
@@ -28,11 +30,11 @@ function App() {
     );
 
     // Add the new alert to the array of alerts
-    setAlerts([...alerts, newAlert]);
+    setAlerts((prevAlerts) => [...prevAlerts, { id, element: newAlert }]);
 
     // Remove the alert after 3 seconds
     setTimeout(() => {
-      setAlerts((currentAlerts) => currentAlerts.filter((alert) => alert.key !== newAlert.key));
+      setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== id));
     }, 3000);
   };
 
@@ -40,8 +42,8 @@ function App() {
     <div id="root" className="App">
       <MainPage showAlert={showAlert} />
       <div>
-        {alerts.map((alert, index) => (
-          <React.Fragment key={index}>{alert}</React.Fragment>
+        {alerts.map((alert) => (
+          <React.Fragment key={alert.id}>{alert.element}</React.Fragment>
         ))}
       </div>
     </div>
