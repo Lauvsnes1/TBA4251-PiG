@@ -27,6 +27,10 @@ interface mapOption {
   img: string;
   apiString: string;
 }
+interface Position {
+  top: number;
+  left: number;
+}
 
 const useStyles = makeStyles({
   hovered: {
@@ -35,13 +39,15 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Settings() {
+export default function Settings(props: { startTutorial: (value: boolean) => void }) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [editMapModal, setEditMapModal] = useState(false);
   const { setBaseMap } = useGeoJSONContext();
   const [hoveredItemId, setHoveredItemId] = useState<number | null>(null);
+  const [mousePosition, setMousePosition] = useState<Position | undefined>(undefined);
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+
   const mapOptions: mapOption[] = [
     {
       id: 1,
@@ -94,6 +100,15 @@ export default function Settings() {
     },
   ];
 
+  const closeSubMenu = () => {
+    setMousePosition(undefined);
+  };
+
+  const startTutorial = () => {
+    props.startTutorial(true);
+    setMousePosition(undefined);
+  };
+
   const handleItemMouseEnter = (id: number) => {
     setHoveredItemId(id);
   };
@@ -105,6 +120,7 @@ export default function Settings() {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
     setOpen(true);
+    props.startTutorial(false);
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -118,6 +134,14 @@ export default function Settings() {
 
   const handleShowDeleteModal = () => {
     setEditMapModal(true);
+  };
+
+  const handleRightClick = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    setMousePosition({
+      top: event.clientY - 4,
+      left: event.clientX - 2,
+    });
   };
 
   return (
@@ -148,6 +172,20 @@ export default function Settings() {
         }}
       >
         <MenuItem onClick={handleShowDeleteModal}>{'Edit basemap'}</MenuItem>
+        <MenuItem onClick={handleRightClick} onContextMenu={handleRightClick}>
+          {'Start tutorial'}
+        </MenuItem>
+        <Menu
+          id="simple-context-menu"
+          anchorReference="anchorPosition"
+          anchorPosition={mousePosition}
+          keepMounted
+          open={Boolean(mousePosition)}
+          onClose={closeSubMenu}
+        >
+          <MenuItem onClick={startTutorial}>Sub-option 1</MenuItem>
+          <MenuItem onClick={closeSubMenu}>Sub-option 2</MenuItem>
+        </Menu>
 
         <Modal
           style={{ justifyContent: 'center', alignContent: 'center', display: 'flex' }}

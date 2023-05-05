@@ -13,6 +13,7 @@ import { FeatureCollection } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
+import InfoIcon from '@mui/icons-material/Info';
 import { modalStyle } from './styledComponents';
 import Loading from './loading';
 import { generateColor } from '../utils/genereateColor';
@@ -269,7 +270,11 @@ function FeatureExtractor(props: {
             width: '100%',
           }}
         >
-          <Typography variant="h6"> Feature extractor:</Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Typography variant="h6"> Feature extractor:</Typography>
+            <InfoIcon sx={{ alignContent: 'center', fontSize: 'small' }} />
+          </Box>
+
           <TextField
             style={{ paddingTop: '10px' }}
             id="Selected-buffer-layer"
