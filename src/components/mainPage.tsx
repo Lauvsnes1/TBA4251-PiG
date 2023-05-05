@@ -73,20 +73,13 @@ export default function MainPage(props: {
     console.log('index: ', index);
     if (open && index === 2) {
       // If the drawer is already open
+      console.log('came here');
       joyrideHelpers.current?.go(3);
     }
+    // if (type === 'tour:end' || type === 'step:close') {
+    //   setRunFeatureTutorial(false);
+    // }
   };
-
-  // Add an effect that calls refresh when drawerOpen changes
-  useEffect(() => {
-    if (open && joyrideHelpers.current) {
-      //joyrideHelpers.current.skip();
-    }
-  }, [open]);
-
-  useEffect(() => {
-    console.log('open:', open);
-  }, [open]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -175,11 +168,10 @@ export default function MainPage(props: {
           }}
           callback={handleJoyrideStepChange}
           continuous
-          scrollToFirstStep
-          hideCloseButton
           showProgress
           showSkipButton
         />
+
         <AppBar position="fixed" open={open} sx={{ display: 'flex', backgroundColor: '#2975a0' }}>
           <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Box sx={{ diplay: 'flex', alignItems: 'center', flexDirection: 'row' }}>

@@ -95,18 +95,4 @@ export const getSteps = [
       },
     },
   },
-  {
-    title: 'Feature extractor',
-    disableBeacon: true,
-    spotlightClicks: true,
-    content:
-      'Now lets find the fish species we are looking for, press the feature extractor button in the menu.',
-    target: '#feature-extractor',
-    offset: -10,
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
-  },
 ];
