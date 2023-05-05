@@ -89,6 +89,7 @@ export default function LongMenu(props: {
 
       // Save the Blob as a file using the FileSaver library
       saveAs(blob, props.layer.name);
+      setOpen(false);
     } catch (error) {
       console.error('Error downloading GeoJSON:', error);
     }

@@ -7,6 +7,7 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import intersect from '@turf/intersect';
 import booleanOverlap from '@turf/boolean-overlap';
+import booleanIntersect from '@turf/boolean-intersects';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
@@ -20,7 +21,7 @@ function Intersect(props: {
   const [selectedLayer1, setSelectedLayer1] = useState<GeoJSONItem>();
   const [selectedLayer2, setSelectedLayer2] = useState<GeoJSONItem>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [name, setName] = useState<string>('');
+  const [name, setName] = useState<string>('intersection');
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
 
@@ -35,13 +36,17 @@ function Intersect(props: {
       const layer2 = selectedLayer2?.geoJSON;
 
       const { processed1, processed2 } = processData(layer1, layer2);
+      console.log('processed1', processed1);
+      console.log('processed2', processed2);
 
       processed1.features.forEach((feature1) => {
         processed2?.features.forEach((feature2) => {
-          if (booleanOverlap(feature1, feature2)) {
+          if (booleanIntersect(feature1, feature2)) {
+            console.log('Overlap!');
             if (feature1.geometry.type === 'Polygon' && feature2.geometry.type === 'Polygon') {
               const intersection = intersect(feature1.geometry, feature2.geometry);
               // Check that there is an intersection at that its not added before
+              console.log('intersection', intersection);
               if (
                 intersection !== null &&
                 finalIntersections.features.every((feat) => !booleanOverlap(intersection, feat))
@@ -194,6 +199,7 @@ function Intersect(props: {
             onChange={(e) => setName(e.target.value)}
             style={{ paddingTop: '10px' }}
             variant="filled"
+            value={name}
           />
           <div
             style={{

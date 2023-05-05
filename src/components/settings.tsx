@@ -3,7 +3,7 @@ import { makeStyles } from '@mui/styles';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import SettingsIcon from '@mui/icons-material/Settings';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import NavDay from '../data/mapsImg/nav-day.png';
@@ -130,7 +130,7 @@ export default function Settings() {
         aria-haspopup="true"
         onClick={handleClick}
       >
-        <MoreVertIcon sx={{ color: 'white' }} />
+        <SettingsIcon sx={{ color: 'white' }} />
       </IconButton>
       <Menu
         id="long-menu"
