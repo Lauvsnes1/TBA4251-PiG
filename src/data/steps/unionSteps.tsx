@@ -8,7 +8,8 @@ export const unionSteps = [
         <p>
           {' '}
           As you can see, you have two different layers containg the surface of Trondheimsfjorden.
-          Lets make them into one layer.{' '}
+          Lets make them into one layer. Note that the eccecution of this algorithm may take several
+          minutes, depending on how large your dataset is, so be pacient.
         </p>
       </div>
     ),

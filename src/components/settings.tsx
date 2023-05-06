@@ -27,10 +27,10 @@ interface mapOption {
   img: string;
   apiString: string;
 }
-interface Position {
-  top: number;
-  left: number;
-}
+// interface Position {
+//   top: number;
+//   left: number;
+// }
 
 const useStyles = makeStyles({
   hovered: {
@@ -44,9 +44,10 @@ export default function Settings(props: { startTutorial: (value: boolean) => voi
   const [editMapModal, setEditMapModal] = useState(false);
   const { setBaseMap } = useGeoJSONContext();
   const [hoveredItemId, setHoveredItemId] = useState<number | null>(null);
-  const [mousePosition, setMousePosition] = useState<Position | undefined>(undefined);
+  // const [mousePosition, setMousePosition] = useState<Position | undefined>(undefined);
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [isStartet, setIsStarted] = useState<boolean>(false);
 
   const mapOptions: mapOption[] = [
     {
@@ -100,13 +101,18 @@ export default function Settings(props: { startTutorial: (value: boolean) => voi
     },
   ];
 
-  const closeSubMenu = () => {
-    setMousePosition(undefined);
-  };
+  // const closeSubMenu = () => {
+  //   setMousePosition(undefined);
+  // };
 
   const startTutorial = () => {
     props.startTutorial(true);
-    setMousePosition(undefined);
+    setOpen(false);
+    //setMousePosition(undefined);
+    setTimeout(() => {
+      //So it dosen´t appear before menu closing
+      setIsStarted(true);
+    }, 500);
   };
 
   const handleItemMouseEnter = (id: number) => {
@@ -136,13 +142,13 @@ export default function Settings(props: { startTutorial: (value: boolean) => voi
     setEditMapModal(true);
   };
 
-  const handleRightClick = (event: React.MouseEvent<HTMLElement>) => {
-    event.preventDefault();
-    setMousePosition({
-      top: event.clientY - 4,
-      left: event.clientX - 2,
-    });
-  };
+  // const handleRightClick = (event: React.MouseEvent<HTMLElement>) => {
+  //   event.preventDefault();
+  //   setMousePosition({
+  //     top: event.clientY - 4,
+  //     left: event.clientX - 2,
+  //   });
+  // };
 
   return (
     <div style={{ display: 'contents' }}>
@@ -172,21 +178,10 @@ export default function Settings(props: { startTutorial: (value: boolean) => voi
         }}
       >
         <MenuItem onClick={handleShowDeleteModal}>{'Edit basemap'}</MenuItem>
-        <MenuItem onClick={handleRightClick} onContextMenu={handleRightClick}>
-          {'Start tutorial'}
+        <MenuItem onClick={startTutorial}>
+          {' '}
+          {isStartet ? 'Continue tutorial' : 'Start tutorial'}
         </MenuItem>
-        <Menu
-          id="simple-context-menu"
-          anchorReference="anchorPosition"
-          anchorPosition={mousePosition}
-          keepMounted
-          open={Boolean(mousePosition)}
-          onClose={closeSubMenu}
-        >
-          <MenuItem onClick={startTutorial}>Sub-option 1</MenuItem>
-          <MenuItem onClick={closeSubMenu}>Sub-option 2</MenuItem>
-        </Menu>
-
         <Modal
           style={{ justifyContent: 'center', alignContent: 'center', display: 'flex' }}
           open={editMapModal}

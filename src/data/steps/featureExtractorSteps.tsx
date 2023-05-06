@@ -16,7 +16,7 @@ export const featureExtractorSteps = [
     disableBeacon: false,
     spotlightClicks: true,
     scrollDuration: 300,
-    content: <p> Choose the fisk-trondheimsimrådet as input layerrr. </p>,
+    content: <p> Choose the fiskeobservasjoner_clip as input layer. </p>,
     target: '#select-layer',
     placement: 'left' as 'left',
     styles: {

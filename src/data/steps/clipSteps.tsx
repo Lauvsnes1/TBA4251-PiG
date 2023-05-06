@@ -5,7 +5,7 @@ export const clipSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p> Let's clip your datasets to a better size to work with. </p>
+        <p> Let's clip your datasets so they become easier to work with. </p>
       </div>
     ),
     target: '#clip-header',

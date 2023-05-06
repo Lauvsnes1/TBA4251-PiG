@@ -7,8 +7,15 @@ export const getSteps = [
 
     disableBeacon: true,
     spotlightClicks: true,
-    content:
-      'Welcome to QGEE´s! In this tutorial you will learn how to use the basic tools. But first, if you are not running this application on Google Chrome, please change to Google Chrome. ',
+    content: (
+      <div>
+        <p>
+          Welcome to QGEE´s! In this tutorial you will learn how to use the basic tools. But first,
+          if you are not running this application on Google Chrome, please change to Google Chrome.{' '}
+        </p>
+      </div>
+    ),
+
     target: '#qgees',
   },
   {
@@ -19,8 +26,9 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          In this tutorial we will try to find the best sea fishing spots in near Trondheim. So lets
-          start!
+          In this tutorial we will try to find the best sea fishing spots in near Trondheim. The
+          tutorial goes in several steps, so if you don't know what to do, go back to the menu where
+          you initially startet the tutorial. Good luck!
         </p>
       </div>
     ),
@@ -36,7 +44,11 @@ export const getSteps = [
 
     disableBeacon: false,
     spotlightClicks: true,
-    content: 'Press the menu on the left to open the drawer full of GIS tools.',
+    content: (
+      <div>
+        <p>'Press the menu on the left to open the drawer and discover the GIS tools.'</p>
+      </div>
+    ),
     target: '#icon-button',
     styles: {
       options: {
@@ -46,7 +58,6 @@ export const getSteps = [
   },
   {
     title: 'Load data',
-
     disableBeacon: false,
     spotlightClicks: true,
     content: (
@@ -60,7 +71,7 @@ export const getSteps = [
             color="blue"
           >
             {' '}
-            this
+            <span style={{ textDecoration: 'underline' }}> this</span>
           </a>{' '}
           folder.
           <br /> <span style={{ fontWeight: 'bold' }}>NB:</span> You have to enter into each file
@@ -78,12 +89,14 @@ export const getSteps = [
   },
   {
     title: 'Load data',
-
     disableBeacon: false,
     spotlightClicks: true,
     content: (
       <div>
-        <p>Now press the load data button and upload the files you downloaded from GitHub.</p>
+        <p>
+          Now, exit the tutorial and press the load data button and upload the files you downloaded
+          from GitHub.
+        </p>
       </div>
     ),
     target: '#load-data',
@@ -101,7 +114,7 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          You can see that the datasets are very big, so we want to clip them to smaller datasets.
+          As you can see, that the datasets are huge, so we want to clip them to smaller datasets.
           Now, press the polygon-draw button in the left bottom corner, and draw a reasonable
           polygon around Trondheim, the size should be something like this:
         </p>
@@ -200,13 +213,34 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          Now that we have our desired fish spots, let's make a buffer to find out where we can
+          Now that we have our desired fish species, let's make a buffer to find out where we can
           fish. Press the buffer button and look for the <InfoIcon sx={{ paddingTop: '6px' }} />{' '}
           button to continue the guide.
         </p>
       </div>
     ),
     target: '#buffer',
+    offset: -10,
+    styles: {
+      options: {
+        zIndex: 10000,
+      },
+    },
+  },
+  {
+    title: 'Union',
+    disableBeacon: false,
+    spotlightClicks: true,
+    content: (
+      <div>
+        <p>
+          You can see that the ocean layer, Trondheimsfjorden is divided into two different layers,
+          we want to fix that. Press the 'Union' button and look for the{' '}
+          <InfoIcon sx={{ paddingTop: '6px' }} /> button to continue the guide.
+        </p>
+      </div>
+    ),
+    target: '#union',
     offset: -10,
     styles: {
       options: {

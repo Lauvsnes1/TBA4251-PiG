@@ -190,7 +190,7 @@ export default function MainPage(props: {
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <Box component="img" sx={{ heigth: 60, width: 60 }} src={pac} />
               <Typography id="qgees" variant="h5" noWrap component="div">
-                QGEE's
+                QGEE'S
               </Typography>
             </Box>
             <Box>
