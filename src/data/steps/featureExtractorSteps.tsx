@@ -1,7 +1,7 @@
 export const featureExtractorSteps = [
   {
     title: 'Feature extractor',
-    disableBeacon: true,
+    disableBeacon: false,
     spotlightClicks: true,
     content: <p> Now we will try to extract your favorite fish species from the dataset. </p>,
     target: '#feature-ex-header',
@@ -13,10 +13,12 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: true,
+    disableBeacon: false,
     spotlightClicks: true,
-    content: <p> Choose the fisk-trondheimsimrådet as input layer. </p>,
+    scrollDuration: 300,
+    content: <p> Choose the fisk-trondheimsimrådet as input layerrr. </p>,
     target: '#select-layer',
+    placement: 'left' as 'left',
     styles: {
       options: {
         zIndex: 10000,
@@ -25,7 +27,7 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: true,
+    disableBeacon: false,
     spotlightClicks: true,
     content: <p> Choose the property "Norsk Navn". </p>,
     target: '#select-prop',
@@ -37,7 +39,7 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: true,
+    disableBeacon: false,
     spotlightClicks: true,
     content: <p> Choose the operation "=" </p>,
     target: '#select-operation',
@@ -49,7 +51,7 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: true,
+    disableBeacon: false,
     spotlightClicks: true,
     content: <p> Type in "kveite" in the text input. </p>,
     target: '#rule-0-value',
@@ -61,7 +63,7 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: true,
+    disableBeacon: false,
     spotlightClicks: true,
     content: (
       <div>
@@ -93,7 +95,7 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: true,
+    disableBeacon: false,
     spotlightClicks: true,
     content: <p> Then press the ok button. </p>,
     target: '#ok-button',

@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent, useRef } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
-import Joyride, { StoreHelpers } from 'react-joyride';
+import Joyride, { CallBackProps, StoreHelpers } from 'react-joyride';
 
 const useStyles = makeStyles({
   hovered: {
@@ -12,9 +12,9 @@ const useStyles = makeStyles({
 function Tutorial(props: { runTour: boolean; steps: any; setRunTour: (toggle: boolean) => void }) {
   const joyrideHelpers = useRef<StoreHelpers | null>(null);
 
-  const handleJoyrideCallback = (data: { index: any; type: any }) => {
-    const { index, type } = data;
-    if (type === 'tour:end' || type === 'step:close') {
+  const handleJoyrideCallback = (data: CallBackProps) => {
+    const { action, index, status, type } = data;
+    if (type === 'tour:end' || type === 'step:close' || action === 'close') {
       props.setRunTour(false);
     }
   };
