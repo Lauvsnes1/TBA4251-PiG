@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useEffect, useRef } from 'react';
+import React, { useState, ChangeEvent, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import {
   AlertColor,
@@ -9,7 +9,6 @@ import {
   SelectChangeEvent,
   Typography,
 } from '@mui/material';
-import Joyride, { StoreHelpers } from 'react-joyride';
 import { FeatureCollection } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
@@ -22,6 +21,7 @@ import generateId from '../utils/generateId';
 import determineOpacity from '../utils/determineOpacity';
 import makeStyles from '@mui/styles/makeStyles';
 import { featureExtractorSteps } from '../data/steps/featureExtractorSteps';
+import Tutorial from './tutorial';
 
 const useStyles = makeStyles({
   hovered: {
@@ -44,7 +44,6 @@ function FeatureExtractor(props: {
   const [numRules, setNumRules] = useState<number>(1);
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [runTour, setRunTour] = useState<boolean>(false);
-  const joyrideHelpers = useRef<StoreHelpers | null>(null);
   const classes = useStyles();
 
   const operations: string[] = ['=', '≠', '<', '>'];
@@ -256,13 +255,6 @@ function FeatureExtractor(props: {
     setSelectedLayer(chosenLayer);
   };
 
-  const handleFeatureJoyrideCallback = (data: { index: any; type: any }) => {
-    const { index, type } = data;
-    if (type === 'tour:end' || type === 'step:close') {
-      setRunTour(false);
-    }
-  };
-
   return (
     <>
       {isLoading ? (
@@ -279,18 +271,7 @@ function FeatureExtractor(props: {
             width: '100%',
           }}
         >
-          <Joyride
-            steps={featureExtractorSteps}
-            run={runTour}
-            getHelpers={(helpers) => {
-              joyrideHelpers.current = helpers;
-            }}
-            callback={handleFeatureJoyrideCallback}
-            continuous
-            scrollToFirstStep
-            showProgress
-            showSkipButton
-          />
+          <Tutorial runTour={runTour} steps={featureExtractorSteps} setRunTour={setRunTour} />
           <Box
             sx={{
               display: 'flex',
@@ -411,7 +392,7 @@ function FeatureExtractor(props: {
             <Button variant="outlined" color="error" onClick={props.handleCloseModal}>
               Cancel
             </Button>
-            <Button variant="outlined" onClick={handleOk} sx={{ color: '#2975a0' }}>
+            <Button id="ok-button" variant="outlined" onClick={handleOk} sx={{ color: '#2975a0' }}>
               OK
             </Button>
           </div>

@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useRef } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
 import { AlertColor, Box, Typography } from '@mui/material';
 import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
@@ -14,9 +14,9 @@ import processData from '../utils/flattenAndDissolve';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import InfoIcon from '@mui/icons-material/Info';
-import Joyride, { StoreHelpers } from 'react-joyride';
 import { intersectSteps } from '../data/steps/intersectSteps';
 import makeStyles from '@mui/styles/makeStyles';
+import Tutorial from './tutorial';
 
 const useStyles = makeStyles({
   hovered: {
@@ -35,17 +35,9 @@ function Intersect(props: {
   const [name, setName] = useState<string>('intersection');
   const [runTour, setRunTour] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
-  const joyrideHelpers = useRef<StoreHelpers | null>(null);
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
   const classes = useStyles();
-
-  const handleFeatureJoyrideCallback = (data: { index: any; type: any }) => {
-    const { index, type } = data;
-    if (type === 'tour:end' || type === 'step:close') {
-      setRunTour(false);
-    }
-  };
 
   function handleIntersection() {
     const finalIntersections: FeatureCollection = {
@@ -182,18 +174,7 @@ function Intersect(props: {
             width: '100%',
           }}
         >
-          <Joyride
-            steps={intersectSteps}
-            run={runTour}
-            getHelpers={(helpers) => {
-              joyrideHelpers.current = helpers;
-            }}
-            callback={handleFeatureJoyrideCallback}
-            continuous
-            scrollToFirstStep
-            showProgress
-            showSkipButton
-          />
+          <Tutorial runTour={runTour} steps={intersectSteps} setRunTour={setRunTour} />
           <Box
             sx={{
               display: 'flex',

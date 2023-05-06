@@ -91,4 +91,16 @@ export const featureExtractorSteps = [
       },
     },
   },
+  {
+    title: 'Feature extractor',
+    disableBeacon: true,
+    spotlightClicks: true,
+    content: <p> Then press the ok button. </p>,
+    target: '#ok-button',
+    styles: {
+      options: {
+        zIndex: 10000,
+      },
+    },
+  },
 ];

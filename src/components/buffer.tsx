@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useRef } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
 import { AlertColor, Box, Typography } from '@mui/material';
 import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
@@ -12,9 +12,9 @@ import { generateColor } from '../utils/genereateColor';
 import processData from '../utils/flattenAndDissolve';
 import generateId from '../utils/generateId';
 import InfoIcon from '@mui/icons-material/Info';
-import Joyride, { StoreHelpers } from 'react-joyride';
 import { bufferSteps } from '../data/steps/bufferSteps';
 import makeStyles from '@mui/styles/makeStyles';
+import Tutorial from './tutorial';
 
 const useStyles = makeStyles({
   hovered: {
@@ -33,20 +33,12 @@ function Buffer(props: {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [runTour, setRunTour] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
-  const joyrideHelpers = useRef<StoreHelpers | null>(null);
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
   const classes = useStyles();
 
   const handleBufferSelect = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setBufferRadius(Number(e.target.value));
-  };
-
-  const handleFeatureJoyrideCallback = (data: { index: any; type: any }) => {
-    const { index, type } = data;
-    if (type === 'tour:end' || type === 'step:close') {
-      setRunTour(false);
-    }
   };
 
   const handleBuffer = () => {
@@ -139,18 +131,7 @@ function Buffer(props: {
             width: '100%',
           }}
         >
-          <Joyride
-            steps={bufferSteps}
-            run={runTour}
-            getHelpers={(helpers) => {
-              joyrideHelpers.current = helpers;
-            }}
-            callback={handleFeatureJoyrideCallback}
-            continuous
-            scrollToFirstStep
-            showProgress
-            showSkipButton
-          />
+          <Tutorial runTour={runTour} steps={bufferSteps} setRunTour={setRunTour} />
           <Box
             sx={{
               display: 'flex',
