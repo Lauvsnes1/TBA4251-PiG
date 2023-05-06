@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, useRef } from 'react';
 import Button from '@mui/material/Button';
 import { AlertColor, Box, Typography } from '@mui/material';
 import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
@@ -13,6 +13,17 @@ import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
+import InfoIcon from '@mui/icons-material/Info';
+import Joyride, { StoreHelpers } from 'react-joyride';
+import { intersectSteps } from '../data/steps/intersectSteps';
+import makeStyles from '@mui/styles/makeStyles';
+
+const useStyles = makeStyles({
+  hovered: {
+    backgroundColor: '#f2f2f2',
+    boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+  },
+});
 
 function Intersect(props: {
   handleCloseModal: () => void;
@@ -22,8 +33,19 @@ function Intersect(props: {
   const [selectedLayer2, setSelectedLayer2] = useState<GeoJSONItem>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [name, setName] = useState<string>('intersection');
+  const [runTour, setRunTour] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const joyrideHelpers = useRef<StoreHelpers | null>(null);
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
+  const classes = useStyles();
+
+  const handleFeatureJoyrideCallback = (data: { index: any; type: any }) => {
+    const { index, type } = data;
+    if (type === 'tour:end' || type === 'step:close') {
+      setRunTour(false);
+    }
+  };
 
   function handleIntersection() {
     const finalIntersections: FeatureCollection = {
@@ -160,11 +182,42 @@ function Intersect(props: {
             width: '100%',
           }}
         >
-          <Typography variant="h6"> Intersect Tool:</Typography>
+          <Joyride
+            steps={intersectSteps}
+            run={runTour}
+            getHelpers={(helpers) => {
+              joyrideHelpers.current = helpers;
+            }}
+            callback={handleFeatureJoyrideCallback}
+            continuous
+            scrollToFirstStep
+            showProgress
+            showSkipButton
+          />
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Typography id="intersect-header" variant="h6">
+              Intersect tool:
+            </Typography>
+            <InfoIcon
+              sx={{ alignContent: 'center' }}
+              titleAccess="Tutorial"
+              onClick={() => setRunTour(true)}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              className={isHovered ? classes.hovered : ''}
+            />
+          </Box>
 
           <TextField
             style={{ paddingTop: '10px' }}
-            id="Selected-buffer-layer"
+            id="select-layer-1"
             select
             label="Select layer one"
             onChange={handleChoseLayer1}
@@ -179,7 +232,7 @@ function Intersect(props: {
           </TextField>
           <TextField
             style={{ paddingTop: '10px' }}
-            id="Selected-buffer-layer"
+            id="select-layer-2"
             select
             label="Select layer two"
             onChange={handleChoseLayer2}
@@ -194,7 +247,7 @@ function Intersect(props: {
           </TextField>
           <TextField
             required
-            id="outlined-required"
+            id="custom-name"
             label="Name of output layer"
             onChange={(e) => setName(e.target.value)}
             style={{ paddingTop: '10px' }}
@@ -212,7 +265,7 @@ function Intersect(props: {
             <Button variant="outlined" color="error" onClick={props.handleCloseModal}>
               Cancel
             </Button>
-            <Button onClick={handleOk} variant="outlined">
+            <Button id="ok-button" onClick={handleOk} variant="outlined">
               OK
             </Button>
           </div>
