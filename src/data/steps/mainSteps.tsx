@@ -82,6 +82,23 @@ export const getSteps = [
     },
   },
   {
+    title: 'Clipping',
+    disableBeacon: true,
+    spotlightClicks: true,
+    content: (
+      <div>
+        <p>You can see that the datasets are very big, lets clip them to more approachable size.</p>
+      </div>
+    ),
+    target: '#feature-extractor',
+    offset: -10,
+    styles: {
+      options: {
+        zIndex: 10000,
+      },
+    },
+  },
+  {
     title: 'Feature extractor',
     disableBeacon: true,
     spotlightClicks: true,
@@ -89,6 +106,28 @@ export const getSteps = [
       'Now lets find the fish species we are looking for, press the feature extractor button in the menu.',
     target: '#feature-extractor',
     offset: -10,
+    styles: {
+      options: {
+        zIndex: 10000,
+      },
+    },
+  },
+  {
+    title: 'Clipping',
+    disableBeacon: true,
+    spotlightClicks: true,
+    content: (
+      <div>
+        <p>
+          Now, press the polygon-draw button in the left bottom corner, and draw a polygon around
+          Trondheim, the size should be something like this:
+        </p>
+        <img src="" placeholder="image cut to come" />
+        <p>Name your new layer my-clip.</p>
+      </div>
+    ),
+    target: '#basemap',
+    placement: 'bottom' as 'bottom',
     styles: {
       options: {
         zIndex: 10000,

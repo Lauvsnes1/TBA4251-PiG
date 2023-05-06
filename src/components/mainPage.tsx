@@ -31,7 +31,7 @@ import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import DropDown from './dropDown';
 import pac from '../data/pac.jpg';
-import { getSteps } from '../data/steps';
+import { getSteps } from '../data/steps/mainSteps';
 
 import Settings from './settings';
 import { makeStyles } from '@mui/styles';

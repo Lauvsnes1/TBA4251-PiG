@@ -21,7 +21,7 @@ import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import determineOpacity from '../utils/determineOpacity';
 import makeStyles from '@mui/styles/makeStyles';
-import { featureExtractorSteps } from '../data/featureExtractorSteps';
+import { featureExtractorSteps } from '../data/steps/featureExtractorSteps';
 
 const useStyles = makeStyles({
   hovered: {
@@ -305,6 +305,7 @@ function FeatureExtractor(props: {
             </Typography>
             <InfoIcon
               sx={{ alignContent: 'center' }}
+              titleAccess="Tutorial"
               onClick={() => setRunTour(true)}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}

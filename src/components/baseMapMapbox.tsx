@@ -315,6 +315,7 @@ function BaseMap(props: {
     <div>
       <div
         ref={mapContainer}
+        id="basemap"
         className="map-container"
         style={{
           position: 'absolute',
