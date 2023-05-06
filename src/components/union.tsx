@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, useRef } from 'react';
 import Button from '@mui/material/Button';
 import { AlertColor, Box, Typography } from '@mui/material';
 import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
@@ -12,6 +12,17 @@ import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
+import InfoIcon from '@mui/icons-material/Info';
+import Joyride, { StoreHelpers } from 'react-joyride';
+import { unionSteps } from '../data/steps/unionSteps';
+import makeStyles from '@mui/styles/makeStyles';
+
+const useStyles = makeStyles({
+  hovered: {
+    backgroundColor: '#f2f2f2',
+    boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+  },
+});
 
 function Union(props: {
   handleCloseModal: () => void;
@@ -21,8 +32,12 @@ function Union(props: {
   const [selectedLayer2, setSelectedLayer2] = useState<GeoJSONItem>();
   const [name, setName] = useState<string>('union');
   const [isLoading, setIsloading] = useState(false);
+  const [runTour, setRunTour] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const joyrideHelpers = useRef<StoreHelpers | null>(null);
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
+  const classes = useStyles();
 
   const executeUnion = () => {
     const unionsLst: FeatureCollection = {
@@ -95,6 +110,13 @@ function Union(props: {
     }, 10);
   };
 
+  const handleFeatureJoyrideCallback = (data: { index: any; type: any }) => {
+    const { index, type } = data;
+    if (type === 'tour:end' || type === 'step:close') {
+      setRunTour(false);
+    }
+  };
+
   const handleChoseLayer1 = (event: ChangeEvent<HTMLInputElement>) => {
     let isPoly = true;
     const chosenLayer: GeoJSONItem = geoJSONList.find(
@@ -157,11 +179,41 @@ function Union(props: {
             width: '100%',
           }}
         >
-          <Typography variant="h6">Union Tool:</Typography>
-
+          <Joyride
+            steps={unionSteps}
+            run={runTour}
+            getHelpers={(helpers) => {
+              joyrideHelpers.current = helpers;
+            }}
+            callback={handleFeatureJoyrideCallback}
+            continuous
+            scrollToFirstStep
+            showProgress
+            showSkipButton
+          />
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Typography id="union-header" variant="h6">
+              Union Tool:
+            </Typography>
+            <InfoIcon
+              sx={{ alignContent: 'center' }}
+              titleAccess="Tutorial"
+              onClick={() => setRunTour(true)}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              className={isHovered ? classes.hovered : ''}
+            />
+          </Box>
           <TextField
             style={{ paddingTop: '10px' }}
-            id="Selected-buffer-layer"
+            id="select-first"
             select
             label="Select layer one"
             onChange={handleChoseLayer1}
@@ -176,7 +228,7 @@ function Union(props: {
           </TextField>
           <TextField
             style={{ paddingTop: '10px' }}
-            id="Selected-buffer-layer"
+            id="select-second"
             select
             label="Select layer two"
             onChange={handleChoseLayer2}
@@ -191,7 +243,7 @@ function Union(props: {
           </TextField>
           <TextField
             required
-            id="outlined-required"
+            id="costum-name"
             label="Name of output layer"
             onChange={(e) => setName(e.target.value)}
             style={{ paddingTop: '10px' }}
@@ -209,7 +261,7 @@ function Union(props: {
             <Button variant="outlined" color="error" onClick={props.handleCloseModal}>
               Cancel
             </Button>
-            <Button onClick={handleOk} variant="outlined">
+            <Button id="ok-button" onClick={handleOk} variant="outlined">
               OK
             </Button>
           </div>
