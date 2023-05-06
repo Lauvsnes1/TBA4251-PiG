@@ -22,6 +22,7 @@ import { AlertColor } from '@mui/material';
 
 interface Tool {
   id: number;
+  joyride: string;
   name: string;
   icon: ElementType;
   component: JSX.Element;
@@ -34,54 +35,63 @@ const getToolsList = (
   return [
     {
       id: 1,
+      joyride: 'load-data',
       name: 'Load data',
       icon: FileUploadIcon,
       component: <FileInput handleCloseModal={closeModal} showAlert={passAlert} />,
     },
     {
       id: 2,
-      name: 'Feature extracor',
+      joyride: 'feature-extractor',
+      name: 'Feature extractor',
       icon: ScienceIcon,
       component: <FeatureExtractor handleCloseModal={closeModal} showAlert={passAlert} />,
     },
     {
       id: 3,
+      joyride: 'buffer',
       name: 'Buffer',
       icon: RemoveCircleIcon,
       component: <Buffer handleCloseModal={closeModal} showAlert={passAlert} />,
     },
     {
       id: 4,
+      joyride: 'intersect',
       name: 'Intersect',
       icon: JoinInnerIcon,
       component: <Intersect handleCloseModal={closeModal} showAlert={passAlert} />,
     },
     {
       id: 5,
+      joyride: 'union',
       name: 'Union',
       icon: JoinFullIcon,
       component: <Union handleCloseModal={closeModal} showAlert={passAlert} />,
     },
     {
       id: 6,
+      joyride: 'difference',
       name: 'Difference',
       icon: RemoveIcon,
       component: <Difference handleCloseModal={closeModal} showAlert={passAlert} />,
     },
     {
       id: 7,
+      joyride: 'clip',
       name: 'Clip',
       icon: ContentCutIcon,
       component: <Clip handleCloseModal={closeModal} showAlert={passAlert} />,
     },
     {
       id: 8,
+      joyride: 'dissolve',
       name: 'Dissolve',
       icon: SVGDissolve,
       component: <Dissolve handleCloseModal={closeModal} showAlert={passAlert} />,
     },
     {
       id: 9,
+      joyride: 'voronoi',
       name: 'Voronoi',
       icon: SVGVoronoi,
       component: <Voronoi handleCloseModal={closeModal} showAlert={passAlert} />,

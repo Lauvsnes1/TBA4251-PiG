@@ -13,11 +13,22 @@ import { FeatureCollection } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
+import InfoIcon from '@mui/icons-material/Info';
 import { modalStyle } from './styledComponents';
 import Loading from './loading';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import determineOpacity from '../utils/determineOpacity';
+import makeStyles from '@mui/styles/makeStyles';
+import { featureExtractorSteps } from '../data/steps/featureExtractorSteps';
+import Tutorial from './tutorial';
+
+const useStyles = makeStyles({
+  hovered: {
+    backgroundColor: '#f2f2f2',
+    boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+  },
+});
 
 function FeatureExtractor(props: {
   handleCloseModal: () => void;
@@ -31,6 +42,9 @@ function FeatureExtractor(props: {
   const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [numRules, setNumRules] = useState<number>(1);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [runTour, setRunTour] = useState<boolean>(false);
+  const classes = useStyles();
 
   const operations: string[] = ['=', '≠', '<', '>'];
 
@@ -64,18 +78,6 @@ function FeatureExtractor(props: {
   const handleChoseOperation = (event: SelectChangeEvent) => {
     setSelectedOperations([...selectedOperations, event.target.value]);
   };
-
-  // const handleSelectedValues = (
-  //   event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  // ) => {
-  //   const val = event.target.value;
-  //   if(typeof(val) === 'number'){
-  //     setSelectedValues([...selectedValues,])
-  //   }
-  //   else if(typeof(val) === 'string'){
-
-  //   }
-  // };
 
   const handleExtract = () => {
     const extracted: FeatureCollection = {
@@ -269,10 +271,32 @@ function FeatureExtractor(props: {
             width: '100%',
           }}
         >
-          <Typography variant="h6"> Feature extractor:</Typography>
+          <Tutorial runTour={runTour} steps={featureExtractorSteps} setRunTour={setRunTour} />
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Typography id="feature-ex-header" variant="h6">
+              {' '}
+              Feature extractor:
+            </Typography>
+            <InfoIcon
+              sx={{ alignContent: 'center' }}
+              titleAccess="Tutorial"
+              onClick={() => setRunTour(true)}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              className={isHovered ? classes.hovered : ''}
+            />
+          </Box>
+
           <TextField
             style={{ paddingTop: '10px' }}
-            id="Selected-buffer-layer"
+            id="select-layer"
             select
             label="Select layer:"
             onChange={handleChoseLayer}
@@ -298,6 +322,7 @@ function FeatureExtractor(props: {
                   </InputLabel>
                 </Typography>
                 <Select
+                  id="select-prop"
                   variant="filled"
                   //value={selectedProperties[index]}
                   onChange={handleChoseProperty}
@@ -318,7 +343,7 @@ function FeatureExtractor(props: {
                 <Select
                   variant="filled"
                   labelId="demo-simple-select-helper-label"
-                  id="demo-simple-select-helper"
+                  id="select-operation"
                   //value={operation}
                   label="Operation"
                   onChange={handleChoseOperation}
@@ -347,6 +372,7 @@ function FeatureExtractor(props: {
           ))}
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <Button
+              id="add-rule-button"
               variant="contained"
               sx={{ backgroundColor: '#2975a0' }}
               onClick={() => setNumRules(numRules + 1)}
@@ -366,7 +392,7 @@ function FeatureExtractor(props: {
             <Button variant="outlined" color="error" onClick={props.handleCloseModal}>
               Cancel
             </Button>
-            <Button variant="outlined" onClick={handleOk} sx={{ color: '#2975a0' }}>
+            <Button id="ok-button" variant="outlined" onClick={handleOk} sx={{ color: '#2975a0' }}>
               OK
             </Button>
           </div>

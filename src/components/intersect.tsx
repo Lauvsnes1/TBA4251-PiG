@@ -13,6 +13,17 @@ import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
+import InfoIcon from '@mui/icons-material/Info';
+import { intersectSteps } from '../data/steps/intersectSteps';
+import makeStyles from '@mui/styles/makeStyles';
+import Tutorial from './tutorial';
+
+const useStyles = makeStyles({
+  hovered: {
+    backgroundColor: '#f2f2f2',
+    boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+  },
+});
 
 function Intersect(props: {
   handleCloseModal: () => void;
@@ -22,8 +33,11 @@ function Intersect(props: {
   const [selectedLayer2, setSelectedLayer2] = useState<GeoJSONItem>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [name, setName] = useState<string>('intersection');
+  const [runTour, setRunTour] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
+  const classes = useStyles();
 
   function handleIntersection() {
     const finalIntersections: FeatureCollection = {
@@ -160,11 +174,31 @@ function Intersect(props: {
             width: '100%',
           }}
         >
-          <Typography variant="h6"> Intersect Tool:</Typography>
+          <Tutorial runTour={runTour} steps={intersectSteps} setRunTour={setRunTour} />
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Typography id="intersect-header" variant="h6">
+              Intersect tool:
+            </Typography>
+            <InfoIcon
+              sx={{ alignContent: 'center' }}
+              titleAccess="Tutorial"
+              onClick={() => setRunTour(true)}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              className={isHovered ? classes.hovered : ''}
+            />
+          </Box>
 
           <TextField
             style={{ paddingTop: '10px' }}
-            id="Selected-buffer-layer"
+            id="select-layer-1"
             select
             label="Select layer one"
             onChange={handleChoseLayer1}
@@ -179,7 +213,7 @@ function Intersect(props: {
           </TextField>
           <TextField
             style={{ paddingTop: '10px' }}
-            id="Selected-buffer-layer"
+            id="select-layer-2"
             select
             label="Select layer two"
             onChange={handleChoseLayer2}
@@ -194,7 +228,7 @@ function Intersect(props: {
           </TextField>
           <TextField
             required
-            id="outlined-required"
+            id="custom-name"
             label="Name of output layer"
             onChange={(e) => setName(e.target.value)}
             style={{ paddingTop: '10px' }}
@@ -212,7 +246,7 @@ function Intersect(props: {
             <Button variant="outlined" color="error" onClick={props.handleCloseModal}>
               Cancel
             </Button>
-            <Button onClick={handleOk} variant="outlined">
+            <Button id="ok-button" onClick={handleOk} variant="outlined">
               OK
             </Button>
           </div>

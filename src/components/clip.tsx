@@ -16,7 +16,7 @@ import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import { Theme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
+import makeStyles from '@mui/styles/makeStyles';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -31,11 +31,14 @@ import booleanDisjoint from '@turf/boolean-disjoint';
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import buffer from '@turf/buffer';
 import Loading from './loading';
+import InfoIcon from '@mui/icons-material/Info';
 import { modalStyle } from './styledComponents';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import determineOpacity from '../utils/determineOpacity';
 import { Point } from '@turf/helpers';
+import { clipSteps } from '../data/steps/clipSteps';
+import Tutorial from './tutorial';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -57,6 +60,13 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
   };
 }
 
+const useStyles = makeStyles({
+  hovered: {
+    backgroundColor: '#f2f2f2',
+    boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+  },
+});
+
 function Clip(props: {
   handleCloseModal: () => void;
   showAlert: (status: AlertColor, message: string) => void;
@@ -64,7 +74,10 @@ function Clip(props: {
   const [selectedMainLayer, setSelectedMainLayer] = useState<GeoJSONItem>();
   const [layerNames, setLayerNames] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [runTour, setRunTour] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
   const theme = useTheme();
+  const classes = useStyles();
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
 
@@ -375,85 +388,94 @@ function Clip(props: {
             width: '100%',
           }}
         >
-          {isLoading ? (
-            <CircularProgress />
-          ) : (
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                flexWrap: 'wrap',
-                width: '100%',
-              }}
-            >
-              <Typography sx={{ paddingBottom: '10px' }} variant="h6">
-                Clipping Tool:
-              </Typography>
+          <Tutorial runTour={runTour} steps={clipSteps} setRunTour={setRunTour} />
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Typography id="clip-header" sx={{ paddingBottom: '10px' }} variant="h6">
+              Clipping Tool:
+            </Typography>
+            <InfoIcon
+              sx={{ alignContent: 'center' }}
+              titleAccess="Tutorial"
+              onClick={() => setRunTour(true)}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              className={isHovered ? classes.hovered : ''}
+            />
+          </Box>
 
-              <FormControl>
-                <InputLabel id="demo-multiple-chip-label">Select layers:</InputLabel>
-                <Select
-                  style={{ margin: 0 }}
-                  id="demo-multiple-chip"
-                  label="Select layers"
-                  multiple
-                  value={layerNames}
-                  onChange={handleChange}
-                  input={<FilledInput id="select-multiple-chip" placeholder="chip" />}
-                  renderValue={(selected) => (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {selected.map((value) => (
-                        <Chip key={value} label={value} />
-                      ))}
-                    </Box>
-                  )}
-                  //defaultValue={[""]}
-                  MenuProps={MenuProps}
-                >
-                  {geoJSONList.map((layer) => (
-                    <MenuItem
-                      key={layer.id}
-                      value={layer.name}
-                      style={getStyles(layer.name, layerNames, theme)}
-                    >
-                      {layer.name}
-                    </MenuItem>
+          <FormControl>
+            <InputLabel id="demo-multiple-chip-label">Select layers:</InputLabel>
+            <Select
+              style={{ margin: 0 }}
+              id="multiple-layer-select"
+              label="Select layers"
+              multiple
+              value={layerNames}
+              onChange={handleChange}
+              input={<FilledInput id="select-multiple-chip" placeholder="chip" />}
+              renderValue={(selected) => (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {selected.map((value) => (
+                    <Chip key={value} label={value} />
                   ))}
-                </Select>
-              </FormControl>
-              <TextField
-                style={{ paddingTop: '10px' }}
-                id="Selected-buffer-layer"
-                select
-                label="Select layer to fit"
-                onChange={handleChoseLayer}
-                variant="filled"
-                defaultValue=""
-              >
-                {geoJSONList.map((layer) => (
-                  <MenuItem key={layer.id} value={layer.id}>
-                    {layer.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-around',
-                  paddingTop: '10px',
-                }}
-              >
-                <Button variant="outlined" color="error" onClick={props.handleCloseModal}>
-                  Cancel
-                </Button>
-                <Button onClick={handleOk} variant="contained" sx={{ backgroundColor: '#2975a0' }}>
-                  {'OK'}
-                </Button>
-              </Box>
-            </Box>
-          )}
+                </Box>
+              )}
+              //defaultValue={[""]}
+              MenuProps={MenuProps}
+            >
+              {geoJSONList.map((layer) => (
+                <MenuItem
+                  key={layer.id}
+                  value={layer.name}
+                  style={getStyles(layer.name, layerNames, theme)}
+                >
+                  {layer.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField
+            style={{ paddingTop: '10px' }}
+            id="select-clip-layer"
+            select
+            label="Select layer to fit"
+            onChange={handleChoseLayer}
+            variant="filled"
+            defaultValue=""
+          >
+            {geoJSONList.map((layer) => (
+              <MenuItem key={layer.id} value={layer.id}>
+                {layer.name}
+              </MenuItem>
+            ))}
+          </TextField>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              paddingTop: '10px',
+            }}
+          >
+            <Button variant="outlined" color="error" onClick={props.handleCloseModal}>
+              Cancel
+            </Button>
+            <Button
+              id="ok-button"
+              onClick={handleOk}
+              variant="contained"
+              sx={{ backgroundColor: '#2975a0' }}
+            >
+              {'OK'}
+            </Button>
+          </Box>
         </Box>
       )}
     </>

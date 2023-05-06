@@ -27,6 +27,10 @@ interface mapOption {
   img: string;
   apiString: string;
 }
+// interface Position {
+//   top: number;
+//   left: number;
+// }
 
 const useStyles = makeStyles({
   hovered: {
@@ -35,13 +39,16 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Settings() {
+export default function Settings(props: { startTutorial: (value: boolean) => void }) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [editMapModal, setEditMapModal] = useState(false);
   const { setBaseMap } = useGeoJSONContext();
   const [hoveredItemId, setHoveredItemId] = useState<number | null>(null);
+  // const [mousePosition, setMousePosition] = useState<Position | undefined>(undefined);
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [isStartet, setIsStarted] = useState<boolean>(false);
+
   const mapOptions: mapOption[] = [
     {
       id: 1,
@@ -94,6 +101,20 @@ export default function Settings() {
     },
   ];
 
+  // const closeSubMenu = () => {
+  //   setMousePosition(undefined);
+  // };
+
+  const startTutorial = () => {
+    props.startTutorial(true);
+    setOpen(false);
+    //setMousePosition(undefined);
+    setTimeout(() => {
+      //So it dosen´t appear before menu closing
+      setIsStarted(true);
+    }, 500);
+  };
+
   const handleItemMouseEnter = (id: number) => {
     setHoveredItemId(id);
   };
@@ -105,6 +126,7 @@ export default function Settings() {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
     setOpen(true);
+    props.startTutorial(false);
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -119,6 +141,14 @@ export default function Settings() {
   const handleShowDeleteModal = () => {
     setEditMapModal(true);
   };
+
+  // const handleRightClick = (event: React.MouseEvent<HTMLElement>) => {
+  //   event.preventDefault();
+  //   setMousePosition({
+  //     top: event.clientY - 4,
+  //     left: event.clientX - 2,
+  //   });
+  // };
 
   return (
     <div style={{ display: 'contents' }}>
@@ -148,7 +178,10 @@ export default function Settings() {
         }}
       >
         <MenuItem onClick={handleShowDeleteModal}>{'Edit basemap'}</MenuItem>
-
+        <MenuItem onClick={startTutorial}>
+          {' '}
+          {isStartet ? 'Continue tutorial' : 'Start tutorial'}
+        </MenuItem>
         <Modal
           style={{ justifyContent: 'center', alignContent: 'center', display: 'flex' }}
           open={editMapModal}

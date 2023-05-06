@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Box, ThemeProvider } from '@mui/system';
 import Drawer from '@mui/material/Drawer';
@@ -23,6 +23,7 @@ import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
 import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
+import Joyride, { CallBackProps, StoreHelpers } from 'react-joyride';
 import getToolsList from '../data/tools';
 import BaseMap from './baseMapMapbox';
 import ColorPicker from './colorPicker';
@@ -30,6 +31,7 @@ import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import DropDown from './dropDown';
 import pac from '../data/pac.jpg';
+import { getSteps } from '../data/steps/mainSteps';
 
 import Settings from './settings';
 import { makeStyles } from '@mui/styles';
@@ -58,7 +60,26 @@ export default function MainPage(props: {
   const [allVisible, setAllVisible] = useState(true);
   const [triggerZoom, setTriggerZoom] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [runTour, setRunTour] = useState<boolean>(false);
+  const joyrideHelpers = useRef<StoreHelpers | null>(null);
   const classes = useStyles();
+
+  const startTutorial = (value: boolean) => {
+    setRunTour(value);
+  };
+
+  const handleJoyrideStepChange = (data: CallBackProps) => {
+    const { action, index, status, type } = data;
+    console.log('index: ', index);
+    if (open && index === 2) {
+      // If the drawer is already open
+      console.log('came here');
+      joyrideHelpers.current?.go(3);
+    }
+    if (type === 'tour:end' || type === 'step:close' || action === 'close') {
+      setRunTour(false);
+    }
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -139,27 +160,41 @@ export default function MainPage(props: {
     <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex', backgroundColor: '#fafafa' }}>
         <CssBaseline />
+        <Joyride
+          steps={getSteps}
+          run={runTour}
+          getHelpers={(helpers) => {
+            joyrideHelpers.current = helpers;
+          }}
+          callback={handleJoyrideStepChange}
+          continuous
+          showProgress
+          showSkipButton
+        />
+
         <AppBar position="fixed" open={open} sx={{ display: 'flex', backgroundColor: '#2975a0' }}>
           <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Box sx={{ diplay: 'flex', alignItems: 'center', flexDirection: 'row' }}>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerOpen}
-                edge="start"
-                sx={{ mr: 2, ...(open && { display: 'none' }) }}
-              >
-                <MenuIcon />
-              </IconButton>
+              <Box id="icon-button">
+                <IconButton
+                  color="inherit"
+                  aria-label="open drawer"
+                  onClick={handleDrawerOpen}
+                  edge="start"
+                  sx={{ mr: 2, ...(open && { display: 'none' }) }}
+                >
+                  <MenuIcon />
+                </IconButton>
+              </Box>
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <Box component="img" sx={{ heigth: 60, width: 60 }} src={pac} />
-              <Typography variant="h5" noWrap component="div">
-                QGEE's
+              <Typography id="qgees" variant="h5" noWrap component="div">
+                QGEE'S
               </Typography>
             </Box>
             <Box>
-              <Settings />
+              <Settings startTutorial={startTutorial} />
             </Box>
           </Toolbar>
         </AppBar>
@@ -188,7 +223,7 @@ export default function MainPage(props: {
           <Divider />
           <List disablePadding sx={{ paddingTop: 0 }}>
             {tools.map((element, index) => (
-              <ListItem key={element.name} disablePadding>
+              <ListItem key={element.name} id={element.joyride} disablePadding>
                 <ListItemButton onClick={() => showModal(element.id)}>
                   <ListItemIcon>
                     <element.icon />
@@ -231,7 +266,7 @@ export default function MainPage(props: {
             </Box>
           </Box>
           <Divider />
-          <List disablePadding sx={{ paddingTop: 0 }}>
+          <List id="layer-list" disablePadding sx={{ paddingTop: 0 }}>
             {geoJSONList.map((layer) => (
               <div key={layer.id}>
                 <Stack spacing={10} direction="row">
@@ -247,7 +282,7 @@ export default function MainPage(props: {
                           alignItems: 'center',
                         }}
                       >
-                        <div>
+                        <div id="drop-down-menu">
                           <DropDown layer={layer} zoomToLayer={zoomToLayer} />
                         </div>
                         <div onClick={(e) => handleShowColorPicker(e, layer)}>
