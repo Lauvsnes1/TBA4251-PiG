@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, useRef } from 'react';
 import Button from '@mui/material/Button';
 import { AlertColor, Box, Typography } from '@mui/material';
 import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
@@ -11,6 +11,17 @@ import { modalStyle } from './styledComponents';
 import { generateColor } from '../utils/genereateColor';
 import processData from '../utils/flattenAndDissolve';
 import generateId from '../utils/generateId';
+import InfoIcon from '@mui/icons-material/Info';
+import Joyride, { StoreHelpers } from 'react-joyride';
+import { bufferSteps } from '../data/steps/bufferSteps';
+import makeStyles from '@mui/styles/makeStyles';
+
+const useStyles = makeStyles({
+  hovered: {
+    backgroundColor: '#f2f2f2',
+    boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+  },
+});
 
 function Buffer(props: {
   handleCloseModal: () => void;
@@ -20,11 +31,22 @@ function Buffer(props: {
   const [name, setName] = useState<string>('buffered');
   const [bufferRadius, setBufferRadius] = useState<number>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [runTour, setRunTour] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const joyrideHelpers = useRef<StoreHelpers | null>(null);
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
+  const classes = useStyles();
 
   const handleBufferSelect = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setBufferRadius(Number(e.target.value));
+  };
+
+  const handleFeatureJoyrideCallback = (data: { index: any; type: any }) => {
+    const { index, type } = data;
+    if (type === 'tour:end' || type === 'step:close') {
+      setRunTour(false);
+    }
   };
 
   const handleBuffer = () => {
@@ -117,11 +139,42 @@ function Buffer(props: {
             width: '100%',
           }}
         >
-          <Typography variant="h6"> Buffer Tool:</Typography>
+          <Joyride
+            steps={bufferSteps}
+            run={runTour}
+            getHelpers={(helpers) => {
+              joyrideHelpers.current = helpers;
+            }}
+            callback={handleFeatureJoyrideCallback}
+            continuous
+            scrollToFirstStep
+            showProgress
+            showSkipButton
+          />
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Typography id="buffer-header" variant="h6">
+              Buffer tool:
+            </Typography>
+            <InfoIcon
+              sx={{ alignContent: 'center' }}
+              titleAccess="Tutorial"
+              onClick={() => setRunTour(true)}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              className={isHovered ? classes.hovered : ''}
+            />
+          </Box>
 
           <TextField
             style={{ paddingTop: '10px' }}
-            id="Selected-buffer-layer"
+            id="select-layer"
             select
             label="Select layer"
             onChange={handleChoseLayer}
@@ -135,7 +188,7 @@ function Buffer(props: {
             ))}
           </TextField>
           <TextField
-            id="outlined-error"
+            id="select-buffer-radius"
             label="Buffer radius in [m]"
             onChange={(e) => handleBufferSelect(e)}
             style={{ paddingTop: '10px' }}
@@ -145,7 +198,7 @@ function Buffer(props: {
           />
           <TextField
             required
-            id="outlined-required"
+            id="custom-name"
             label="Name of output layer"
             onChange={(e) => setName(e.target.value)}
             style={{ paddingTop: '10px' }}
@@ -163,6 +216,7 @@ function Buffer(props: {
               Cancel
             </Button>
             <Button
+              id="ok-button"
               onClick={handleOk}
               variant="outlined"
               sx={{ color: '#2975a0', borderColor: '#2975a0' }}
