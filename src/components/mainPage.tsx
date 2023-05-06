@@ -23,7 +23,7 @@ import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
 import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
-import Joyride, { StoreHelpers } from 'react-joyride';
+import Joyride, { CallBackProps, StoreHelpers } from 'react-joyride';
 import getToolsList from '../data/tools';
 import BaseMap from './baseMapMapbox';
 import ColorPicker from './colorPicker';
@@ -60,25 +60,25 @@ export default function MainPage(props: {
   const [allVisible, setAllVisible] = useState(true);
   const [triggerZoom, setTriggerZoom] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [runTutorial, setRunTutorial] = useState<boolean>(false);
+  const [runTour, setRunTour] = useState<boolean>(false);
   const joyrideHelpers = useRef<StoreHelpers | null>(null);
   const classes = useStyles();
 
   const startTutorial = (value: boolean) => {
-    setRunTutorial(value);
+    setRunTour(value);
   };
 
-  const handleJoyrideStepChange = (data: { index: any; type: any }) => {
-    const { index, type } = data;
+  const handleJoyrideStepChange = (data: CallBackProps) => {
+    const { action, index, status, type } = data;
     console.log('index: ', index);
     if (open && index === 2) {
       // If the drawer is already open
       console.log('came here');
       joyrideHelpers.current?.go(3);
     }
-    // if (type === 'tour:end' || type === 'step:close') {
-    //   setRunFeatureTutorial(false);
-    // }
+    if (type === 'tour:end' || type === 'step:close' || action === 'close') {
+      setRunTour(false);
+    }
   };
 
   const handleDrawerOpen = () => {
@@ -162,7 +162,7 @@ export default function MainPage(props: {
         <CssBaseline />
         <Joyride
           steps={getSteps}
-          run={runTutorial}
+          run={runTour}
           getHelpers={(helpers) => {
             joyrideHelpers.current = helpers;
           }}
@@ -266,7 +266,7 @@ export default function MainPage(props: {
             </Box>
           </Box>
           <Divider />
-          <List disablePadding sx={{ paddingTop: 0 }}>
+          <List id="layer-list" disablePadding sx={{ paddingTop: 0 }}>
             {geoJSONList.map((layer) => (
               <div key={layer.id}>
                 <Stack spacing={10} direction="row">
@@ -282,7 +282,7 @@ export default function MainPage(props: {
                           alignItems: 'center',
                         }}
                       >
-                        <div>
+                        <div id="drop-down-menu">
                           <DropDown layer={layer} zoomToLayer={zoomToLayer} />
                         </div>
                         <div onClick={(e) => handleShowColorPicker(e, layer)}>

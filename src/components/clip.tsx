@@ -1,6 +1,6 @@
 /* eslint-disable no-loop-func */
 /* eslint-disable react/prop-types */
-import React, { useState, ChangeEvent, useRef } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import Button from '@mui/material/Button';
 import { AlertColor, FilledInput, Typography } from '@mui/material';
 import {
@@ -37,8 +37,8 @@ import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import determineOpacity from '../utils/determineOpacity';
 import { Point } from '@turf/helpers';
-import Joyride, { StoreHelpers } from 'react-joyride';
 import { clipSteps } from '../data/steps/clipSteps';
+import Tutorial from './tutorial';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -76,7 +76,6 @@ function Clip(props: {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [runTour, setRunTour] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
-  const joyrideHelpers = useRef<StoreHelpers | null>(null);
   const theme = useTheme();
   const classes = useStyles();
 
@@ -91,13 +90,6 @@ function Clip(props: {
       typeof value === 'string' ? value.split(',') : value
     );
     console.log('layers selected:', layerNames);
-  };
-
-  const handleFeatureJoyrideCallback = (data: { index: any; type: any }) => {
-    const { index, type } = data;
-    if (type === 'tour:end' || type === 'step:close') {
-      setRunTour(false);
-    }
   };
 
   const findAllLayers = () => {
@@ -396,18 +388,7 @@ function Clip(props: {
             width: '100%',
           }}
         >
-          <Joyride
-            steps={clipSteps}
-            run={runTour}
-            getHelpers={(helpers) => {
-              joyrideHelpers.current = helpers;
-            }}
-            callback={handleFeatureJoyrideCallback}
-            continuous
-            scrollToFirstStep
-            showProgress
-            showSkipButton
-          />
+          <Tutorial runTour={runTour} steps={clipSteps} setRunTour={setRunTour} />
           <Box
             sx={{
               display: 'flex',

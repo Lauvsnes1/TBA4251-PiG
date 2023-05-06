@@ -21,7 +21,7 @@ export const intersectSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p> Select trondheimsfjorden as layer one. </p>
+        <p> Select "trondheimsfjorden" as layer one. </p>
       </div>
     ),
     target: '#select-layer-1',
@@ -37,7 +37,7 @@ export const intersectSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p>Select fiskeområder as layer two</p>
+        <p>Select "fiskeområder" as layer two</p>
       </div>
     ),
     target: '#select-layer-2',
@@ -53,7 +53,7 @@ export const intersectSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p> Name the output layer "fiskeområder_hemmelig". </p>
+        <p> Name the output layer "my_fishingmap". </p>
       </div>
     ),
     target: '#custom-name',

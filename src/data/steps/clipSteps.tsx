@@ -53,7 +53,7 @@ export const clipSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p> Then press ok. </p>
+        <p> Then press ok and return to the tutorial on the main page. </p>
       </div>
     ),
     target: '#ok-button',
