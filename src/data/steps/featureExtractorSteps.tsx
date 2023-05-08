@@ -1,7 +1,7 @@
 export const featureExtractorSteps = [
   {
     title: 'Feature extractor',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: <p> Now we will try to extract your favorite fish species from the dataset. </p>,
     target: '#feature-ex-header',
@@ -13,7 +13,7 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     scrollDuration: 300,
     content: <p> Choose the fiskeobservasjoner_clip as input layer. </p>,
@@ -27,7 +27,7 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: <p> Choose the property "Norsk Navn". </p>,
     target: '#select-prop',
@@ -39,7 +39,7 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: <p> Choose the operation "=" </p>,
     target: '#select-operation',
@@ -51,7 +51,7 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: <p> Type in "kveite" in the text input. </p>,
     target: '#rule-0-value',
@@ -63,7 +63,7 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
@@ -95,7 +95,7 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: <p> Then press the ok button. </p>,
     target: '#ok-button',

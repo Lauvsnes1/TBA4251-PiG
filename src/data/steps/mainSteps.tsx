@@ -20,6 +20,15 @@ export const getSteps = [
             The tutorial is step based, so if you don't know what to do, go back to the menu where
             you initially startet the tutorial.
           </li>
+          <li>
+            You can start, stop and restart this tutorial any time you want under the settings wheel
+            in the top right corner.
+          </li>
+          <li>
+            Make sure that the menu on the left is{' '}
+            <span style={{ textDecoration: 'underline' }}>open</span> before you continue the
+            tutorial further.
+          </li>
         </ul>
       </div>
     ),
