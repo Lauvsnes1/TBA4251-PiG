@@ -13,6 +13,17 @@ import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
+import Tutorial from './tutorial';
+import { differenceSteps } from '../data/steps/differenceSteps';
+import makeStyles from '@mui/styles/makeStyles';
+import InfoIcon from '@mui/icons-material/Info';
+
+const useStyles = makeStyles({
+  hovered: {
+    backgroundColor: '#f2f2f2',
+    boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+  },
+});
 
 function Difference(props: {
   handleCloseModal: () => void;
@@ -22,8 +33,11 @@ function Difference(props: {
   const [selectedLayer2, setSelectedLayer2] = useState<GeoJSONItem>();
   const [name, setName] = useState<string>('difference');
   const [isLoading, setIsLoading] = useState(false);
+  const [runTour, setRunTour] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
+  const classes = useStyles();
 
   function handleDifference() {
     const differenceList: FeatureCollection = {
@@ -159,10 +173,30 @@ function Difference(props: {
             width: '100%',
           }}
         >
-          <Typography variant="h6"> Difference Tool:</Typography>
+          <Tutorial runTour={runTour} steps={differenceSteps} setRunTour={setRunTour} />
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Typography id="difference-header" variant="h6">
+              DifferenceTool Tool:
+            </Typography>
+            <InfoIcon
+              sx={{ alignContent: 'center' }}
+              titleAccess="Tutorial"
+              onClick={() => setRunTour(true)}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              className={isHovered ? classes.hovered : ''}
+            />
+          </Box>
           <TextField
             style={{ paddingTop: '10px' }}
-            id="Selected-buffer-layer"
+            id="select-layer-1"
             select
             label="Select layer one"
             onChange={handleChoseLayer1}
@@ -177,7 +211,7 @@ function Difference(props: {
           </TextField>
           <TextField
             style={{ paddingTop: '10px' }}
-            id="Selected-buffer-layer"
+            id="select-layer-2"
             select
             label="Select layer to subtract"
             onChange={handleChoseLayer2}
@@ -192,7 +226,7 @@ function Difference(props: {
           </TextField>
           <TextField
             required
-            id="outlined-required"
+            id="custom-name"
             label="Name of output layer"
             onChange={(e) => setName(e.target.value)}
             style={{ paddingTop: '10px' }}
@@ -210,7 +244,7 @@ function Difference(props: {
             <Button variant="outlined" color="error" onClick={props.handleCloseModal}>
               Cancel
             </Button>
-            <Button onClick={handleOk} variant="outlined">
+            <Button id="ok-button" onClick={handleOk} variant="outlined">
               OK
             </Button>
           </div>

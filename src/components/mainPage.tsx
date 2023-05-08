@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Box, ThemeProvider } from '@mui/system';
 import Drawer from '@mui/material/Drawer';
@@ -49,12 +49,12 @@ export default function MainPage(props: {
   showAlert: (status: AlertColor, message: string) => void;
 }) {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(true);
   const [openPop, setOpenPop] = useState<boolean>(false);
   const [modal, setModal] = useState<boolean>(false);
   const [modalComponent, setModalComponent] = useState<JSX.Element>();
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem | null>(null);
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
   const [allVisible, setAllVisible] = useState(true);
@@ -68,15 +68,18 @@ export default function MainPage(props: {
     setRunTour(value);
   };
 
+  const handleResetTutorial = () => {
+    joyrideHelpers.current?.reset(true);
+  };
+
   const handleJoyrideStepChange = (data: CallBackProps) => {
     const { action, index, status, type } = data;
     console.log('index: ', index);
-    if (open && index === 2) {
-      // If the drawer is already open
-      console.log('came here');
-      joyrideHelpers.current?.go(3);
-    }
+    console.log('action:', action);
+    console.log('type:', type);
     if (type === 'tour:end' || type === 'step:close' || action === 'close') {
+      console.log('CAME HERE');
+      //joyrideHelpers.current?.close();
       setRunTour(false);
     }
   };
@@ -140,6 +143,9 @@ export default function MainPage(props: {
         (comp) => comp.id === id
       )?.component;
       setModalComponent(componentToRender);
+      //bit shady but ok for tutorial
+      setRunTour(false);
+      joyrideHelpers.current?.close();
     } catch {
       console.log('Tool not found');
     }
@@ -172,7 +178,12 @@ export default function MainPage(props: {
           showSkipButton
         />
 
-        <AppBar position="fixed" open={open} sx={{ display: 'flex', backgroundColor: '#2975a0' }}>
+        <AppBar
+          id="qgees"
+          position="fixed"
+          open={open}
+          sx={{ display: 'flex', backgroundColor: '#2975a0' }}
+        >
           <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Box sx={{ diplay: 'flex', alignItems: 'center', flexDirection: 'row' }}>
               <Box id="icon-button">
@@ -189,12 +200,12 @@ export default function MainPage(props: {
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <Box component="img" sx={{ heigth: 60, width: 60 }} src={pac} />
-              <Typography id="qgees" variant="h5" noWrap component="div">
+              <Typography variant="h5" noWrap component="div">
                 QGEE'S
               </Typography>
             </Box>
             <Box>
-              <Settings startTutorial={startTutorial} />
+              <Settings startTutorial={startTutorial} resetTutorial={handleResetTutorial} />
             </Box>
           </Toolbar>
         </AppBar>
@@ -207,6 +218,7 @@ export default function MainPage(props: {
               width: drawerWidth,
               boxSizing: 'border-box',
             },
+            overflow: 'auto',
           }}
           variant="persistent"
           anchor="left"

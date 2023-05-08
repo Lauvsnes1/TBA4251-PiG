@@ -11,12 +11,26 @@ export const getSteps = [
       <div>
         <p>
           Welcome to QGEE´s! In this tutorial you will learn how to use the basic tools. But first,
-          if you are not running this application on Google Chrome, please change to Google Chrome.{' '}
+          some quick info:
         </p>
+        <ul style={{ textAlign: 'left', margin: 'auto', width: '70%' }}>
+          <li>Run this application in Google Chrome.</li>
+          <li>
+            {' '}
+            The tutorial is step based, so if you don't know what to do, go back to the menu where
+            you initially startet the tutorial.
+          </li>
+        </ul>
       </div>
     ),
-
-    target: '#qgees',
+    placement: 'center' as 'center',
+    target: 'body',
+    styles: {
+      options: {
+        zIndex: 100000,
+        width: '90%',
+      },
+    },
   },
   {
     title: 'Mission',
@@ -26,61 +40,59 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          In this tutorial we will try to find the best sea fishing spots in near Trondheim. The
-          tutorial goes in several steps, so if you don't know what to do, go back to the menu where
-          you initially startet the tutorial. Good luck!
+          In this tutorial we will try to find the best spots near Trondheim to do sea fishing.{' '}
+          <br />
+          <span style={{ fontWeight: 'bold' }}> Good luck!</span>
         </p>
       </div>
     ),
-    target: '#qgees',
+    placement: 'center' as 'center',
+    target: 'body',
     styles: {
       options: {
         zIndex: 100000,
       },
     },
   },
-  {
-    title: 'Open the drawer',
+  // {
+  //   title: 'Open the drawer',
 
-    disableBeacon: false,
-    spotlightClicks: true,
-    content: (
-      <div>
-        <p>'Press the menu on the left to open the drawer and discover the GIS tools.'</p>
-      </div>
-    ),
-    target: '#icon-button',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
-  },
+  //   disableBeacon: false,
+  //   spotlightClicks: true,
+  //   content: (
+  //     <div>
+  //       <p>'Press the menu on the left to open the drawer and discover the GIS tools.'</p>
+  //     </div>
+  //   ),
+  //   target: '#icon-button',
+  //   styles: {
+  //     options: {
+  //       zIndex: 10000,
+  //     },
+  //   },
+  // },
   {
     title: 'Load data',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
         <p>
-          We need some datasets to work with, go to GitHub and download all the files from{' '}
+          Firstly, we need some datasets to work with, go to GitHub and download the zip file from{' '}
           <a
             href="https://github.com/Lauvsnes1/TBA4251-PiG/tree/main/src/data/demo_data"
             target="_blank"
             rel="noopener noreferrer"
             color="blue"
           >
-            {' '}
-            <span style={{ textDecoration: 'underline' }}> this</span>
+            <span style={{ textDecoration: 'underline' }}>this</span>
           </a>{' '}
-          folder.
-          <br /> <span style={{ fontWeight: 'bold' }}>NB:</span> You have to enter into each file
-          and press the download button.
+          folder. Then unpack the files on your computer and press next.
         </p>
       </div>
     ),
-    target: '#load-data',
-    offset: -10,
+    placement: 'center' as 'center',
+    target: 'body',
     styles: {
       options: {
         zIndex: 10000,
@@ -94,8 +106,9 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          Now, exit the tutorial and press the load data button and upload the files you downloaded
-          from GitHub.
+          Now, press this "Load data" button and upload the files you just downloaded from GitHub.
+          When you return to the main screen, you find the next step of the tutorial under settings
+          in the top right corner.{' '}
         </p>
       </div>
     ),
@@ -109,7 +122,7 @@ export const getSteps = [
   },
   {
     title: 'Clipping',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
@@ -135,7 +148,7 @@ export const getSteps = [
   },
   {
     title: 'Clipping',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
@@ -155,7 +168,7 @@ export const getSteps = [
   },
   {
     title: 'Delete layers',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
@@ -171,7 +184,7 @@ export const getSteps = [
   },
   {
     title: 'Delete layers',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
@@ -187,7 +200,7 @@ export const getSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
@@ -208,7 +221,7 @@ export const getSteps = [
   },
   {
     title: 'Buffer',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
@@ -229,7 +242,7 @@ export const getSteps = [
   },
   {
     title: 'Union',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
@@ -250,14 +263,13 @@ export const getSteps = [
   },
   {
     title: 'Intersect',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
         <p>
-          Last thing we want to do is to extract the spots which are on the ocean. Press the
-          'Intersect' button and look for the <InfoIcon sx={{ paddingTop: '6px' }} /> button to
-          continue the guide.
+          Now, we want to extract the spots which are on the ocean. Press the 'Intersect' button and
+          look for the <InfoIcon sx={{ paddingTop: '6px' }} /> button to continue the guide.
         </p>
       </div>
     ),
@@ -270,8 +282,29 @@ export const getSteps = [
     },
   },
   {
+    title: 'Difference',
+    disableBeacon: true,
+    spotlightClicks: true,
+    content: (
+      <div>
+        <p>
+          Last thing we want to do is to find the best spots to fish the ocean from land side. Press
+          the 'Difference' button and look for the <InfoIcon sx={{ paddingTop: '6px' }} /> button to
+          continue the guide.
+        </p>
+      </div>
+    ),
+    target: '#difference',
+    offset: -10,
+    styles: {
+      options: {
+        zIndex: 10000,
+      },
+    },
+  },
+  {
     title: 'Download layer',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
