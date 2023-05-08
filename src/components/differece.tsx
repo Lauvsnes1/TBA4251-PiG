@@ -7,6 +7,7 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import differnce from '@turf/difference';
 import booleanOverlap from '@turf/boolean-overlap';
+import booleanIntersects from '@turf/boolean-intersects';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
@@ -38,7 +39,7 @@ function Difference(props: {
       processed1.features.forEach((feature1) => {
         let feature1Added: boolean = false;
         processed2?.features.forEach((feature2) => {
-          if (booleanOverlap(feature1, feature2)) {
+          if (booleanIntersects(feature1, feature2)) {
             const diff = differnce(feature1, feature2);
             if (
               diff !== null &&
