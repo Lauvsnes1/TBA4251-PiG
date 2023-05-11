@@ -44,7 +44,7 @@ export const getSteps = [
     styles: {
       options: {
         zIndex: 100000,
-        width: '90%',
+        width: '100%',
       },
     },
   },

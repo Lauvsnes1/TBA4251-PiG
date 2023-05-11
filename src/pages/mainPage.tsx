@@ -66,15 +66,13 @@ export default function MainPage(props: {
   const classes = useStyles();
 
   const handleResetTutorial = () => {
-    joyrideHelpers.current?.reset(true);
+    joyrideHelpers.current?.reset(false);
+    setRunTour(true);
   };
 
   const handleJoyrideStepChange = (data: CallBackProps) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { action, index, status, type } = data;
-    console.log('index: ', index);
-    console.log('action:', action);
-    console.log('type:', type);
     if (type === 'tour:end' || type === 'step:close' || action === 'close') {
       joyrideHelpers.current?.close();
       //fix skip step in tutorial problem
