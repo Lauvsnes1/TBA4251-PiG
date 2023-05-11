@@ -37,8 +37,8 @@ import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import determineOpacity from '../utils/determineOpacity';
 import { Point } from '@turf/helpers';
-import { clipSteps } from '../data/steps/clipSteps';
-import Tutorial from './tutorial';
+import { clipSteps } from '../tutorial/steps/clipSteps';
+import Tutorial from '../tutorial/steps/tutorial';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

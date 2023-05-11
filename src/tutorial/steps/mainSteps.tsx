@@ -1,5 +1,5 @@
 import InfoIcon from '@mui/icons-material/Info';
-import trondheimClip from '../clip_demo.png';
+import trondheimClip from './clip_demo.png';
 
 export const getSteps = [
   {

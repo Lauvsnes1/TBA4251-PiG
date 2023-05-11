@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import MainPage from './components/mainPage';
+import MainPage from './pages/mainPage';
 import Alert, { AlertColor } from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import { uid } from 'uid';

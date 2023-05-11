@@ -13,8 +13,8 @@ import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
-import Tutorial from './tutorial';
-import { differenceSteps } from '../data/steps/differenceSteps';
+import Tutorial from '../tutorial/steps/tutorial';
+import { differenceSteps } from '../tutorial/steps/differenceSteps';
 import makeStyles from '@mui/styles/makeStyles';
 import InfoIcon from '@mui/icons-material/Info';
 

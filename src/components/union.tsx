@@ -13,9 +13,9 @@ import processData from '../utils/flattenAndDissolve';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import InfoIcon from '@mui/icons-material/Info';
-import { unionSteps } from '../data/steps/unionSteps';
+import { unionSteps } from '../tutorial/steps/unionSteps';
 import makeStyles from '@mui/styles/makeStyles';
-import Tutorial from './tutorial';
+import Tutorial from '../tutorial/steps/tutorial';
 
 const useStyles = makeStyles({
   hovered: {

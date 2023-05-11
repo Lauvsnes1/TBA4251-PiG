@@ -12,9 +12,9 @@ import { generateColor } from '../utils/genereateColor';
 import processData from '../utils/flattenAndDissolve';
 import generateId from '../utils/generateId';
 import InfoIcon from '@mui/icons-material/Info';
-import { bufferSteps } from '../data/steps/bufferSteps';
+import { bufferSteps } from '../tutorial/steps/bufferSteps';
 import makeStyles from '@mui/styles/makeStyles';
-import Tutorial from './tutorial';
+import Tutorial from '../tutorial/steps/tutorial';
 
 const useStyles = makeStyles({
   hovered: {

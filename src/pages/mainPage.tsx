@@ -25,15 +25,15 @@ import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
 import Joyride, { CallBackProps, StoreHelpers } from 'react-joyride';
 import getToolsList from '../data/tools';
-import BaseMap from './baseMapMapbox';
-import ColorPicker from './colorPicker';
-import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
+import BaseMap from '../components/baseMapMapbox';
+import ColorPicker from '../components/colorPicker';
+import { AppBar, Main, DrawerHeader, modalStyle } from '../components/styledComponents';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
-import DropDown from './dropDown';
+import DropDown from '../components/dropDown';
 import pac from '../data/pac.jpg';
-import { getSteps } from '../data/steps/mainSteps';
+import { getSteps } from '../tutorial/steps/mainSteps';
 
-import Settings from './settings';
+import Settings from '../components/settings';
 import { makeStyles } from '@mui/styles';
 
 const drawerWidth = 240;
@@ -41,7 +41,8 @@ const drawerWidth = 240;
 const useStyles = makeStyles({
   hovered: {
     backgroundColor: '#f2f2f2',
-    boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+    boxShadow: 'inset 0px 0px 8px 0px rgba(0, 0, 0, 0.5);',
+    borderRadius: '20px',
   },
 });
 
@@ -63,10 +64,6 @@ export default function MainPage(props: {
   const [runTour, setRunTour] = useState<boolean>(false);
   const joyrideHelpers = useRef<StoreHelpers | null>(null);
   const classes = useStyles();
-
-  // const startTutorial = (value: boolean) => {
-  //   setRunTour(value);
-  // };
 
   const handleResetTutorial = () => {
     joyrideHelpers.current?.reset(true);

@@ -20,8 +20,8 @@ import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import determineOpacity from '../utils/determineOpacity';
 import makeStyles from '@mui/styles/makeStyles';
-import { featureExtractorSteps } from '../data/steps/featureExtractorSteps';
-import Tutorial from './tutorial';
+import { featureExtractorSteps } from '../tutorial/steps/featureExtractorSteps';
+import Tutorial from '../tutorial/steps/tutorial';
 
 const useStyles = makeStyles({
   hovered: {
@@ -354,7 +354,7 @@ function FeatureExtractor(props: {
             <Button
               id="add-rule-button"
               variant="contained"
-              sx={{ backgroundColor: '#2975a0' }}
+              style={{ backgroundColor: '#2975a0' }}
               onClick={() => setNumRules(numRules + 1)}
             >
               Add Rule

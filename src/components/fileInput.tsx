@@ -113,7 +113,6 @@ function FileInput(props: {
           setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
           nameCounter++;
           props.showAlert('success', 'File(s) uploaded successfully');
-          console.log('Sending alert success!!');
         });
       } catch (error) {
         console.log(error);
