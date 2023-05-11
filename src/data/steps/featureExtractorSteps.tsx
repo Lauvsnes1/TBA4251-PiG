@@ -72,7 +72,7 @@ export const featureExtractorSteps = [
           Now, press this button and do the same with at least two more of your favorite fish
           species from the following list(remember to have everything in lowercase):{' '}
         </p>
-        <ul style={{ textAlign: 'left', margin: 'auto', width: '50%' }}>
+        <ul style={{ textAlign: 'left', margin: 'auto', width: '60%' }}>
           <li>sei</li>
           <li>torsk</li>
           <li>laks</li>
@@ -80,12 +80,12 @@ export const featureExtractorSteps = [
           <li>hvitting</li>
           <li>breiflabb</li>
           <li>hyse</li>
-          <li>ål</li>
+          {/*<li>ål</li>*/}
           <li>gråsteinbit</li>
         </ul>
       </div>
     ),
-    placement: 'left' as 'left',
+    placement: 'right' as 'right',
     target: '#add-rule-button',
     styles: {
       options: {

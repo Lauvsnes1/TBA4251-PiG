@@ -40,7 +40,7 @@ const useStyles = makeStyles({
 });
 
 export default function Settings(props: {
-  startTutorial: (value: boolean) => void;
+  setRunTour: (value: boolean) => void;
   resetTutorial: () => void;
 }) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -109,7 +109,7 @@ export default function Settings(props: {
   // };
 
   const startTutorial = () => {
-    props.startTutorial(true);
+    props.setRunTour(true);
     setOpen(false);
     //setMousePosition(undefined);
     setTimeout(() => {
@@ -129,7 +129,7 @@ export default function Settings(props: {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
     setOpen(true);
-    props.startTutorial(false);
+    props.setRunTour(false);
   };
   const handleClose = () => {
     setAnchorEl(null);

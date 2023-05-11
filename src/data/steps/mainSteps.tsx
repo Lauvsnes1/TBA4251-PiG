@@ -25,9 +25,16 @@ export const getSteps = [
             in the top right corner.
           </li>
           <li>
+            If you refresh the page you <span style={{ textDecoration: 'underline' }}>will</span>{' '}
+            lose your work.
+          </li>
+          <li>
             Make sure that the menu on the left is{' '}
             <span style={{ textDecoration: 'underline' }}>open</span> before you continue the
             tutorial further.
+          </li>
+          <li>
+            If you have problem with the tutorial, a walk through guide can be found here: "youtube"
           </li>
         </ul>
       </div>
@@ -137,8 +144,8 @@ export const getSteps = [
       <div>
         <p>
           As you can see, that the datasets are huge, so we want to clip them to smaller datasets.
-          Now, press the polygon-draw button in the left bottom corner, and draw a reasonable
-          polygon around Trondheim, the size should be something like this:
+          Now, press the polygon-draw button in the left bottom corner of the map and draw a
+          reasonable polygon around Trondheim. The size should be something like this:
         </p>
         <div>
           <img src={trondheimClip} width="365px" height="200px" alt="trondheim_cut" />
@@ -277,8 +284,9 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          Now, we want to extract the spots which are on the ocean. Press the 'Intersect' button and
-          look for the <InfoIcon sx={{ paddingTop: '6px' }} /> button to continue the guide.
+          Now, we want to find the fishing spots which are on the ocean. Press the 'Intersect'
+          button and look for the <InfoIcon sx={{ paddingTop: '6px' }} /> button to continue the
+          guide.
         </p>
       </div>
     ),
@@ -318,13 +326,11 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          Congratulations! You have completed the tutorial and found your best places to fish in
-          Trondheimsfjorden. Don't forget to download your final layer from the drop down menu and
-          bring it next time you go out fishing.
+          Congratulations!🥳 You have completed the tutorial and found your best places to fish in
+          Trondheimsfjorden. Don't forget to download your final layers from the drop down menu and
+          bring them next the time you go fishing.
         </p>
-        <p>
-          <span style={{ fontWeight: 'bolder', paddingTop: '20px' }}>Skitt fiske!</span>
-        </p>
+        <p style={{ fontWeight: 'bolder', paddingTop: '20px' }}>Skitt fiske 🎣</p>
       </div>
     ),
     target: '#layer-list',

@@ -64,22 +64,24 @@ export default function MainPage(props: {
   const joyrideHelpers = useRef<StoreHelpers | null>(null);
   const classes = useStyles();
 
-  const startTutorial = (value: boolean) => {
-    setRunTour(value);
-  };
+  // const startTutorial = (value: boolean) => {
+  //   setRunTour(value);
+  // };
 
   const handleResetTutorial = () => {
     joyrideHelpers.current?.reset(true);
   };
 
   const handleJoyrideStepChange = (data: CallBackProps) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { action, index, status, type } = data;
     console.log('index: ', index);
     console.log('action:', action);
     console.log('type:', type);
     if (type === 'tour:end' || type === 'step:close' || action === 'close') {
-      console.log('CAME HERE');
-      //joyrideHelpers.current?.close();
+      joyrideHelpers.current?.close();
+      //fix skip step in tutorial problem
+      joyrideHelpers.current?.go(index);
       setRunTour(false);
     }
   };
@@ -146,8 +148,8 @@ export default function MainPage(props: {
       //bit shady but ok for tutorial
       setRunTour(false);
       joyrideHelpers.current?.close();
-    } catch {
-      console.log('Tool not found');
+    } catch (e) {
+      console.log('Tool not found, error', e);
     }
     setModal(true);
   };
@@ -205,7 +207,7 @@ export default function MainPage(props: {
               </Typography>
             </Box>
             <Box>
-              <Settings startTutorial={startTutorial} resetTutorial={handleResetTutorial} />
+              <Settings setRunTour={setRunTour} resetTutorial={handleResetTutorial} />
             </Box>
           </Toolbar>
         </AppBar>

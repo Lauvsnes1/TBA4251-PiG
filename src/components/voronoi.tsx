@@ -88,7 +88,6 @@ function Voronoi(props: {
     });
     if (isPoint) {
       setSelectedLayer(chosenLayer);
-      console.log('layer:', chosenLayer, 'is set');
     } else {
       props.showAlert('warning', 'Selected layer is not a Point layer');
     }
