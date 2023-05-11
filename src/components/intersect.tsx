@@ -12,11 +12,12 @@ import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
 import { generateColor } from '../utils/genereateColor';
+import createUniqueName from '../utils/createUniqueName';
 import generateId from '../utils/generateId';
 import InfoIcon from '@mui/icons-material/Info';
 import { intersectSteps } from '../tutorial/steps/intersectSteps';
 import makeStyles from '@mui/styles/makeStyles';
-import Tutorial from '../tutorial/steps/tutorial';
+import Tutorial from '../tutorial/tutorial';
 
 const useStyles = makeStyles({
   hovered: {
@@ -87,7 +88,7 @@ function Intersect(props: {
         if (intersected.features.length > 0) {
           const newObj: GeoJSONItem = {
             id: generateId(),
-            name: createUniqueName(name),
+            name: createUniqueName(name, geoJSONList),
             visible: true,
             color: generateColor(),
             opacity: 0.5,
@@ -143,17 +144,6 @@ function Intersect(props: {
       props.showAlert('warning', 'Please select a polygon layer');
     }
   };
-
-  function createUniqueName(name: string) {
-    let count = 0;
-    const baseName = name;
-    const names = geoJSONList.map((item) => item.name);
-    while (names.includes(name)) {
-      count++;
-      name = `${baseName}_${count}`;
-    }
-    return name;
-  }
 
   return (
     <>

@@ -17,6 +17,7 @@ import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
+import createUniqueName from '../utils/createUniqueName';
 import flatten from '@turf/flatten';
 import dissolve from '@turf/dissolve';
 import { Properties } from '@turf/helpers';
@@ -108,7 +109,7 @@ function Dissolve(props: {
         if (dissolved.processed.features.length > 0) {
           const newObj: GeoJSONItem = {
             id: generateId(),
-            name: createUniqueName(name),
+            name: createUniqueName(name, geoJSONList),
             visible: true,
             color: generateColor(),
             opacity: 0.5,
@@ -130,17 +131,6 @@ function Dissolve(props: {
       }
     }, 10);
   };
-
-  function createUniqueName(name: string) {
-    let count = 0;
-    const baseName = name;
-    const names = geoJSONList.map((item) => item.name);
-    while (names.includes(name)) {
-      count++;
-      name = `${baseName}_${count}`;
-    }
-    return name;
-  }
 
   return (
     <>

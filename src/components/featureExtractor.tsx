@@ -21,7 +21,7 @@ import generateId from '../utils/generateId';
 import determineOpacity from '../utils/determineOpacity';
 import makeStyles from '@mui/styles/makeStyles';
 import { featureExtractorSteps } from '../tutorial/steps/featureExtractorSteps';
-import Tutorial from '../tutorial/steps/tutorial';
+import Tutorial from '../tutorial/tutorial';
 
 const useStyles = makeStyles({
   hovered: {

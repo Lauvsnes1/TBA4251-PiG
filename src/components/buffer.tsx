@@ -9,12 +9,13 @@ import buffer from '@turf/buffer';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import { generateColor } from '../utils/genereateColor';
+import createUniqueName from '../utils/createUniqueName';
 import processData from '../utils/flattenAndDissolve';
 import generateId from '../utils/generateId';
 import InfoIcon from '@mui/icons-material/Info';
 import { bufferSteps } from '../tutorial/steps/bufferSteps';
 import makeStyles from '@mui/styles/makeStyles';
-import Tutorial from '../tutorial/steps/tutorial';
+import Tutorial from '../tutorial/tutorial';
 
 const useStyles = makeStyles({
   hovered: {
@@ -73,7 +74,7 @@ function Buffer(props: {
         let buffered = handleBuffer();
         const newObj: GeoJSONItem = {
           id: generateId(),
-          name: createUniqueName(name),
+          name: createUniqueName(name, geoJSONList),
           visible: true,
           color: generateColor(),
           opacity: 0.5,
@@ -101,18 +102,6 @@ function Buffer(props: {
       setSelectedLayer(undefined);
     }
   };
-
-  function createUniqueName(name: string) {
-    let count = 0;
-    const baseName = name;
-    const names = geoJSONList.map((item) => item.name);
-
-    while (names.includes(name)) {
-      count++;
-      name = `${baseName}_${count}`;
-    }
-    return name;
-  }
 
   return (
     <>

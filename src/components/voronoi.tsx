@@ -7,12 +7,12 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import voronoi from '@turf/voronoi';
 import bbox from '@turf/bbox';
-
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import { BBox } from '@turf/helpers';
 import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
+import createUniqueName from '../utils/createUniqueName';
 
 function Voronoi(props: {
   handleCloseModal: () => void;
@@ -58,7 +58,7 @@ function Voronoi(props: {
       if (voronoiPolygon.features.length > 0) {
         const newObj: GeoJSONItem = {
           id: generateId(),
-          name: createUniqueName(name),
+          name: createUniqueName(name, geoJSONList),
           visible: true,
           color: generateColor(),
           opacity: 0.5,
@@ -92,18 +92,6 @@ function Voronoi(props: {
       props.showAlert('warning', 'Selected layer is not a Point layer');
     }
   };
-
-  function createUniqueName(name: string) {
-    let count = 0;
-    const baseName = name;
-    const names = geoJSONList.map((item) => item.name);
-
-    while (names.includes(name)) {
-      count++;
-      name = `${baseName}_${count}`;
-    }
-    return name;
-  }
 
   return (
     <>

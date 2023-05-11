@@ -12,8 +12,9 @@ import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
 import { generateColor } from '../utils/genereateColor';
+import createUniqueName from '../utils/createUniqueName';
 import generateId from '../utils/generateId';
-import Tutorial from '../tutorial/steps/tutorial';
+import Tutorial from '../tutorial/tutorial';
 import { differenceSteps } from '../tutorial/steps/differenceSteps';
 import makeStyles from '@mui/styles/makeStyles';
 import InfoIcon from '@mui/icons-material/Info';
@@ -90,7 +91,7 @@ function Difference(props: {
         if (differenced?.features.length > 0) {
           const newObj: GeoJSONItem = {
             id: generateId(),
-            name: createUniqueName(name),
+            name: createUniqueName(name, geoJSONList),
             visible: true,
             color: generateColor(),
             opacity: 0.5,
@@ -144,18 +145,6 @@ function Difference(props: {
       props.showAlert('warning', 'Please select a polygon layer');
     }
   };
-
-  function createUniqueName(name: string) {
-    let count = 0;
-    const baseName = name;
-    const names = geoJSONList.map((item) => item.name);
-
-    while (names.includes(name)) {
-      count++;
-      name = `${baseName}_${count}`;
-    }
-    return name;
-  }
 
   return (
     <>
