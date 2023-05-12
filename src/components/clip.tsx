@@ -339,19 +339,24 @@ function Clip(props: {
     setTimeout(() => {
       const clipped = handleClip_2();
       clipped?.forEach((value: FeatureCollection, key: string) => {
-        const newObj: GeoJSONItem = {
-          id: generateId(),
-          name: generateClipName(key),
-          visible: true,
-          color: generateColor(),
-          opacity: determineOpacity(value),
-          geoJSON: value as FeatureCollection,
-        };
-        setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+        if (value.features.length > 0) {
+          console.log('true');
+          const newObj: GeoJSONItem = {
+            id: generateId(),
+            name: generateClipName(key),
+            visible: true,
+            color: generateColor(),
+            opacity: determineOpacity(value),
+            geoJSON: value as FeatureCollection,
+          };
+          setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+          props.showAlert('success', 'clipped ' + key);
+        } else {
+          props.showAlert('warning', 'No overlap');
+        }
       });
       setIsLoading(false);
       props.handleCloseModal();
-      props.showAlert('success', '');
     }, 10);
   };
 
@@ -467,12 +472,7 @@ function Clip(props: {
             <Button variant="outlined" color="error" onClick={props.handleCloseModal}>
               Cancel
             </Button>
-            <Button
-              id="ok-button"
-              onClick={handleOk}
-              variant="contained"
-              sx={{ backgroundColor: '#2975a0' }}
-            >
+            <Button id="ok-button" onClick={handleOk} variant="outlined" sx={{ color: '#2975a0' }}>
               {'OK'}
             </Button>
           </Box>

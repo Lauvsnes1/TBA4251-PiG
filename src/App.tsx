@@ -22,6 +22,7 @@ function App() {
           right: 750,
           zIndex: 9999,
           transition: 'opacity 0.7s ease-in-out',
+          width: '30%',
         }}
       >
         <AlertTitle>{status}</AlertTitle>
