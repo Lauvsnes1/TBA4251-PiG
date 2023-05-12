@@ -1,14 +1,14 @@
-export const intersectSteps = [
+export const differenceSteps = [
   {
-    title: 'Intersect',
+    title: 'Difference',
     disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
-        <p>Finally, lets find the out where you want to navigate to catch you favorite fish.</p>
+        <p>Finally, lets find the out where you can catch your favourite fish from land.</p>
       </div>
     ),
-    target: '#intersect-header',
+    target: '#difference-header',
     styles: {
       options: {
         zIndex: 10000,
@@ -16,12 +16,12 @@ export const intersectSteps = [
     },
   },
   {
-    title: 'Intersect',
+    title: 'Difference',
     disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
-        <p> Select "trondheimsfjorden" as layer one. </p>
+        <p> Select "fiskeområder" as layer one. </p>
       </div>
     ),
     target: '#select-layer-1',
@@ -32,12 +32,12 @@ export const intersectSteps = [
     },
   },
   {
-    title: 'Intersect',
+    title: 'Difference',
     disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
-        <p>Select "fiskeområder" as layer two</p>
+        <p>Select "trondheimsfjorden" as layer two</p>
       </div>
     ),
     target: '#select-layer-2',
@@ -48,12 +48,12 @@ export const intersectSteps = [
     },
   },
   {
-    title: 'Intersect',
+    title: 'Difference',
     disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
-        <p> Name the output layer "my_fishingmap". </p>
+        <p> Name the output layer "my_fishingmap_land". </p>
       </div>
     ),
     target: '#custom-name',
@@ -64,7 +64,7 @@ export const intersectSteps = [
     },
   },
   {
-    title: 'Intersect',
+    title: 'Difference',
     disableBeacon: true,
     spotlightClicks: true,
     content: (

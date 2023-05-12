@@ -20,8 +20,8 @@ import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import determineOpacity from '../utils/determineOpacity';
 import makeStyles from '@mui/styles/makeStyles';
-import { featureExtractorSteps } from '../data/steps/featureExtractorSteps';
-import Tutorial from './tutorial';
+import { featureExtractorSteps } from '../tutorial/steps/featureExtractorSteps';
+import Tutorial from '../tutorial/tutorial';
 
 const useStyles = makeStyles({
   hovered: {
@@ -86,33 +86,18 @@ function FeatureExtractor(props: {
     };
 
     for (let i = 0; i < numRules; i++) {
-      //let target: number | string = selectedValues[i];
-      let test = document.getElementById(`rule-${i}-value`) as HTMLInputElement;
-
       let target: number | string = selectedValues[i];
-
-      console.log('test:', test);
-      console.log(selectedValues);
       //If input is a number, convert to number for easier comparison
       if (!isNaN(+target)) {
         target = Number(target);
       }
       switch (selectedOperations[i]) {
         case '=':
-          console.log('case: equal');
           if (
             selectedLayer &&
             selectedLayer.geoJSON.features &&
             selectedLayer.geoJSON.features.length > 0
           ) {
-            console.log(
-              'came here with layer:',
-              selectedLayer,
-              'operation:',
-              selectedOperations[i],
-              'target:',
-              target
-            );
             const matchingFeatures = selectedLayer.geoJSON.features.filter((feature) => {
               // loop through each property in the feature
               for (const key in feature.properties) {
@@ -127,13 +112,11 @@ function FeatureExtractor(props: {
               // if none of the properties match, return false to exclude the feature from the filtered array
               return false;
             });
-            console.log('matching features are:', matchingFeatures);
             matchingFeatures.forEach((feat) => extracted.features.push(feat));
           }
           break;
 
         case '≠':
-          console.log('Case: not equals');
           if (
             selectedLayer &&
             selectedLayer.geoJSON.features &&
@@ -157,7 +140,6 @@ function FeatureExtractor(props: {
           }
           break;
         case '>':
-          console.log('Case: greater');
           if (
             selectedLayer &&
             selectedLayer.geoJSON.features &&
@@ -186,7 +168,6 @@ function FeatureExtractor(props: {
           }
           break;
         case '<':
-          console.log('Case: less');
           if (
             selectedLayer &&
             selectedLayer.geoJSON.features &&
@@ -195,7 +176,6 @@ function FeatureExtractor(props: {
             const matchingFeatures = selectedLayer.geoJSON.features.filter((feature) => {
               // loop through each property in the feature
               for (const key in feature.properties) {
-                console.log('featureProp', feature.properties[key], 'and target:', target);
                 if (
                   Object.prototype.hasOwnProperty.call(feature.properties, key) &&
                   feature.properties[key] != null &&
@@ -374,7 +354,7 @@ function FeatureExtractor(props: {
             <Button
               id="add-rule-button"
               variant="contained"
-              sx={{ backgroundColor: '#2975a0' }}
+              style={{ backgroundColor: '#2975a0' }}
               onClick={() => setNumRules(numRules + 1)}
             >
               Add Rule

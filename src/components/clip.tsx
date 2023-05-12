@@ -37,8 +37,8 @@ import { generateColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import determineOpacity from '../utils/determineOpacity';
 import { Point } from '@turf/helpers';
-import { clipSteps } from '../data/steps/clipSteps';
-import Tutorial from './tutorial';
+import { clipSteps } from '../tutorial/steps/clipSteps';
+import Tutorial from '../tutorial/tutorial';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -89,7 +89,6 @@ function Clip(props: {
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value
     );
-    console.log('layers selected:', layerNames);
   };
 
   const findAllLayers = () => {
@@ -105,11 +104,12 @@ function Clip(props: {
           matchingLayer.geoJSON.features[0].geometry.type === 'MultiPolygon')
       ) {
         selectedPolygonLayers.push(matchingLayer);
-      }
-      if (matchingLayer && matchingLayer.geoJSON.features[0].geometry.type === 'LineString') {
+      } else if (
+        matchingLayer &&
+        matchingLayer.geoJSON.features[0].geometry.type === 'LineString'
+      ) {
         selectedLineStringLayers.push(matchingLayer);
-      }
-      if (
+      } else if (
         matchingLayer &&
         (matchingLayer.geoJSON.features[0].geometry.type === 'Point' ||
           matchingLayer.geoJSON.features[0].geometry.type === 'MultiPoint')
@@ -120,81 +120,81 @@ function Clip(props: {
     return [selectedPolygonLayers, selectedLineStringLayers, selectedPointLayers];
   };
 
-  function handleClip() {
-    const totalClippedList = new Map<string, FeatureCollection>();
-    //Find all selectedlayers
-    const [selectedPolyLayers, selectedLineLayers] = findAllLayers();
-    console.log('SelectedLayers', selectedPolyLayers);
-    console.log('SelectedLineLayers', selectedLineLayers);
-    selectedPolyLayers.forEach((polyLayer) => {
-      const clipps: FeatureCollection = {
-        type: 'FeatureCollection',
-        features: [],
-      };
-      if (selectedMainLayer?.geoJSON && polyLayer?.geoJSON) {
-        selectedMainLayer.geoJSON.features.forEach((mainFeature) => {
-          if (mainFeature.geometry.type === 'Polygon') {
-            polyLayer.geoJSON.features.forEach((polyFeature) => {
-              if (polyFeature.geometry.type === 'Polygon') {
-                const clipped = intersect(
-                  mainFeature.geometry as Polygon,
-                  polyFeature.geometry as Polygon
-                ) as Feature<Polygon | MultiPolygon>;
-                if (clipped !== null) {
-                  clipps.features.push(clipped);
-                }
-              }
-            });
-          }
-        });
-      }
-      totalClippedList.set(polyLayer.name, clipps);
-    });
+  // function handleClip() {
+  //   const totalClippedList = new Map<string, FeatureCollection>();
+  //   //Find all selectedlayers
+  //   const [selectedPolyLayers, selectedLineLayers] = findAllLayers();
+  //   console.log('SelectedLayers', selectedPolyLayers);
+  //   console.log('SelectedLineLayers', selectedLineLayers);
+  //   selectedPolyLayers.forEach((polyLayer) => {
+  //     const clipps: FeatureCollection = {
+  //       type: 'FeatureCollection',
+  //       features: [],
+  //     };
+  //     if (selectedMainLayer?.geoJSON && polyLayer?.geoJSON) {
+  //       selectedMainLayer.geoJSON.features.forEach((mainFeature) => {
+  //         if (mainFeature.geometry.type === 'Polygon') {
+  //           polyLayer.geoJSON.features.forEach((polyFeature) => {
+  //             if (polyFeature.geometry.type === 'Polygon') {
+  //               const clipped = intersect(
+  //                 mainFeature.geometry as Polygon,
+  //                 polyFeature.geometry as Polygon
+  //               ) as Feature<Polygon | MultiPolygon>;
+  //               if (clipped !== null) {
+  //                 clipps.features.push(clipped);
+  //               }
+  //             }
+  //           });
+  //         }
+  //       });
+  //     }
+  //     totalClippedList.set(polyLayer.name, clipps);
+  //   });
 
-    for (const selectedLineLayer of selectedLineLayers) {
-      const clipps: FeatureCollection = {
-        type: 'FeatureCollection',
-        features: [],
-      };
-      if (selectedMainLayer?.geoJSON && selectedLineLayer.geoJSON) {
-        selectedMainLayer.geoJSON.features.forEach((mainFeature) => {
-          if (mainFeature.geometry.type === 'Polygon') {
-            selectedLineLayer.geoJSON.features.forEach((lineFeature) => {
-              if (lineFeature.geometry.type === 'LineString') {
-                const line = lineFeature as Feature<LineString>;
-                const polygon = mainFeature.geometry as Polygon;
+  //   for (const selectedLineLayer of selectedLineLayers) {
+  //     const clipps: FeatureCollection = {
+  //       type: 'FeatureCollection',
+  //       features: [],
+  //     };
+  //     if (selectedMainLayer?.geoJSON && selectedLineLayer.geoJSON) {
+  //       selectedMainLayer.geoJSON.features.forEach((mainFeature) => {
+  //         if (mainFeature.geometry.type === 'Polygon') {
+  //           selectedLineLayer.geoJSON.features.forEach((lineFeature) => {
+  //             if (lineFeature.geometry.type === 'LineString') {
+  //               const line = lineFeature as Feature<LineString>;
+  //               const polygon = mainFeature.geometry as Polygon;
 
-                if (booleanDisjoint(line, mainFeature)) {
-                  // Line is completely outside
-                  //console.log('Line is completely outside');
-                } else if (booleanContains(polygon, line) && !booleanCrosses(polygon, line)) {
-                  // Line is completely inside
-                  //console.log('Line is completely inside');
-                  clipps.features.push(line);
-                } else {
-                  // Line intersects with polygon
-                  const polyLine = polygonToLine(polygon);
-                  const clippedLines = lineSplit(line, polyLine) as FeatureCollection<LineString>;
-                  if (clippedLines === undefined) {
-                    console.log('error');
-                    return null;
-                  }
-                  const bufferedPolygon = buffer(polygon, 0.000001, { units: 'kilometers' });
-                  const insideSegments = clippedLines.features.filter((segment) =>
-                    booleanContains(bufferedPolygon, segment)
-                  );
-                  clipps.features.push(...insideSegments);
-                }
-              }
-            });
-          }
-        });
-      }
-      totalClippedList.set(selectedLineLayer.name, clipps);
-    }
+  //               if (booleanDisjoint(line, mainFeature)) {
+  //                 // Line is completely outside
+  //                 //console.log('Line is completely outside');
+  //               } else if (booleanContains(polygon, line) && !booleanCrosses(polygon, line)) {
+  //                 // Line is completely inside
+  //                 //console.log('Line is completely inside');
+  //                 clipps.features.push(line);
+  //               } else {
+  //                 // Line intersects with polygon
+  //                 const polyLine = polygonToLine(polygon);
+  //                 const clippedLines = lineSplit(line, polyLine) as FeatureCollection<LineString>;
+  //                 if (clippedLines === undefined) {
+  //                   console.log('error');
+  //                   return null;
+  //                 }
+  //                 const bufferedPolygon = buffer(polygon, 0.000001, { units: 'kilometers' });
+  //                 const insideSegments = clippedLines.features.filter((segment) =>
+  //                   booleanContains(bufferedPolygon, segment)
+  //                 );
+  //                 clipps.features.push(...insideSegments);
+  //               }
+  //             }
+  //           });
+  //         }
+  //       });
+  //     }
+  //     totalClippedList.set(selectedLineLayer.name, clipps);
+  //   }
 
-    return totalClippedList;
-  }
+  //   return totalClippedList;
+  // }
 
   function handleClip_2() {
     const totalClippedList = new Map<string, FeatureCollection>();
@@ -339,19 +339,24 @@ function Clip(props: {
     setTimeout(() => {
       const clipped = handleClip_2();
       clipped?.forEach((value: FeatureCollection, key: string) => {
-        const newObj: GeoJSONItem = {
-          id: generateId(),
-          name: generateClipName(key),
-          visible: true,
-          color: generateColor(),
-          opacity: determineOpacity(value),
-          geoJSON: value as FeatureCollection,
-        };
-        setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+        if (value.features.length > 0) {
+          console.log('true');
+          const newObj: GeoJSONItem = {
+            id: generateId(),
+            name: generateClipName(key),
+            visible: true,
+            color: generateColor(),
+            opacity: determineOpacity(value),
+            geoJSON: value as FeatureCollection,
+          };
+          setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+          props.showAlert('success', 'clipped ' + key);
+        } else {
+          props.showAlert('warning', 'No overlap');
+        }
       });
       setIsLoading(false);
       props.handleCloseModal();
-      props.showAlert('success', '');
     }, 10);
   };
 
@@ -467,12 +472,7 @@ function Clip(props: {
             <Button variant="outlined" color="error" onClick={props.handleCloseModal}>
               Cancel
             </Button>
-            <Button
-              id="ok-button"
-              onClick={handleOk}
-              variant="contained"
-              sx={{ backgroundColor: '#2975a0' }}
-            >
+            <Button id="ok-button" onClick={handleOk} variant="outlined" sx={{ color: '#2975a0' }}>
               {'OK'}
             </Button>
           </Box>

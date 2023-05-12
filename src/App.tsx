@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import MainPage from './components/mainPage';
+import MainPage from './pages/mainPage';
 import Alert, { AlertColor } from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import { uid } from 'uid';
@@ -22,6 +22,7 @@ function App() {
           right: 750,
           zIndex: 9999,
           transition: 'opacity 0.7s ease-in-out',
+          width: '30%',
         }}
       >
         <AlertTitle>{status}</AlertTitle>

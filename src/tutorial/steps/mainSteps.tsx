@@ -1,5 +1,5 @@
 import InfoIcon from '@mui/icons-material/Info';
-import trondheimClip from '../clip_demo.png';
+import trondheimClip from './clip_demo.png';
 
 export const getSteps = [
   {
@@ -11,12 +11,42 @@ export const getSteps = [
       <div>
         <p>
           Welcome to QGEE´s! In this tutorial you will learn how to use the basic tools. But first,
-          if you are not running this application on Google Chrome, please change to Google Chrome.{' '}
+          some quick info:
         </p>
+        <ul style={{ textAlign: 'left', margin: 'auto', width: '70%' }}>
+          <li>Run this application in Google Chrome.</li>
+          <li>
+            {' '}
+            The tutorial is step based, so if you don't know what to do, go back to the menu where
+            you initially startet the tutorial.
+          </li>
+          <li>
+            You can start, stop and restart this tutorial any time you want under the settings wheel
+            in the top right corner.
+          </li>
+          <li>
+            If you refresh the page you <span style={{ textDecoration: 'underline' }}>will</span>{' '}
+            lose your work.
+          </li>
+          <li>
+            Make sure that the menu on the left is{' '}
+            <span style={{ textDecoration: 'underline' }}>open</span> before you continue the
+            tutorial further.
+          </li>
+          <li>
+            If you have problem with the tutorial, a walk through guide can be found here: "youtube"
+          </li>
+        </ul>
       </div>
     ),
-
-    target: '#qgees',
+    placement: 'center' as 'center',
+    target: 'body',
+    styles: {
+      options: {
+        zIndex: 100000,
+        width: '100%',
+      },
+    },
   },
   {
     title: 'Mission',
@@ -26,61 +56,59 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          In this tutorial we will try to find the best sea fishing spots in near Trondheim. The
-          tutorial goes in several steps, so if you don't know what to do, go back to the menu where
-          you initially startet the tutorial. Good luck!
+          In this tutorial we will try to find the best spots near Trondheim to do sea fishing.{' '}
+          <br />
+          <span style={{ fontWeight: 'bold' }}> Good luck!</span>
         </p>
       </div>
     ),
-    target: '#qgees',
+    placement: 'center' as 'center',
+    target: 'body',
     styles: {
       options: {
         zIndex: 100000,
       },
     },
   },
-  {
-    title: 'Open the drawer',
+  // {
+  //   title: 'Open the drawer',
 
-    disableBeacon: false,
-    spotlightClicks: true,
-    content: (
-      <div>
-        <p>'Press the menu on the left to open the drawer and discover the GIS tools.'</p>
-      </div>
-    ),
-    target: '#icon-button',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
-  },
+  //   disableBeacon: false,
+  //   spotlightClicks: true,
+  //   content: (
+  //     <div>
+  //       <p>'Press the menu on the left to open the drawer and discover the GIS tools.'</p>
+  //     </div>
+  //   ),
+  //   target: '#icon-button',
+  //   styles: {
+  //     options: {
+  //       zIndex: 10000,
+  //     },
+  //   },
+  // },
   {
     title: 'Load data',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
         <p>
-          We need some datasets to work with, go to GitHub and download all the files from{' '}
+          Firstly, we need some datasets to work with, go to GitHub and download the zip file from{' '}
           <a
             href="https://github.com/Lauvsnes1/TBA4251-PiG/tree/main/src/data/demo_data"
             target="_blank"
             rel="noopener noreferrer"
             color="blue"
           >
-            {' '}
-            <span style={{ textDecoration: 'underline' }}> this</span>
+            <span style={{ textDecoration: 'underline' }}>this</span>
           </a>{' '}
-          folder.
-          <br /> <span style={{ fontWeight: 'bold' }}>NB:</span> You have to enter into each file
-          and press the download button.
+          folder. Then unpack the files on your computer and press next.
         </p>
       </div>
     ),
-    target: '#load-data',
-    offset: -10,
+    placement: 'center' as 'center',
+    target: 'body',
     styles: {
       options: {
         zIndex: 10000,
@@ -94,8 +122,9 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          Now, exit the tutorial and press the load data button and upload the files you downloaded
-          from GitHub.
+          Now, press this "Load data" button and upload the files you just downloaded from GitHub.
+          When you return to the main screen, you find the next step of the tutorial under settings
+          in the top right corner.{' '}
         </p>
       </div>
     ),
@@ -109,14 +138,14 @@ export const getSteps = [
   },
   {
     title: 'Clipping',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
         <p>
           As you can see, that the datasets are huge, so we want to clip them to smaller datasets.
-          Now, press the polygon-draw button in the left bottom corner, and draw a reasonable
-          polygon around Trondheim, the size should be something like this:
+          Now, press the polygon-draw button in the left bottom corner of the map and draw a
+          reasonable polygon around Trondheim. The size should be something like this:
         </p>
         <div>
           <img src={trondheimClip} width="365px" height="200px" alt="trondheim_cut" />
@@ -135,7 +164,7 @@ export const getSteps = [
   },
   {
     title: 'Clipping',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
@@ -155,7 +184,7 @@ export const getSteps = [
   },
   {
     title: 'Delete layers',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
@@ -171,7 +200,7 @@ export const getSteps = [
   },
   {
     title: 'Delete layers',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
@@ -187,7 +216,7 @@ export const getSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
@@ -208,7 +237,7 @@ export const getSteps = [
   },
   {
     title: 'Buffer',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
@@ -229,7 +258,7 @@ export const getSteps = [
   },
   {
     title: 'Union',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
@@ -250,14 +279,14 @@ export const getSteps = [
   },
   {
     title: 'Intersect',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
         <p>
-          Last thing we want to do is to extract the spots which are on the ocean. Press the
-          'Intersect' button and look for the <InfoIcon sx={{ paddingTop: '6px' }} /> button to
-          continue the guide.
+          Now, we want to find the fishing spots which are on the ocean. Press the 'Intersect'
+          button and look for the <InfoIcon sx={{ paddingTop: '6px' }} /> button to continue the
+          guide.
         </p>
       </div>
     ),
@@ -270,19 +299,38 @@ export const getSteps = [
     },
   },
   {
-    title: 'Download layer',
-    disableBeacon: false,
+    title: 'Difference',
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
         <p>
-          Congratulations! You have completed the tutorial and found your best places to fish in
-          Trondheimsfjorden. Don't forget to download your final layer from the drop down menu and
-          bring it next time you go out fishing.
+          Last thing we want to do is to find the best spots to fish the ocean from land side. Press
+          the 'Difference' button and look for the <InfoIcon sx={{ paddingTop: '6px' }} /> button to
+          continue the guide.
         </p>
+      </div>
+    ),
+    target: '#difference',
+    offset: -10,
+    styles: {
+      options: {
+        zIndex: 10000,
+      },
+    },
+  },
+  {
+    title: 'Download layer',
+    disableBeacon: true,
+    spotlightClicks: true,
+    content: (
+      <div>
         <p>
-          <span style={{ fontWeight: 'bolder', paddingTop: '20px' }}>Skitt fiske!</span>
+          Congratulations!🥳 You have completed the tutorial and found your best places to fish in
+          Trondheimsfjorden. Don't forget to download your final layers from the drop down menu and
+          bring them next the time you go fishing.
         </p>
+        <p style={{ fontWeight: 'bolder', paddingTop: '20px' }}>Skitt fiske 🎣</p>
       </div>
     ),
     target: '#layer-list',

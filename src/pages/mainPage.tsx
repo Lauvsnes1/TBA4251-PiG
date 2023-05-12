@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Box, ThemeProvider } from '@mui/system';
 import Drawer from '@mui/material/Drawer';
@@ -25,15 +25,15 @@ import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
 import Joyride, { CallBackProps, StoreHelpers } from 'react-joyride';
 import getToolsList from '../data/tools';
-import BaseMap from './baseMapMapbox';
-import ColorPicker from './colorPicker';
-import { AppBar, Main, DrawerHeader, modalStyle } from './styledComponents';
+import BaseMap from '../components/baseMapMapbox';
+import ColorPicker from '../components/colorPicker';
+import { AppBar, Main, DrawerHeader, modalStyle } from '../components/styledComponents';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
-import DropDown from './dropDown';
+import DropDown from '../components/dropDown';
 import pac from '../data/pac.jpg';
-import { getSteps } from '../data/steps/mainSteps';
+import { getSteps } from '../tutorial/steps/mainSteps';
 
-import Settings from './settings';
+import Settings from '../components/settings';
 import { makeStyles } from '@mui/styles';
 
 const drawerWidth = 240;
@@ -41,7 +41,8 @@ const drawerWidth = 240;
 const useStyles = makeStyles({
   hovered: {
     backgroundColor: '#f2f2f2',
-    boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+    boxShadow: 'inset 0px 0px 8px 0px rgba(0, 0, 0, 0.5);',
+    borderRadius: '20px',
   },
 });
 
@@ -49,12 +50,12 @@ export default function MainPage(props: {
   showAlert: (status: AlertColor, message: string) => void;
 }) {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(true);
   const [openPop, setOpenPop] = useState<boolean>(false);
   const [modal, setModal] = useState<boolean>(false);
   const [modalComponent, setModalComponent] = useState<JSX.Element>();
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem | null>(null);
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
   const [allVisible, setAllVisible] = useState(true);
@@ -64,19 +65,18 @@ export default function MainPage(props: {
   const joyrideHelpers = useRef<StoreHelpers | null>(null);
   const classes = useStyles();
 
-  const startTutorial = (value: boolean) => {
-    setRunTour(value);
+  const handleResetTutorial = () => {
+    joyrideHelpers.current?.reset(false);
+    setRunTour(true);
   };
 
   const handleJoyrideStepChange = (data: CallBackProps) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { action, index, status, type } = data;
-    console.log('index: ', index);
-    if (open && index === 2) {
-      // If the drawer is already open
-      console.log('came here');
-      joyrideHelpers.current?.go(3);
-    }
     if (type === 'tour:end' || type === 'step:close' || action === 'close') {
+      joyrideHelpers.current?.close();
+      //fix skip step in tutorial problem
+      joyrideHelpers.current?.go(index);
       setRunTour(false);
     }
   };
@@ -140,8 +140,11 @@ export default function MainPage(props: {
         (comp) => comp.id === id
       )?.component;
       setModalComponent(componentToRender);
-    } catch {
-      console.log('Tool not found');
+      //bit shady but ok for tutorial
+      setRunTour(false);
+      joyrideHelpers.current?.close();
+    } catch (e) {
+      console.log('Tool not found, error', e);
     }
     setModal(true);
   };
@@ -172,7 +175,12 @@ export default function MainPage(props: {
           showSkipButton
         />
 
-        <AppBar position="fixed" open={open} sx={{ display: 'flex', backgroundColor: '#2975a0' }}>
+        <AppBar
+          id="qgees"
+          position="fixed"
+          open={open}
+          sx={{ display: 'flex', backgroundColor: '#2975a0' }}
+        >
           <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Box sx={{ diplay: 'flex', alignItems: 'center', flexDirection: 'row' }}>
               <Box id="icon-button">
@@ -189,12 +197,12 @@ export default function MainPage(props: {
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <Box component="img" sx={{ heigth: 60, width: 60 }} src={pac} />
-              <Typography id="qgees" variant="h5" noWrap component="div">
+              <Typography variant="h5" noWrap component="div">
                 QGEE'S
               </Typography>
             </Box>
             <Box>
-              <Settings startTutorial={startTutorial} />
+              <Settings setRunTour={setRunTour} resetTutorial={handleResetTutorial} />
             </Box>
           </Toolbar>
         </AppBar>
@@ -207,6 +215,7 @@ export default function MainPage(props: {
               width: drawerWidth,
               boxSizing: 'border-box',
             },
+            overflow: 'auto',
           }}
           variant="persistent"
           anchor="left"

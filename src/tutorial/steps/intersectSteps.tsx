@@ -1,19 +1,14 @@
-export const unionSteps = [
+export const intersectSteps = [
   {
-    title: 'Union',
+    title: 'Intersect',
     disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
-        <p>
-          {' '}
-          As you can see, you have two different layers containg the surface of Trondheimsfjorden.
-          Lets make them into one layer. Note that the eccecution of this algorithm may take several
-          minutes, depending on how large your dataset is, so be pacient.
-        </p>
+        <p>Lets find the out where you want to navigate to catch you favorite fish.</p>
       </div>
     ),
-    target: '#union-header',
+    target: '#intersect-header',
     styles: {
       options: {
         zIndex: 10000,
@@ -21,15 +16,15 @@ export const unionSteps = [
     },
   },
   {
-    title: 'Buffer',
+    title: 'Intersect',
     disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
-        <p> Select trdfjorden_vest_clip as the first layer. </p>
+        <p> Select "trondheimsfjorden" as layer one. </p>
       </div>
     ),
-    target: '#select-first',
+    target: '#select-layer-1',
     styles: {
       options: {
         zIndex: 10000,
@@ -37,15 +32,15 @@ export const unionSteps = [
     },
   },
   {
-    title: 'Union',
+    title: 'Intersect',
     disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
-        <p> Select trdfjordern_øst_clip as the second layer. </p>
+        <p>Select "fiskeområder" as layer two</p>
       </div>
     ),
-    target: '#select-second',
+    target: '#select-layer-2',
     styles: {
       options: {
         zIndex: 10000,
@@ -53,15 +48,15 @@ export const unionSteps = [
     },
   },
   {
-    title: 'Union',
+    title: 'Intersect',
     disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
-        <p> Name the layer "trondheimsfjorden". </p>
+        <p> Name the output layer "my_fishingmap_sea". </p>
       </div>
     ),
-    target: '#costum-name',
+    target: '#custom-name',
     styles: {
       options: {
         zIndex: 10000,
@@ -69,7 +64,7 @@ export const unionSteps = [
     },
   },
   {
-    title: 'Union',
+    title: 'Intersect',
     disableBeacon: true,
     spotlightClicks: true,
     content: (

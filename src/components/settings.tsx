@@ -39,7 +39,10 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Settings(props: { startTutorial: (value: boolean) => void }) {
+export default function Settings(props: {
+  setRunTour: (value: boolean) => void;
+  resetTutorial: () => void;
+}) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [editMapModal, setEditMapModal] = useState(false);
   const { setBaseMap } = useGeoJSONContext();
@@ -106,7 +109,7 @@ export default function Settings(props: { startTutorial: (value: boolean) => voi
   // };
 
   const startTutorial = () => {
-    props.startTutorial(true);
+    props.setRunTour(true);
     setOpen(false);
     //setMousePosition(undefined);
     setTimeout(() => {
@@ -126,20 +129,23 @@ export default function Settings(props: { startTutorial: (value: boolean) => voi
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
     setOpen(true);
-    props.startTutorial(false);
+    props.setRunTour(false);
   };
   const handleClose = () => {
     setAnchorEl(null);
     setOpen(false);
   };
   const handleChangeMap = (mapAPI: string) => {
-    console.log('pressed! with:', mapAPI);
     setBaseMap(mapAPI);
     handleClose();
   };
 
   const handleShowDeleteModal = () => {
     setEditMapModal(true);
+  };
+  const handleRestartTutorial = () => {
+    props.resetTutorial();
+    setOpen(false);
   };
 
   // const handleRightClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -182,6 +188,7 @@ export default function Settings(props: { startTutorial: (value: boolean) => voi
           {' '}
           {isStartet ? 'Continue tutorial' : 'Start tutorial'}
         </MenuItem>
+        {isStartet ? <MenuItem onClick={handleRestartTutorial}> {'Reset tutorial'}</MenuItem> : ''}
         <Modal
           style={{ justifyContent: 'center', alignContent: 'center', display: 'flex' }}
           open={editMapModal}

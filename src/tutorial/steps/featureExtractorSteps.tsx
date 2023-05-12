@@ -1,7 +1,7 @@
 export const featureExtractorSteps = [
   {
     title: 'Feature extractor',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: <p> Now we will try to extract your favorite fish species from the dataset. </p>,
     target: '#feature-ex-header',
@@ -13,7 +13,7 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     scrollDuration: 300,
     content: <p> Choose the fiskeobservasjoner_clip as input layer. </p>,
@@ -27,7 +27,7 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: <p> Choose the property "Norsk Navn". </p>,
     target: '#select-prop',
@@ -39,7 +39,7 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: <p> Choose the operation "=" </p>,
     target: '#select-operation',
@@ -51,7 +51,7 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: <p> Type in "kveite" in the text input. </p>,
     target: '#rule-0-value',
@@ -63,7 +63,7 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: (
       <div>
@@ -72,7 +72,7 @@ export const featureExtractorSteps = [
           Now, press this button and do the same with at least two more of your favorite fish
           species from the following list(remember to have everything in lowercase):{' '}
         </p>
-        <ul style={{ textAlign: 'left', margin: 'auto', width: '50%' }}>
+        <ul style={{ textAlign: 'left', margin: 'auto', width: '60%' }}>
           <li>sei</li>
           <li>torsk</li>
           <li>laks</li>
@@ -80,12 +80,12 @@ export const featureExtractorSteps = [
           <li>hvitting</li>
           <li>breiflabb</li>
           <li>hyse</li>
-          <li>ål</li>
+          {/*<li>ål</li>*/}
           <li>gråsteinbit</li>
         </ul>
       </div>
     ),
-    placement: 'left' as 'left',
+    placement: 'right' as 'right',
     target: '#add-rule-button',
     styles: {
       options: {
@@ -95,7 +95,7 @@ export const featureExtractorSteps = [
   },
   {
     title: 'Feature extractor',
-    disableBeacon: false,
+    disableBeacon: true,
     spotlightClicks: true,
     content: <p> Then press the ok button. </p>,
     target: '#ok-button',

@@ -21,7 +21,7 @@ export const clipSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p> Select all the layers you have uploaded: ... </p>
+        <p> Select all the layers you have uploaded from Github. </p>
       </div>
     ),
     target: '#multiple-layer-select',
@@ -37,7 +37,7 @@ export const clipSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p> Here select the layer myClip which you just made. </p>
+        <p> Here select the layer my_clip which you just made to fit the other layers. </p>
       </div>
     ),
     target: '#select-clip-layer',

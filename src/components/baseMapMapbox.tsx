@@ -339,7 +339,7 @@ function BaseMap(props: {
           <TextField
             style={{ marginTop: '10px' }}
             id="outlined-basic"
-            label="Name"
+            label="Layer name"
             variant="filled"
             value={name}
             placeholder={name}
