@@ -1,3 +1,5 @@
+import { commonStyles } from './commonStyle';
+
 export const intersectSteps = [
   {
     title: 'Intersect',
@@ -9,11 +11,7 @@ export const intersectSteps = [
       </div>
     ),
     target: '#intersect-header',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Intersect',
@@ -25,11 +23,7 @@ export const intersectSteps = [
       </div>
     ),
     target: '#select-layer-1',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Intersect',
@@ -41,11 +35,7 @@ export const intersectSteps = [
       </div>
     ),
     target: '#select-layer-2',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Intersect',
@@ -57,11 +47,7 @@ export const intersectSteps = [
       </div>
     ),
     target: '#custom-name',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Intersect',
@@ -73,10 +59,6 @@ export const intersectSteps = [
       </div>
     ),
     target: '#ok-button',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
 ];

@@ -1,3 +1,5 @@
+import { commonStyles } from './commonStyle';
+
 export const clipSteps = [
   {
     title: 'Clip',
@@ -9,11 +11,7 @@ export const clipSteps = [
       </div>
     ),
     target: '#clip-header',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Clip',
@@ -25,11 +23,7 @@ export const clipSteps = [
       </div>
     ),
     target: '#multiple-layer-select',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Clip',
@@ -41,11 +35,7 @@ export const clipSteps = [
       </div>
     ),
     target: '#select-clip-layer',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Clip',
@@ -57,10 +47,6 @@ export const clipSteps = [
       </div>
     ),
     target: '#ok-button',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
 ];

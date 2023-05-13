@@ -1,3 +1,4 @@
+import { commonStyles } from './commonStyle';
 export const bufferSteps = [
   {
     title: 'Buffer',
@@ -9,11 +10,8 @@ export const bufferSteps = [
       </div>
     ),
     target: '#buffer-header',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+
+    styles: commonStyles,
   },
   {
     title: 'Buffer',
@@ -25,11 +23,7 @@ export const bufferSteps = [
       </div>
     ),
     target: '#select-layer',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Buffer',
@@ -41,11 +35,7 @@ export const bufferSteps = [
       </div>
     ),
     target: '#select-buffer-radius',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Buffer',
@@ -57,11 +47,7 @@ export const bufferSteps = [
       </div>
     ),
     target: '#custom-name',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Buffer',
@@ -73,10 +59,6 @@ export const bufferSteps = [
       </div>
     ),
     target: '#ok-button',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
 ];

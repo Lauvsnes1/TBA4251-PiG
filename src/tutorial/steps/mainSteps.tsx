@@ -1,5 +1,6 @@
 import InfoIcon from '@mui/icons-material/Info';
 import trondheimClip from './clip_demo.png';
+import { commonStyles } from './commonStyle';
 
 export const getSteps = [
   {
@@ -43,7 +44,7 @@ export const getSteps = [
     target: 'body',
     styles: {
       options: {
-        zIndex: 100000,
+        ...commonStyles.options,
         width: '100%',
       },
     },
@@ -64,11 +65,7 @@ export const getSteps = [
     ),
     placement: 'center' as 'center',
     target: 'body',
-    styles: {
-      options: {
-        zIndex: 100000,
-      },
-    },
+    styles: commonStyles,
   },
   // {
   //   title: 'Open the drawer',
@@ -109,11 +106,7 @@ export const getSteps = [
     ),
     placement: 'center' as 'center',
     target: 'body',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Load data',
@@ -130,11 +123,7 @@ export const getSteps = [
     ),
     target: '#load-data',
     offset: -10,
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Clipping',
@@ -157,7 +146,7 @@ export const getSteps = [
     placement: 'bottom' as 'bottom',
     styles: {
       options: {
-        zIndex: 10000,
+        ...commonStyles.options,
         width: 550,
       },
     },
@@ -176,11 +165,7 @@ export const getSteps = [
     ),
     target: '#clip',
     offset: -10,
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Delete layers',
@@ -192,11 +177,7 @@ export const getSteps = [
       </div>
     ),
     target: '#layer-list',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Delete layers',
@@ -208,11 +189,7 @@ export const getSteps = [
       </div>
     ),
     target: '#drop-down-menu',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Feature extractor',
@@ -229,11 +206,7 @@ export const getSteps = [
     ),
     target: '#feature-extractor',
     offset: -10,
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Buffer',
@@ -250,11 +223,7 @@ export const getSteps = [
     ),
     target: '#buffer',
     offset: -10,
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Union',
@@ -271,11 +240,7 @@ export const getSteps = [
     ),
     target: '#union',
     offset: -10,
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Intersect',
@@ -292,11 +257,7 @@ export const getSteps = [
     ),
     target: '#intersect',
     offset: -10,
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Difference',
@@ -313,11 +274,7 @@ export const getSteps = [
     ),
     target: '#difference',
     offset: -10,
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Download layer',
@@ -335,10 +292,6 @@ export const getSteps = [
     ),
     target: '#layer-list',
     offset: -10,
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
 ];

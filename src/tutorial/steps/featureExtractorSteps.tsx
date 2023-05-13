@@ -1,3 +1,5 @@
+import { commonStyles } from './commonStyle';
+
 export const featureExtractorSteps = [
   {
     title: 'Feature extractor',
@@ -5,11 +7,7 @@ export const featureExtractorSteps = [
     spotlightClicks: true,
     content: <p> Now we will try to extract your favorite fish species from the dataset. </p>,
     target: '#feature-ex-header',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Feature extractor',
@@ -19,11 +17,7 @@ export const featureExtractorSteps = [
     content: <p> Choose the fiskeobservasjoner_clip as input layer. </p>,
     target: '#select-layer',
     placement: 'left' as 'left',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Feature extractor',
@@ -31,11 +25,7 @@ export const featureExtractorSteps = [
     spotlightClicks: true,
     content: <p> Choose the property "Norsk Navn". </p>,
     target: '#select-prop',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Feature extractor',
@@ -43,11 +33,7 @@ export const featureExtractorSteps = [
     spotlightClicks: true,
     content: <p> Choose the operation "=" </p>,
     target: '#select-operation',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Feature extractor',
@@ -55,11 +41,7 @@ export const featureExtractorSteps = [
     spotlightClicks: true,
     content: <p> Type in "kveite" in the text input. </p>,
     target: '#rule-0-value',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Feature extractor',
@@ -87,11 +69,7 @@ export const featureExtractorSteps = [
     ),
     placement: 'right' as 'right',
     target: '#add-rule-button',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Feature extractor',
@@ -99,10 +77,6 @@ export const featureExtractorSteps = [
     spotlightClicks: true,
     content: <p> Then press the ok button. </p>,
     target: '#ok-button',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
 ];

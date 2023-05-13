@@ -1,3 +1,5 @@
+import { commonStyles } from './commonStyle';
+
 export const unionSteps = [
   {
     title: 'Union',
@@ -16,11 +18,7 @@ export const unionSteps = [
       </div>
     ),
     target: '#union-header',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Buffer',
@@ -32,11 +30,7 @@ export const unionSteps = [
       </div>
     ),
     target: '#select-first',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Union',
@@ -48,11 +42,7 @@ export const unionSteps = [
       </div>
     ),
     target: '#select-second',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Union',
@@ -64,11 +54,7 @@ export const unionSteps = [
       </div>
     ),
     target: '#costum-name',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
   {
     title: 'Union',
@@ -80,10 +66,6 @@ export const unionSteps = [
       </div>
     ),
     target: '#ok-button',
-    styles: {
-      options: {
-        zIndex: 10000,
-      },
-    },
+    styles: commonStyles,
   },
 ];
