@@ -1,6 +1,49 @@
-# Getting Started with Create React App
+# Web GIS Application TBA4251
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to this GIS (Geographic Information System) application! This project is developed as part of the NTNU 4th year course TBA4251 "Programming in Geomatics". It's designed for non-professional GIS users with little to no experience. You can run the application either by cloning the repository and running it with npm, or simply by visiting this [website](https://lauvsnes1.github.io/TBA4251-PiG/). To get started, click the settings wheel in the top-right corner and select "Start tutorial".
+
+## Tech Stack (most important)
+* React: v. 18.2.0
+* TypeScript: v. 4.9.5
+* React-DOM: v. 18.2.0
+* Mapbox-GL: v. 2.13.0 - For rendering map and geographical layers.
+* Turf JS: v. 6.5.0 - For geospatial analysis.
+* React-Map-GL: v. 7.0.21
+* React Joyride: v. 2.0.5 - For website tutorial.
+
+## Purpose
+The purpose of this application is to present geographical data in a straightforward and appealing manner, along with the ability to conduct basic spatial analysis. The application aims to be intuitive and user-friendly, enabling users with a minimal understanding of geographic information science to comprehend and utilize the application for solving simple GIS tasks. The goal is for a first-year student in the Geomatics study at NTNU to easily perform the tutorial. 
+
+## Usage
+This application is accessible at [https://lauvsnes1.github.io/TBA4251-PiG/](https://lauvsnes1.github.io/TBA4251-PiG/) and supports files of type GeoJSON and JSON. The map is centered on Trondheim, Norway, but you can zoom into layers anywhere in the world. By clicking on the settings icon and selecting "Start tutorial", you can learn how to use the basic geospatial tools. The example task will guide you in identifying the best fishing spots in Trondheimsfjorden. 
+## Additional Packages Used
+This project has made use of several npm packages to facilitate its development. These include (but are not limited to):
+
+* [@emotion/react](https://www.npmjs.com/package/@emotion/react): v. 11.10.6
+* [@emotion/styled](https://www.npmjs.com/package/@emotion/styled): v. 11.10.6
+* [@mapbox/mapbox-gl-draw](https://www.npmjs.com/package/@mapbox/mapbox-gl-draw): v. 1.4.1
+* [@mui/icons-material](https://www.npmjs.com/package/@mui/icons-material): v. 5.11.9
+* [@mui/material](https://www.npmjs.com/package/@mui/material): v. 5.11.10
+* [@mui/styles](https://www.npmjs.com/package/@mui/styles): v. 5.12.0
+* [@turf modules](https://www.npmjs.com/package/@turf/turf): v. 6.5.0
+* [@types/geojson](https://www.npmjs.com/package/@types/geojson): v. 7946.0.10
+* [@types/mapbox-gl](https://www.npmjs.com/package/@types/mapbox-gl): v. 2.7.10
+* [@types/node](https://www.npmjs.com/package/@types/node): v. 16.18.13
+* [@types/react](https://www.npmjs.com/package/@types/react): v. 18.0.28
+* [@types/react-dom](https://www.npmjs.com/package/@types/react-dom): v. 18.0.11
+* [file-saver](https://www.npmjs.com/package/file-saver): v. 2.0.5
+* [leaflet](https://www.npmjs.com/package/leaflet): v. 1.9.3
+* [mapbox-gl-draw-rectangle-mode](https://www.npmjs.com/package/mapbox-gl-draw-rectangle-mode): v. 1.0.4
+* [react-bootstrap-sidebar-menu](https://www.npmjs.com/package/react-bootstrap-sidebar-menu): v. 2.0.3
+* [react-color](https://www.npmjs.com/package/react-color): v. 2.19.3
+* [react-scripts](https://www.npmjs.com/package/react-scripts): v. 5.0.1
+* [uid](https://www.npmjs.com/package/uid
+
+
+## Acknowledgements
+* This app was created with create-react-app using the TypeScript template.
+
+
 
 ## Available Scripts
 
@@ -8,40 +51,4 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-# TBA4251-PiG
