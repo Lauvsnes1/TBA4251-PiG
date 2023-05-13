@@ -25,8 +25,8 @@ export const getSteps = [
             in the top right corner.
           </li>
           <li>
-            If you refresh the page you <span style={{ textDecoration: 'underline' }}>will</span>{' '}
-            lose your work.
+            If you refresh the page you will{' '}
+            <span style={{ textDecoration: 'underline' }}>lose</span> your work.
           </li>
           <li>
             Make sure that the menu on the left is{' '}
@@ -148,7 +148,7 @@ export const getSteps = [
           reasonable polygon around Trondheim. The size should be something like this:
         </p>
         <div>
-          <img src={trondheimClip} width="365px" height="200px" alt="trondheim_cut" />
+          <img src={trondheimClip} width="425px" height="233px" alt="trondheim_cut" />
         </div>
         <p>Name your new layer my_clip.</p>
       </div>
@@ -158,7 +158,7 @@ export const getSteps = [
     styles: {
       options: {
         zIndex: 10000,
-        width: 450,
+        width: 550,
       },
     },
   },
