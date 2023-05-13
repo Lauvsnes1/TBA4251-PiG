@@ -93,7 +93,7 @@ export const getSteps = [
         <p>
           Firstly, we need some datasets to work with, go to GitHub and download the zip file from{' '}
           <a
-            href="https://github.com/Lauvsnes1/TBA4251-PiG/tree/main/src/data/demo_data"
+            href="https://github.com/Lauvsnes1/TBA4251-PiG/blob/main/src/data/demo_data/data.zip"
             target="_blank"
             rel="noopener noreferrer"
             color="blue"
