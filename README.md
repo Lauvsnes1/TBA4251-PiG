@@ -1,6 +1,17 @@
 # Web GIS Application TBA4251
 
-Welcome to this GIS (Geographic Information System) application! This project is developed as part of the NTNU 4th year course TBA4251 "Programming in Geomatics". It's designed for non-professional GIS users with little to no experience. You can run the application either by cloning the repository and running it with npm, or simply by visiting this [website](https://lauvsnes1.github.io/TBA4251-PiG/). To get started, click the settings wheel in the top-right corner and select "Start tutorial".
+Welcome to this GIS (Geographic Information System) application! This project is developed as part of the NTNU 4th year course TBA4251 "Programming in Geomatics". It's designed for non-professional GIS users with little to no experience. You can run the application either by cloning the repository and running it with npm, or simply by visiting this [website](https://lauvsnes1.github.io/TBA4251-PiG/). To get started, click the settings wheel in the top-right corner and select "Start tutorial". 
+
+
+## Run locally
+
+Clone the project and run:
+
+### `npm i`
+
+then run:
+
+### `npm start`
 
 ## Tech Stack (most important)
 * React: v. 18.2.0
@@ -16,6 +27,7 @@ The purpose of this application is to present geographical data in a straightfor
 
 ## Usage
 This application is accessible at [https://lauvsnes1.github.io/TBA4251-PiG/](https://lauvsnes1.github.io/TBA4251-PiG/) and supports files of type GeoJSON and JSON. The map is centered on Trondheim, Norway, but you can zoom into layers anywhere in the world. By clicking on the settings icon and selecting "Start tutorial", you can learn how to use the basic geospatial tools. The example task will guide you in identifying the best fishing spots in Trondheimsfjorden. 
+
 ## Additional Packages Used
 This project has made use of several npm packages to facilitate its development. These include (but are not limited to):
 
@@ -42,13 +54,4 @@ This project has made use of several npm packages to facilitate its development.
 
 ## Acknowledgements
 * This app was created with create-react-app using the TypeScript template.
-
-
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
 
