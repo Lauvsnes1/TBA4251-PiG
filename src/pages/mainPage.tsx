@@ -173,7 +173,6 @@ export default function MainPage(props: {
           callback={handleJoyrideStepChange}
           continuous
           showProgress
-          showSkipButton
         />
 
         <AppBar
@@ -198,7 +197,7 @@ export default function MainPage(props: {
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <Box component="img" sx={{ heigth: 60, width: 60 }} src={pac} />
-              <Typography variant="h5" noWrap component="div">
+              <Typography variant="h5" noWrap component="div" id="header">
                 QGEE'S
               </Typography>
             </Box>

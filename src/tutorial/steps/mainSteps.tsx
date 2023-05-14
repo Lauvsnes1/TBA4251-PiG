@@ -1,6 +1,7 @@
 import InfoIcon from '@mui/icons-material/Info';
 import trondheimClip from './clip_demo.png';
 import { commonStyles } from './commonStyle';
+import polygon_button from './polygon-button.png';
 
 export const getSteps = [
   {
@@ -133,21 +134,31 @@ export const getSteps = [
       <div>
         <p>
           As you can see, that the datasets are huge, so we want to clip them to smaller datasets.
-          Now, press the polygon-draw button in the left bottom corner of the map and draw a
-          reasonable polygon around Trondheim. The size should be something like this:
+          Now, press the polygon-draw{' '}
+          <img
+            src={polygon_button}
+            style={{ marginBottom: '-4px' }}
+            height="20px"
+            width="20px"
+            alt=""
+          />{' '}
+          button in the left bottom corner of the map and draw a reasonable polygon around
+          Trondheim. The size should be something like the phot under. Name your new layer my_clip.
         </p>
         <div>
           <img src={trondheimClip} width="425px" height="233px" alt="trondheim_cut" />
         </div>
-        <p>Name your new layer my_clip.</p>
+        <p></p>
       </div>
     ),
-    target: '#basemap',
-    placement: 'bottom' as 'bottom',
+    target: '#header',
+    placement: 'bottom' as const,
     styles: {
       options: {
         ...commonStyles.options,
         width: 550,
+        zIndex: 1,
+        arrowColor: 'transparent',
       },
     },
   },

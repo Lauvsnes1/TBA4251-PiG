@@ -22,7 +22,6 @@ function Tutorial(props: { runTour: boolean; steps: any; setRunTour: (toggle: bo
         continuous
         scrollToFirstStep
         showProgress
-        showSkipButton
       />
     </>
   );
