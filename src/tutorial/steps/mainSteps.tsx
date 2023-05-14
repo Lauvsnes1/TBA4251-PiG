@@ -291,7 +291,7 @@ export const getSteps = [
       </div>
     ),
     target: '#layer-list',
-    offset: -10,
+    offset: 0,
     styles: commonStyles,
   },
 ];

@@ -64,6 +64,7 @@ export default function MainPage(props: {
   const [runTour, setRunTour] = useState<boolean>(false);
   const joyrideHelpers = useRef<StoreHelpers | null>(null);
   const classes = useStyles();
+  const drawerRef = useRef<HTMLDivElement>(null);
 
   const handleResetTutorial = () => {
     joyrideHelpers.current?.reset(false);
@@ -215,121 +216,125 @@ export default function MainPage(props: {
               width: drawerWidth,
               boxSizing: 'border-box',
             },
-            overflow: 'auto',
+            overflow: 'scroll',
           }}
           variant="persistent"
           anchor="left"
           open={open}
         >
-          <DrawerHeader style={{ justifyContent: 'space-between' }}>
-            <Typography variant="h6" sx={{ paddingLeft: '10px', fontWeight: 'bold' }}>
-              {'Tools '}
-            </Typography>
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-            </IconButton>
-          </DrawerHeader>
-          <Divider />
-          <List disablePadding sx={{ paddingTop: 0 }}>
-            {tools.map((element, index) => (
-              <ListItem key={element.name} id={element.joyride} disablePadding>
-                <ListItemButton onClick={() => showModal(element.id)}>
-                  <ListItemIcon>
-                    <element.icon />
-                  </ListItemIcon>
-                  <ListItemText primary={element.name} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography
-              variant="h6"
-              sx={{
-                display: 'flex',
-                alignContent: 'flex-start',
-                marginLeft: '10px',
-                fontWeight: 'bold',
-                paddingInline: '8px',
-                paddingBottom: '12px',
-              }}
-            >
-              Layers
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', paddingRight: 2 }}>
-              {allVisible ? (
-                <VisibilityIcon
-                  onClick={toggleOffAllVisibility}
-                  onMouseEnter={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
-                  className={isHovered ? classes.hovered : ''}
-                />
-              ) : (
-                <VisibilityOffIcon
-                  onClick={toggleOnAllVisibility}
-                  onMouseEnter={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
-                  className={isHovered ? classes.hovered : ''}
-                />
-              )}
+          <div ref={drawerRef}>
+            <DrawerHeader style={{ justifyContent: 'space-between' }}>
+              <Typography variant="h6" sx={{ paddingLeft: '10px', fontWeight: 'bold' }}>
+                {'Tools '}
+              </Typography>
+              <IconButton onClick={handleDrawerClose}>
+                {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+              </IconButton>
+            </DrawerHeader>
+            <Divider />
+            <List disablePadding sx={{ paddingTop: 0 }}>
+              {tools.map((element, index) => (
+                <ListItem key={element.name} id={element.joyride} disablePadding>
+                  <ListItemButton onClick={() => showModal(element.id)}>
+                    <ListItemIcon>
+                      <element.icon />
+                    </ListItemIcon>
+                    <ListItemText primary={element.name} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  display: 'flex',
+                  alignContent: 'flex-start',
+                  marginLeft: '10px',
+                  fontWeight: 'bold',
+                  paddingInline: '8px',
+                  paddingBottom: '12px',
+                }}
+              >
+                Layers
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', paddingRight: 2 }}>
+                {allVisible ? (
+                  <VisibilityIcon
+                    onClick={toggleOffAllVisibility}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    className={isHovered ? classes.hovered : ''}
+                  />
+                ) : (
+                  <VisibilityOffIcon
+                    onClick={toggleOnAllVisibility}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    className={isHovered ? classes.hovered : ''}
+                  />
+                )}
+              </Box>
             </Box>
-          </Box>
-          <Divider />
-          <List id="layer-list" disablePadding sx={{ paddingTop: 0 }}>
-            {geoJSONList.map((layer) => (
-              <div key={layer.id}>
-                <Stack spacing={10} direction="row">
-                  <ListItem divider key={layer.id} disablePadding sx={{ paddingLeft: '6px' }}>
-                    <ListItemButton key={layer.id} sx={{ paddingTop: 0, paddingBottom: 0 }}>
-                      <ListItemText>
-                        <Typography sx={{ fontSize: 12 }}> {layer.name}</Typography>
-                      </ListItemText>
-                      <ListItemIcon
-                        style={{
-                          justifyContent: 'space-between',
-                          alignContent: 'space-between',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <div id="drop-down-menu">
-                          <DropDown layer={layer} zoomToLayer={zoomToLayer} />
-                        </div>
-                        <div onClick={(e) => handleShowColorPicker(e, layer)}>
-                          <PaletteIcon htmlColor={layer.color} key={layer.id} />
-                        </div>
-                        {selectedLayer === layer && (
-                          <Popper
-                            id={layer.id}
-                            open={openPop}
-                            anchorEl={anchorEl}
-                            transition
-                            style={{ zIndex: 2 }}
-                          >
-                            {({ TransitionProps }) => (
-                              <Fade {...TransitionProps} timeout={100}>
-                                <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }}>
-                                  <ColorPicker
-                                    handleCloseColorPicker={handleCloseColorPicker}
-                                    layer={layer}
-                                  />
-                                </Box>
-                              </Fade>
-                            )}
-                          </Popper>
-                        )}
-                        {layer.visible ? (
-                          <VisibilityIcon onClick={() => toggleVisibility(layer)} />
-                        ) : (
-                          <VisibilityOffIcon onClick={() => toggleVisibility(layer)} />
-                        )}
-                      </ListItemIcon>
-                    </ListItemButton>
-                  </ListItem>
-                </Stack>
-              </div>
-            ))}
-          </List>
-          <DrawerHeader />
+            <Divider />
+            <List id="layer-list" disablePadding sx={{ paddingTop: 0 }}>
+              {geoJSONList.map((layer) => (
+                <div key={layer.id}>
+                  <Stack spacing={10} direction="row">
+                    <ListItem divider key={layer.id} disablePadding sx={{ paddingLeft: '6px' }}>
+                      <ListItemButton key={layer.id} sx={{ paddingTop: 0, paddingBottom: 0 }}>
+                        <ListItemText>
+                          <Typography sx={{ fontSize: 12 }}> {layer.name}</Typography>
+                        </ListItemText>
+                        <ListItemIcon
+                          style={{
+                            justifyContent: 'space-between',
+                            alignContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <div id="drop-down-menu">
+                            <DropDown layer={layer} zoomToLayer={zoomToLayer} />
+                          </div>
+                          <div onClick={(e) => handleShowColorPicker(e, layer)}>
+                            <PaletteIcon htmlColor={layer.color} key={layer.id} />
+                          </div>
+                          {selectedLayer === layer && (
+                            <Popper
+                              id={layer.id}
+                              open={openPop}
+                              anchorEl={anchorEl}
+                              transition
+                              style={{ zIndex: 2 }}
+                            >
+                              {({ TransitionProps }) => (
+                                <Fade {...TransitionProps} timeout={100}>
+                                  <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }}>
+                                    <ColorPicker
+                                      handleCloseColorPicker={handleCloseColorPicker}
+                                      layer={layer}
+                                    />
+                                  </Box>
+                                </Fade>
+                              )}
+                            </Popper>
+                          )}
+                          {layer.visible ? (
+                            <VisibilityIcon onClick={() => toggleVisibility(layer)} />
+                          ) : (
+                            <VisibilityOffIcon onClick={() => toggleVisibility(layer)} />
+                          )}
+                        </ListItemIcon>
+                      </ListItemButton>
+                    </ListItem>
+                  </Stack>
+                </div>
+              ))}
+            </List>
+            <DrawerHeader />
+            {/* This div is only here to ensure correct scroll behaviour in regards to the overlay of the tutorial*/}
+            <div style={{ height: '100px' }} />
+          </div>
         </Drawer>
         <Main open={open}>
           <Modal
