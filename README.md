@@ -37,7 +37,7 @@ This project has made use of several npm packages to facilitate its development.
 * [react-bootstrap-sidebar-menu](https://www.npmjs.com/package/react-bootstrap-sidebar-menu): v. 2.0.3
 * [react-color](https://www.npmjs.com/package/react-color): v. 2.19.3
 * [react-scripts](https://www.npmjs.com/package/react-scripts): v. 5.0.1
-* [uid](https://www.npmjs.com/package/uid
+* [uid](https://www.npmjs.com/package/uid): v. 2.0.1
 
 
 ## Acknowledgements
