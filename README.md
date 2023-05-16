@@ -44,7 +44,6 @@ This project has made use of several npm packages to facilitate its development.
 * [@types/react](https://www.npmjs.com/package/@types/react): v. 18.0.28
 * [@types/react-dom](https://www.npmjs.com/package/@types/react-dom): v. 18.0.11
 * [file-saver](https://www.npmjs.com/package/file-saver): v. 2.0.5
-* [leaflet](https://www.npmjs.com/package/leaflet): v. 1.9.3
 * [mapbox-gl-draw-rectangle-mode](https://www.npmjs.com/package/mapbox-gl-draw-rectangle-mode): v. 1.0.4
 * [react-bootstrap-sidebar-menu](https://www.npmjs.com/package/react-bootstrap-sidebar-menu): v. 2.0.3
 * [react-color](https://www.npmjs.com/package/react-color): v. 2.19.3
