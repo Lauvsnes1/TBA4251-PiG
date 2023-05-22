@@ -160,6 +160,15 @@ function BaseMap(props: {
             'line-opacity': 1,
           },
         };
+      case 'MultiLineString':
+        return {
+          type: 'line',
+          paint: {
+            'line-color': layer.color,
+            'line-width': 2,
+            'line-opacity': 1,
+          },
+        };
       case 'Polygon':
         return {
           type: 'fill',
