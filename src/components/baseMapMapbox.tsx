@@ -151,6 +151,15 @@ function BaseMap(props: {
             'circle-opacity': 1,
           },
         };
+      case 'MultiPoint':
+        return {
+          type: 'circle',
+          paint: {
+            'circle-radius': 5,
+            'circle-color': layer.color,
+            'circle-opacity': 1,
+          },
+        };
       case 'LineString':
         return {
           type: 'line',
