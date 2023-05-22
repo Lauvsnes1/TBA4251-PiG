@@ -62,6 +62,7 @@ export default function MainPage(props: {
   const [triggerZoom, setTriggerZoom] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [runTour, setRunTour] = useState<boolean>(false);
+  const [divHelper, setDivHelper] = useState<boolean>(false);
   const joyrideHelpers = useRef<StoreHelpers | null>(null);
   const classes = useStyles();
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -69,6 +70,11 @@ export default function MainPage(props: {
   const handleResetTutorial = () => {
     joyrideHelpers.current?.reset(false);
     setRunTour(true);
+  };
+
+  const startFirstTour = () => {
+    setRunTour(true);
+    setDivHelper(true);
   };
 
   const handleJoyrideStepChange = (data: CallBackProps) => {
@@ -202,7 +208,11 @@ export default function MainPage(props: {
               </Typography>
             </Box>
             <Box>
-              <Settings setRunTour={setRunTour} resetTutorial={handleResetTutorial} />
+              <Settings
+                startFirstTour={startFirstTour}
+                setRunTour={setRunTour}
+                resetTutorial={handleResetTutorial}
+              />
             </Box>
           </Toolbar>
         </AppBar>
@@ -336,8 +346,7 @@ export default function MainPage(props: {
             </List>
             <DrawerHeader />
             {/* This div is only here to ensure correct scroll behaviour in regards to the overlay of the tutorial*/}
-
-            <div style={{ height: '150px' }} />
+            {divHelper && <div style={{ height: '400px' }} />}
           </div>
         </Drawer>
         <Main open={open}>

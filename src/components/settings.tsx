@@ -40,6 +40,7 @@ const useStyles = makeStyles({
 });
 
 export default function Settings(props: {
+  startFirstTour: () => void;
   setRunTour: (value: boolean) => void;
   resetTutorial: () => void;
 }) {
@@ -109,7 +110,18 @@ export default function Settings(props: {
   // };
 
   const startTutorial = () => {
+    props.startFirstTour();
+    setOpen(false);
+    //setMousePosition(undefined);
+    setTimeout(() => {
+      //So it dosen´t appear before menu closing
+      setIsStarted(true);
+    }, 500);
+  };
+
+  const continueTutorial = () => {
     props.setRunTour(true);
+
     setOpen(false);
     //setMousePosition(undefined);
     setTimeout(() => {
@@ -184,10 +196,12 @@ export default function Settings(props: {
         }}
       >
         <MenuItem onClick={handleShowDeleteModal}>{'Edit basemap'}</MenuItem>
-        <MenuItem onClick={startTutorial}>
-          {' '}
-          {isStartet ? 'Continue tutorial' : 'Start tutorial'}
-        </MenuItem>
+        {isStartet ? (
+          <MenuItem onClick={continueTutorial}> {'Continue tutorial'} </MenuItem>
+        ) : (
+          <MenuItem onClick={startTutorial}>{'Start tutorial'} </MenuItem>
+        )}
+
         {isStartet ? <MenuItem onClick={handleRestartTutorial}> {'Reset tutorial'}</MenuItem> : ''}
         <Modal
           style={{ justifyContent: 'center', alignContent: 'center', display: 'flex' }}
