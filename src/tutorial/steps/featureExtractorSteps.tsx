@@ -14,7 +14,7 @@ export const featureExtractorSteps = [
     disableBeacon: true,
     spotlightClicks: true,
     scrollDuration: 300,
-    content: <p> Choose the fiskeobservasjoner_clip as input layer. </p>,
+    content: <p> Choose the layer "fiskeobservasjoner_clip" as input. </p>,
     target: '#select-layer',
     placement: 'left' as 'left',
     styles: commonStyles,
@@ -67,7 +67,7 @@ export const featureExtractorSteps = [
         </ul>
       </div>
     ),
-    placement: 'right' as 'right',
+    placement: 'right' as const,
     target: '#add-rule-button',
     styles: commonStyles,
   },

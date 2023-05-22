@@ -31,7 +31,9 @@ export const clipSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p> Here select the layer my_clip which you just made to fit the other layers. </p>
+        <p>
+          Select the "my_clip" layer that you have just created to align it with the other layers.
+        </p>
       </div>
     ),
     target: '#select-clip-layer',

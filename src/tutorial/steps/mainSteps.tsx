@@ -12,22 +12,21 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          Welcome to QGEE´s! In this tutorial you will learn how to use the basic tools. But first,
-          some quick info:
+          Welcome to QGEE's! In this tutorial, you will learn how to use the basic tools. But first,
+          here's some quick info:
         </p>
         <ul style={{ textAlign: 'left', margin: 'auto', width: '70%' }}>
           <li>Run this application in Google Chrome.</li>
           <li>
-            {' '}
-            The tutorial is step based, so if you don't know what to do, go back to the menu where
-            you initially startet the tutorial.
+            The tutorial is step-based, so if you don't know what to do, go back to the menu where
+            you initially started the tutorial.
           </li>
           <li>
-            You can start, stop and restart this tutorial any time you want under the settings wheel
+            You can start, stop, and restart this tutorial anytime you want under the settings wheel
             in the top right corner.
           </li>
           <li>
-            If you refresh the page you will{' '}
+            If you refresh the page, you will{' '}
             <span style={{ textDecoration: 'underline' }}>lose</span> your work.
           </li>
           <li>
@@ -36,7 +35,8 @@ export const getSteps = [
             tutorial further.
           </li>
           <li>
-            If you have problem with the tutorial, a walk through guide can be found here: "youtube"
+            If you have problems with the tutorial, a walkthrough guide can be found here:
+            "youtube".
           </li>
         </ul>
       </div>
@@ -58,9 +58,9 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          In this tutorial we will try to find the best spots near Trondheim to do sea fishing.{' '}
+          In this tutorial, we will try to find the best spots near Trondheim for sea fishing.{' '}
           <br />
-          <span style={{ fontWeight: 'bold' }}> Good luck!</span>
+          <span style={{ fontWeight: 'bold' }}>Good luck!</span>
         </p>
       </div>
     ),
@@ -92,16 +92,18 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          Firstly, we need some datasets to work with, go to GitHub and download the zip file from{' '}
+          Firstly, we need some datasets to work with. Please go to GitHub and download the zip file
+          from{' '}
           <a
             href="https://github.com/Lauvsnes1/TBA4251-PiG/blob/main/src/data/demo_data/data.zip"
             target="_blank"
             rel="noopener noreferrer"
-            color="blue"
+            style={{ color: 'blue', textDecoration: 'underline' }}
           >
-            <span style={{ textDecoration: 'underline' }}>this</span>
-          </a>{' '}
-          folder. Then unpack the files on your computer and press next.
+            this folder
+          </a>
+          . Once you have downloaded the file, unpack the files on your computer and proceed to the
+          next step.
         </p>
       </div>
     ),
@@ -116,9 +118,9 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          Now, press this "Load data" button and upload the files you just downloaded from GitHub.
-          When you return to the main screen, you find the next step of the tutorial under settings
-          in the top right corner.{' '}
+          Now, click on the "Load data" button and upload the files you just downloaded from GitHub.
+          Once you return to the main screen, you will find the next step of the tutorial under the
+          settings menu in the top right corner.
         </p>
       </div>
     ),
@@ -133,17 +135,17 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          As you can see, that the datasets are huge, so we want to clip them to smaller datasets.
-          Now, press the polygon-draw{' '}
+          As you can see, the datasets are quite large, so we need to clip them to smaller datasets.
+          Now, click on the polygon-draw
           <img
             src={polygon_button}
             style={{ marginBottom: '-4px' }}
             height="20px"
             width="20px"
             alt=""
-          />{' '}
-          button in the left bottom corner of the map and draw a reasonable polygon around
-          Trondheim. The size should be something like the phot under. Name your new layer my_clip.
+          />
+          button located in the bottom left corner of the map. Draw a reasonable polygon around
+          Trondheim. The size should be similar to the photo below. Name your new layer "my_clip".
         </p>
         <div>
           <img src={trondheimClip} width="425px" height="233px" alt="trondheim_cut" />
@@ -169,8 +171,9 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          Open the clipping tool and look for the <InfoIcon sx={{ paddingTop: '6px' }} /> button to
-          continue the guide.
+          Open the clipping tool and look for the{' '}
+          <InfoIcon sx={{ paddingTop: '6px', marginBottom: '-4px' }} /> button to continue the
+          guide.
         </p>
       </div>
     ),
@@ -209,9 +212,10 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          Now lets find the fish species we are looking for, press the feature extractor button in
-          the menu. Again, look for the <InfoIcon sx={{ paddingTop: '6px' }} /> button to continue
-          the guide.
+          Now let's find the fish species we are looking for. Click on the feature extractor button
+          in the menu. Once again, look for the{' '}
+          <InfoIcon sx={{ paddingTop: '6px', marginBottom: '-4px' }} /> button to continue the
+          guide.
         </p>
       </div>
     ),
@@ -226,9 +230,10 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          Now that we have our desired fish species, let's make a buffer to find out where we can
-          fish. Press the buffer button and look for the <InfoIcon sx={{ paddingTop: '6px' }} />{' '}
-          button to continue the guide.
+          Now that we have our desired fish species, let's create a buffer to determine the fishing
+          areas. Click on the buffer button and search for the{' '}
+          <InfoIcon sx={{ paddingTop: '6px', marginBottom: '-4px' }} /> button to continue the
+          guide.
         </p>
       </div>
     ),
@@ -243,9 +248,10 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          You can see that the ocean layer, Trondheimsfjorden is divided into two different layers,
-          we want to fix that. Press the 'Union' button and look for the{' '}
-          <InfoIcon sx={{ paddingTop: '6px' }} /> button to continue the guide.
+          You may notice that the ocean layer, Trondheimsfjorden, is divided into two separate
+          layers. We need to fix that. Click on the 'Union' button and search for the{' '}
+          <InfoIcon sx={{ paddingTop: '6px', marginBottom: '-4px' }} /> button to continue the
+          guide.
         </p>
       </div>
     ),
@@ -260,8 +266,9 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          Now, we want to find the fishing spots which are on the ocean. Press the 'Intersect'
-          button and look for the <InfoIcon sx={{ paddingTop: '6px' }} /> button to continue the
+          Now, we want to find the fishing spots that are located in the ocean. Click on the
+          'Intersect' button and search for the{' '}
+          <InfoIcon sx={{ paddingTop: '6px', marginBottom: '-4px' }} /> button to continue the
           guide.
         </p>
       </div>
@@ -277,9 +284,10 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          Last thing we want to do is to find the best spots to fish the ocean from land side. Press
-          the 'Difference' button and look for the <InfoIcon sx={{ paddingTop: '6px' }} /> button to
-          continue the guide.
+          The last thing we want to do is find the best spots for fishing in the ocean from the land
+          side. Click on the 'Difference' button and search for the{' '}
+          <InfoIcon sx={{ paddingTop: '6px', marginBottom: '-4px' }} /> button to continue the
+          guide.
         </p>
       </div>
     ),
@@ -294,11 +302,11 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          Congratulations!🥳 You have completed the tutorial and found your best places to fish in
-          Trondheimsfjorden. Don't forget to download your final layers from the drop down menu and
-          bring them next the time you go fishing.
+          Congratulations! 🥳 You have completed the tutorial and found the best places to fish in
+          Trondheimsfjorden. Don't forget to download your final layers from the drop-down menu and
+          bring them with you the next time you go fishing.
         </p>
-        <p style={{ fontWeight: 'bolder', paddingTop: '20px' }}>Skitt fiske 🎣</p>
+        <p style={{ fontWeight: 'bold', paddingTop: '20px' }}>Skitt fiske! 🎣</p>
       </div>
     ),
     target: '#layer-list',

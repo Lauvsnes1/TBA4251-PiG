@@ -4,6 +4,7 @@ import { Box, ThemeProvider } from '@mui/system';
 import Drawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -32,7 +33,6 @@ import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import DropDown from '../components/dropDown';
 import pac from '../data/pac.jpg';
 import { getSteps } from '../tutorial/steps/mainSteps';
-
 import Settings from '../components/settings';
 import { makeStyles } from '@mui/styles';
 
@@ -259,19 +259,23 @@ export default function MainPage(props: {
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', paddingRight: 2 }}>
                 {allVisible ? (
-                  <VisibilityIcon
-                    onClick={toggleOffAllVisibility}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                    className={isHovered ? classes.hovered : ''}
-                  />
+                  <Tooltip title="Hide all">
+                    <VisibilityIcon
+                      onClick={toggleOffAllVisibility}
+                      onMouseEnter={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}
+                      className={isHovered ? classes.hovered : ''}
+                    />
+                  </Tooltip>
                 ) : (
-                  <VisibilityOffIcon
-                    onClick={toggleOnAllVisibility}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                    className={isHovered ? classes.hovered : ''}
-                  />
+                  <Tooltip title="Show all">
+                    <VisibilityOffIcon
+                      onClick={toggleOnAllVisibility}
+                      onMouseEnter={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}
+                      className={isHovered ? classes.hovered : ''}
+                    />
+                  </Tooltip>
                 )}
               </Box>
             </Box>
@@ -332,7 +336,8 @@ export default function MainPage(props: {
             </List>
             <DrawerHeader />
             {/* This div is only here to ensure correct scroll behaviour in regards to the overlay of the tutorial*/}
-            <div style={{ height: '100px' }} />
+
+            <div style={{ height: '150px' }} />
           </div>
         </Drawer>
         <Main open={open}>
