@@ -11,7 +11,7 @@ import booleanIntersects from '@turf/boolean-intersects';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
-import { generateColor } from '../utils/genereateColor';
+import { generateColor, generateDistinctColor } from '../utils/genereateColor';
 import createUniqueName from '../utils/createUniqueName';
 import generateId from '../utils/generateId';
 import Tutorial from '../tutorial/tutorial';
@@ -93,7 +93,7 @@ function Difference(props: {
             id: generateId(),
             name: createUniqueName(name, geoJSONList),
             visible: true,
-            color: generateColor(),
+            color: generateDistinctColor(geoJSONList),
             opacity: 0.5,
             geoJSON: differenced as FeatureCollection,
           };

@@ -16,7 +16,7 @@ import MenuItem from '@mui/material/MenuItem';
 import InfoIcon from '@mui/icons-material/Info';
 import { modalStyle } from './styledComponents';
 import Loading from './loading';
-import { generateColor } from '../utils/genereateColor';
+import { generateColor, generateDistinctColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import determineOpacity from '../utils/determineOpacity';
 import makeStyles from '@mui/styles/makeStyles';
@@ -216,7 +216,7 @@ function FeatureExtractor(props: {
           id: generateId(),
           name: selectedLayer?.name + '_ext',
           visible: true,
-          color: generateColor(),
+          color: generateDistinctColor(geoJSONList),
           opacity: determineOpacity(extract),
           geoJSON: extract as FeatureCollection,
         };

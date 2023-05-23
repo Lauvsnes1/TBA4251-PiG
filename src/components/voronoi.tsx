@@ -10,7 +10,7 @@ import bbox from '@turf/bbox';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import { BBox } from '@turf/helpers';
-import { generateColor } from '../utils/genereateColor';
+import { generateColor, generateDistinctColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import createUniqueName from '../utils/createUniqueName';
 
@@ -60,7 +60,7 @@ function Voronoi(props: {
           id: generateId(),
           name: createUniqueName(name, geoJSONList),
           visible: true,
-          color: generateColor(),
+          color: generateDistinctColor(geoJSONList),
           opacity: 0.5,
           geoJSON: voronoiPolygon as FeatureCollection<Geometry, GeoJsonProperties>,
         };

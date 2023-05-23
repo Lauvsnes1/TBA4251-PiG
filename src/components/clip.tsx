@@ -33,7 +33,7 @@ import buffer from '@turf/buffer';
 import Loading from './loading';
 import InfoIcon from '@mui/icons-material/Info';
 import { modalStyle } from './styledComponents';
-import { generateColor } from '../utils/genereateColor';
+import { generateColor, generateDistinctColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import determineOpacity from '../utils/determineOpacity';
 import { Point } from '@turf/helpers';
@@ -345,7 +345,7 @@ function Clip(props: {
             id: generateId(),
             name: generateClipName(key),
             visible: true,
-            color: generateColor(),
+            color: generateDistinctColor(geoJSONList),
             opacity: determineOpacity(value),
             geoJSON: value as FeatureCollection,
           };
