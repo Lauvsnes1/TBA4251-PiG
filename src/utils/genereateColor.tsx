@@ -1,5 +1,5 @@
 import { GeoJSONItem } from '../context/geoJSONContext';
-import chroma from 'chroma-js';
+import chroma, { Color } from 'chroma-js';
 
 export function generateColor(): string {
   const hexChars = '0123456789ABCDEF';
@@ -15,39 +15,48 @@ export function generateColor(): string {
   return hexColor;
 }
 
+// Initialize a static shuffled array of hues
+const hues = Array.from({ length: 360 }, (_, i) => i);
+hues.sort(() => Math.random() - 0.5);
+let hueIndex = 0;
+
 //Algorithm that aims to find a distinct color each time new layer is added
 export function generateDistinctColor(layers: GeoJSONItem[]) {
-  const colors: string[] = [];
-  layers.forEach((item) => colors.push(item.color));
-  // Convert existing colors to HSL
-  const existingHSLs = colors.map((color) => chroma(color).hsl());
+  const existingColors: [number, number, number][] = layers.map((item) => chroma(item.color).hsl());
 
-  // Define a wide range of hues
-  const hues = Array.from({ length: 360 }, (_, i) => i);
-
-  // Randomly sort hues to ensure a different starting point each time
-  hues.sort(() => Math.random() - 0.5);
-
-  for (let h of hues) {
-    // Proposed new color with full saturation and medium lightness
-    const newColor = chroma.hsl(h, 1, 0.5);
-
-    // Check if newColor is distinct from existing colors
-    const isDistinct = existingHSLs.every((existingHSL) => {
-      // Use chroma.deltaE to measure perceptual color difference
-      // A Delta E value over 20 is typically considered a large difference
-      return chroma.deltaE(newColor, chroma.hsl(...existingHSL), 1, 1) > 20;
-    });
-
-    if (isDistinct) {
-      console.log('Found distinct');
-      return newColor.hex();
-    }
+  const newColor = findDistinctColor(existingColors);
+  if (!newColor) {
+    console.log('Random was generated');
+    return String(chroma.random());
   }
-  // If no distinct color found, return null
-  console.log('Random was generated');
-  return String(chroma.random());
+
+  console.log('Found distinct');
+  return newColor.hex();
 }
+
+function findDistinctColor(existingColors: [number, number, number][]) {
+  // Reset hueIndex if it has exceeded the length of hues
+  hueIndex = hueIndex < hues.length ? hueIndex : 0;
+
+  for (let i = 0; i < hues.length; i++) {
+    const proposedColor: Color = chroma.hsl(hues[hueIndex], 1, 0.5);
+    if (isColorDistinct(existingColors, proposedColor)) {
+      hueIndex++; // Increase hueIndex each time we find a distinct color
+      return proposedColor;
+    }
+    hueIndex++; // Increase hueIndex if proposed color is not distinct
+  }
+
+  return null;
+}
+
+function isColorDistinct(existingColors: [number, number, number][], colorToCheck: Color) {
+  return existingColors.every((existingColor) => {
+    // delta E value above 20 is normally considered quite distinct
+    return chroma.deltaE(colorToCheck, chroma.hsl(...existingColor), 1, 1) > 20;
+  });
+}
+
 // // type RGB = [number, number, number];
 
 // // function hexToRGB(hex: string): RGB {
