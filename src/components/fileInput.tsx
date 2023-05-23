@@ -19,7 +19,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PaletteIcon from '@mui/icons-material/Palette';
 import booleanEqual from '@turf/boolean-equal';
 import ColorPicker from './colorPicker';
-import { generateColor } from '../utils/genereateColor';
+import { generateColor, generateDistinctColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import { getType } from '@turf/invariant';
 import determineOpacity from '../utils/determineOpacity';
