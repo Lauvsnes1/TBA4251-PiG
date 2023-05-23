@@ -49,6 +49,7 @@ This project has made use of several npm packages to facilitate its development.
 * [react-color](https://www.npmjs.com/package/react-color): v. 2.19.3
 * [react-scripts](https://www.npmjs.com/package/react-scripts): v. 5.0.1
 * [uid](https://www.npmjs.com/package/uid): v. 2.0.1
+* [Chroma JS](https://gka.github.io/chroma.js/#chroma-distance): v. 2.4.2
 
 
 ## Acknowledgements
