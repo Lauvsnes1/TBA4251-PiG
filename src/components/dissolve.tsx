@@ -122,7 +122,7 @@ function Dissolve(props: {
           props.showAlert('success', '');
         } else {
           setIsLoading(false);
-          props.showAlert('warning', 'No Intersect');
+          props.showAlert('warning', 'Empty result');
         }
       } catch (error) {
         console.log(error);

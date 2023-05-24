@@ -19,7 +19,6 @@ import { differenceSteps } from '../tutorial/steps/differenceSteps';
 import makeStyles from '@mui/styles/makeStyles';
 import InfoIcon from '@mui/icons-material/Info';
 import booleanContains from '@turf/boolean-contains';
-import buffer from '@turf/buffer';
 import { Properties } from '@turf/helpers';
 import booleanDisjoint from '@turf/boolean-disjoint';
 
@@ -44,124 +43,124 @@ function Difference(props: {
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
   const classes = useStyles();
 
-  function handleDifference() {
+  // function handleDifference() {
+  //   const differenceList: FeatureCollection = {
+  //     type: 'FeatureCollection',
+  //     features: [],
+  //   };
+  //   if (selectedLayer1?.geoJSON && selectedLayer2?.geoJSON) {
+  //     const layer1 = selectedLayer1.geoJSON;
+  //     const layer2 = selectedLayer2.geoJSON;
+
+  //     const { processed1, processed2 } = processData(layer1, layer2);
+
+  //     processed1.features.forEach((feature1) => {
+  //       let feature1Added: boolean = false;
+  //       processed2?.features.forEach((feature2) => {
+  //         if (booleanIntersects(feature1, feature2)) {
+  //           const diff = difference(feature1, feature2);
+  //           if (
+  //             diff !== null &&
+  //             differenceList.features.every((feat) => !booleanOverlap(diff, feat))
+  //           ) {
+  //             const diffFeature: Feature<Polygon | MultiPolygon> = {
+  //               type: 'Feature',
+  //               // combine properties from both input features
+  //               properties: { ...feature1.properties, ...feature2.properties },
+  //               geometry: diff.geometry,
+  //             };
+  //             differenceList.features.push(diffFeature);
+  //             feature1Added = true;
+  //           }
+  //         }
+  //         //Find if isolated fragment must be added
+  //         else if (
+  //           !feature1Added &&
+  //           processed2?.features.every(
+  //             (feat) => !booleanOverlap(feat, feature1) && !booleanContains(feat, feature1)
+  //           )
+  //         ) {
+  //           differenceList.features.push(feature1);
+  //           feature1Added = true;
+  //         }
+  //       });
+  //     });
+  //   }
+  //   //return dissolve(differenceList as FeatureCollection<Polygon, Properties>);
+  //   return differenceList;
+  // }
+
+  // function handleDifference2(): FeatureCollection {
+  //   const differenceList: FeatureCollection = {
+  //     type: 'FeatureCollection',
+  //     features: [],
+  //   };
+
+  //   if (selectedLayer1?.geoJSON && selectedLayer2?.geoJSON) {
+  //     const layer1 = selectedLayer1.geoJSON;
+  //     const layer2 = selectedLayer2.geoJSON;
+
+  //     const { processed1, processed2 } = processData(layer1, layer2);
+
+  //     const intersectedFeatures: Feature[] = [];
+
+  //     processed1.features.forEach((feature1) => {
+  //       let feature1Added: boolean = false;
+  //       processed2?.features.forEach((feature2) => {
+  //         if (booleanIntersects(feature1, feature2)) {
+  //           const diff = difference(feature1, feature2);
+
+  //           if (diff !== null && !feature1Added) {
+  //             const diffFeature: Feature<Polygon | MultiPolygon> = {
+  //               type: 'Feature',
+  //               properties: { ...feature1.properties, ...feature2.properties },
+  //               geometry: diff.geometry,
+  //             };
+
+  //             differenceList.features.push(diffFeature);
+  //             intersectedFeatures.push(feature1);
+  //             feature1Added = true;
+  //           }
+  //         }
+  //       });
+  //     });
+
+  //     processed1.features.forEach((feature1) => {
+  //       if (!intersectedFeatures.includes(feature1)) {
+  //         differenceList.features.push(feature1);
+  //       }
+  //     });
+
+  //     // const remains: any[] = [];
+  //     // processed1.features.forEach((feature1) => {
+  //     //   const remain = differenceList.features.find((feat) =>
+  //     //     booleanOverlap(
+  //     //       feature1,
+  //     //       feat
+  //     //       // buffer(feat, -0.001, {
+  //     //       //   units: 'meters',
+  //     //       // })
+  //     //     )
+  //     //   );
+  //     //   if (remain) {
+  //     //     remains.push(remain);
+  //     //   }
+  //     // });
+  //     // console.log(remains);
+  //     // remains.forEach((element) => {
+  //     //   //const diff = difference(element,)
+  //     // });
+  //   }
+
+  //   return differenceList;
+  // }
+
+  const handleDifference = () => {
     const differenceList: FeatureCollection = {
       type: 'FeatureCollection',
       features: [],
     };
-    if (selectedLayer1?.geoJSON && selectedLayer2?.geoJSON) {
-      const layer1 = selectedLayer1.geoJSON;
-      const layer2 = selectedLayer2.geoJSON;
-
-      const { processed1, processed2 } = processData(layer1, layer2);
-
-      processed1.features.forEach((feature1) => {
-        let feature1Added: boolean = false;
-        processed2?.features.forEach((feature2) => {
-          if (booleanIntersects(feature1, feature2)) {
-            const diff = difference(feature1, feature2);
-            if (
-              diff !== null &&
-              differenceList.features.every((feat) => !booleanOverlap(diff, feat))
-            ) {
-              const diffFeature: Feature<Polygon | MultiPolygon> = {
-                type: 'Feature',
-                // combine properties from both input features
-                properties: { ...feature1.properties, ...feature2.properties },
-                geometry: diff.geometry,
-              };
-              differenceList.features.push(diffFeature);
-              feature1Added = true;
-            }
-          }
-          //Find if isolated fragment must be added
-          else if (
-            !feature1Added &&
-            processed2?.features.every(
-              (feat) => !booleanOverlap(feat, feature1) && !booleanContains(feat, feature1)
-            )
-          ) {
-            differenceList.features.push(feature1);
-            feature1Added = true;
-          }
-        });
-      });
-    }
-    //return dissolve(differenceList as FeatureCollection<Polygon, Properties>);
-    return differenceList;
-  }
-
-  function handleDifference2(): FeatureCollection {
-    const differenceList: FeatureCollection = {
-      type: 'FeatureCollection',
-      features: [],
-    };
-
-    if (selectedLayer1?.geoJSON && selectedLayer2?.geoJSON) {
-      const layer1 = selectedLayer1.geoJSON;
-      const layer2 = selectedLayer2.geoJSON;
-
-      const { processed1, processed2 } = processData(layer1, layer2);
-
-      const intersectedFeatures: Feature[] = [];
-
-      processed1.features.forEach((feature1) => {
-        let feature1Added: boolean = false;
-        processed2?.features.forEach((feature2) => {
-          if (booleanIntersects(feature1, feature2)) {
-            const diff = difference(feature1, feature2);
-
-            if (diff !== null && !feature1Added) {
-              const diffFeature: Feature<Polygon | MultiPolygon> = {
-                type: 'Feature',
-                properties: { ...feature1.properties, ...feature2.properties },
-                geometry: diff.geometry,
-              };
-
-              differenceList.features.push(diffFeature);
-              intersectedFeatures.push(feature1);
-              feature1Added = true;
-            }
-          }
-        });
-      });
-
-      processed1.features.forEach((feature1) => {
-        if (!intersectedFeatures.includes(feature1)) {
-          differenceList.features.push(feature1);
-        }
-      });
-
-      // const remains: any[] = [];
-      // processed1.features.forEach((feature1) => {
-      //   const remain = differenceList.features.find((feat) =>
-      //     booleanOverlap(
-      //       feature1,
-      //       feat
-      //       // buffer(feat, -0.001, {
-      //       //   units: 'meters',
-      //       // })
-      //     )
-      //   );
-      //   if (remain) {
-      //     remains.push(remain);
-      //   }
-      // });
-      // console.log(remains);
-      // remains.forEach((element) => {
-      //   //const diff = difference(element,)
-      // });
-    }
-
-    return differenceList;
-  }
-
-  const newDifference = () => {
-    const differenceList: FeatureCollection = {
-      type: 'FeatureCollection',
-      features: [],
-    };
-    const differenceMap: Map<
+    const intersectionMap: Map<
       Feature<Polygon, Properties>,
       Feature<Polygon, Properties>[]
     > = new Map<Feature<Polygon, Properties>, Feature<Polygon, Properties>[]>();
@@ -174,30 +173,29 @@ function Difference(props: {
 
       //find all segments that intersects and allocate in map
       processed1.features.forEach((feature1) => {
-        differenceMap.set(feature1, []);
+        intersectionMap.set(feature1, []);
         processed2?.features.forEach((feature2) => {
+          //if overlapping we add to the list of intersecting geometries
           if (booleanOverlap(feature1, feature2)) {
-            const existingFeatures = differenceMap.get(feature1) || [];
-            existingFeatures.push(feature2);
-            differenceMap.set(feature1, existingFeatures);
+            intersectionMap.get(feature1)?.push(feature2);
           }
         });
       });
 
       //We compute the difference between each segment of layer 1 and all the ones it intersects with
-      Array.from(differenceMap.entries()).forEach(([key, values]) => {
-        let diff: Feature<Polygon | MultiPolygon, Properties> = key;
+      Array.from(intersectionMap.entries()).forEach(([feature, intersectingFeatures]) => {
+        let diff: Feature<Polygon | MultiPolygon, Properties> = feature;
         //BoleanOverlap does not count geometries completely covered,
         //therefore a geometry completely covered will have length 0
-        if (values.length === 0) {
+        if (intersectingFeatures.length === 0) {
           //if geometry is disjoint from all geometries in processed2 it is an outlier and needs to be included
-          if (processed2?.features.every((feat) => booleanDisjoint(key, feat))) {
-            differenceList.features.push(key);
+          if (processed2?.features.every((feat) => booleanDisjoint(feature, feat))) {
+            differenceList.features.push(feature);
           }
         } else {
           //Compute the differnce recursive for all intersecting geometries
-          for (let i = 0; i < values.length; i++) {
-            let tempDiff = difference(diff, values[i]);
+          for (let i = 0; i < intersectingFeatures.length; i++) {
+            const tempDiff = difference(diff, intersectingFeatures[i]);
             if (tempDiff) {
               diff = tempDiff;
             }
@@ -205,6 +203,8 @@ function Difference(props: {
           differenceList.features.push(diff);
         }
       });
+    } else {
+      props.showAlert('warning', 'Select layers first');
     }
     return differenceList;
   };
@@ -213,7 +213,7 @@ function Difference(props: {
     setIsLoading(true);
     setTimeout(() => {
       try {
-        let differenced = newDifference();
+        let differenced = handleDifference();
         if (differenced?.features.length > 0) {
           const newObj: GeoJSONItem = {
             id: generateId(),

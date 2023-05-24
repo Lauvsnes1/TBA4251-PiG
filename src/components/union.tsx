@@ -147,7 +147,7 @@ function Union(props: {
           props.showAlert('success', '');
         } else {
           setIsloading(false);
-          props.showAlert('error', 'Invalid input');
+          props.showAlert('error', 'No union');
         }
       } catch (e) {
         setIsloading(false);
