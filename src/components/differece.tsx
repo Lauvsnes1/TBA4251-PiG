@@ -5,19 +5,21 @@ import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
-import differnce from '@turf/difference';
+import difference from '@turf/difference';
 import booleanOverlap from '@turf/boolean-overlap';
 import booleanIntersects from '@turf/boolean-intersects';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
-import { generateColor, generateDistinctColor } from '../utils/genereateColor';
+import { generateDistinctColor } from '../utils/genereateColor';
 import createUniqueName from '../utils/createUniqueName';
 import generateId from '../utils/generateId';
 import Tutorial from '../tutorial/tutorial';
 import { differenceSteps } from '../tutorial/steps/differenceSteps';
 import makeStyles from '@mui/styles/makeStyles';
 import InfoIcon from '@mui/icons-material/Info';
+import booleanContains from '@turf/boolean-contains';
+import buffer from '@turf/buffer';
 
 const useStyles = makeStyles({
   hovered: {
@@ -55,7 +57,7 @@ function Difference(props: {
         let feature1Added: boolean = false;
         processed2?.features.forEach((feature2) => {
           if (booleanIntersects(feature1, feature2)) {
-            const diff = differnce(feature1, feature2);
+            const diff = difference(feature1, feature2);
             if (
               diff !== null &&
               differenceList.features.every((feat) => !booleanOverlap(diff, feat))
@@ -67,12 +69,15 @@ function Difference(props: {
                 geometry: diff.geometry,
               };
               differenceList.features.push(diffFeature);
+              feature1Added = true;
             }
           }
-          //Check that it has no overlapping fractions or existis in list
+          //Find if isolated fragment must be added
           else if (
             !feature1Added &&
-            differenceList.features.every((feat) => !booleanOverlap(feature1, feat))
+            processed2?.features.every(
+              (feat) => !booleanOverlap(feat, feature1) && !booleanContains(feat, feature1)
+            )
           ) {
             differenceList.features.push(feature1);
             feature1Added = true;
@@ -80,6 +85,72 @@ function Difference(props: {
         });
       });
     }
+    //return dissolve(differenceList as FeatureCollection<Polygon, Properties>);
+    return differenceList;
+  }
+
+  function handleDifference2(): FeatureCollection {
+    const differenceList: FeatureCollection = {
+      type: 'FeatureCollection',
+      features: [],
+    };
+
+    if (selectedLayer1?.geoJSON && selectedLayer2?.geoJSON) {
+      const layer1 = selectedLayer1.geoJSON;
+      const layer2 = selectedLayer2.geoJSON;
+
+      const { processed1, processed2 } = processData(layer1, layer2);
+
+      const intersectedFeatures: Feature[] = [];
+
+      processed1.features.forEach((feature1) => {
+        let feature1Added: boolean = false;
+        processed2?.features.forEach((feature2) => {
+          if (booleanIntersects(feature1, feature2)) {
+            const diff = difference(feature1, feature2);
+
+            if (diff !== null && !feature1Added) {
+              const diffFeature: Feature<Polygon | MultiPolygon> = {
+                type: 'Feature',
+                properties: { ...feature1.properties, ...feature2.properties },
+                geometry: diff.geometry,
+              };
+
+              differenceList.features.push(diffFeature);
+              intersectedFeatures.push(feature1);
+              feature1Added = true;
+            }
+          }
+        });
+      });
+
+      processed1.features.forEach((feature1) => {
+        if (!intersectedFeatures.includes(feature1)) {
+          differenceList.features.push(feature1);
+        }
+      });
+
+      // const remains: any[] = [];
+      // processed1.features.forEach((feature1) => {
+      //   const remain = differenceList.features.find((feat) =>
+      //     booleanOverlap(
+      //       feature1,
+      //       feat
+      //       // buffer(feat, -0.001, {
+      //       //   units: 'meters',
+      //       // })
+      //     )
+      //   );
+      //   if (remain) {
+      //     remains.push(remain);
+      //   }
+      // });
+      // console.log(remains);
+      // remains.forEach((element) => {
+      //   //const diff = difference(element,)
+      // });
+    }
+
     return differenceList;
   }
 
@@ -172,7 +243,7 @@ function Difference(props: {
             }}
           >
             <Typography id="difference-header" variant="h6">
-              DifferenceTool Tool:
+              Difference Tool:
             </Typography>
             <InfoIcon
               sx={{ alignContent: 'center' }}
