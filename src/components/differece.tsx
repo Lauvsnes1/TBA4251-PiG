@@ -20,6 +20,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import InfoIcon from '@mui/icons-material/Info';
 import booleanContains from '@turf/boolean-contains';
 import buffer from '@turf/buffer';
+import { Properties } from '@turf/helpers';
 
 const useStyles = makeStyles({
   hovered: {
@@ -154,11 +155,66 @@ function Difference(props: {
     return differenceList;
   }
 
+  const newDifference = () => {
+    const differenceList: FeatureCollection = {
+      type: 'FeatureCollection',
+      features: [],
+    };
+    const differenceMap: Map<
+      Feature<Polygon, Properties>,
+      Feature<Polygon, Properties>[]
+    > = new Map<Feature<Polygon, Properties>, Feature<Polygon, Properties>[]>();
+
+    const intersectedFeatures: Feature[] = [];
+
+    if (selectedLayer1?.geoJSON && selectedLayer2?.geoJSON) {
+      const layer1 = selectedLayer1.geoJSON;
+      const layer2 = selectedLayer2.geoJSON;
+
+      const { processed1, processed2 } = processData(layer1, layer2);
+
+      //find all segments that intersects
+      processed1.features.forEach((feature1) => {
+        processed2?.features.forEach((feature2) => {
+          if (booleanIntersects(feature1, feature2)) {
+            const existingFeatures = differenceMap.get(feature1) || [];
+            existingFeatures.push(feature2);
+            differenceMap.set(feature1, existingFeatures);
+          } else {
+            intersectedFeatures.push(feature1);
+          }
+        });
+      });
+
+      //We compute the difference between each segment of layer 1 and all the ones it intersects with
+      console.log('diffmap', differenceMap);
+      console.log('Intersected', intersectedFeatures);
+      Array.from(differenceMap.entries()).forEach(([key, values]) => {
+        let diff: Feature<Polygon | MultiPolygon, Properties> = key;
+        //Compute the differnce recursive for all intersecting geometries
+        for (let i = 0; i < values.length; i++) {
+          let tempDiff = difference(diff, values[i]);
+          if (tempDiff) {
+            diff = tempDiff;
+          }
+        }
+        differenceList.features.push(diff);
+      });
+
+      differenceList.features.forEach((feature1) => {
+        if (intersectedFeatures.includes(feature1)) {
+          differenceList.features.push(feature1);
+        }
+      });
+    }
+    return differenceList;
+  };
+
   const handleOk = () => {
     setIsLoading(true);
     setTimeout(() => {
       try {
-        let differenced = handleDifference();
+        let differenced = newDifference();
         if (differenced?.features.length > 0) {
           const newObj: GeoJSONItem = {
             id: generateId(),
