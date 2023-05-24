@@ -55,7 +55,6 @@ function Intersect(props: {
       processed1.features.forEach((feature1) => {
         processed2?.features.forEach((feature2) => {
           if (booleanIntersect(feature1, feature2)) {
-            console.log('Overlap!');
             if (feature1.geometry.type === 'Polygon' && feature2.geometry.type === 'Polygon') {
               const intersection = intersect(feature1.geometry, feature2.geometry);
               // Check that there is an intersection at that its not added before

@@ -21,6 +21,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import booleanContains from '@turf/boolean-contains';
 import buffer from '@turf/buffer';
 import { Properties } from '@turf/helpers';
+import booleanDisjoint from '@turf/boolean-disjoint';
 
 const useStyles = makeStyles({
   hovered: {
@@ -165,45 +166,43 @@ function Difference(props: {
       Feature<Polygon, Properties>[]
     > = new Map<Feature<Polygon, Properties>, Feature<Polygon, Properties>[]>();
 
-    const intersectedFeatures: Feature[] = [];
-
     if (selectedLayer1?.geoJSON && selectedLayer2?.geoJSON) {
       const layer1 = selectedLayer1.geoJSON;
       const layer2 = selectedLayer2.geoJSON;
 
       const { processed1, processed2 } = processData(layer1, layer2);
 
-      //find all segments that intersects
+      //find all segments that intersects and allocate in map
       processed1.features.forEach((feature1) => {
+        differenceMap.set(feature1, []);
         processed2?.features.forEach((feature2) => {
-          if (booleanIntersects(feature1, feature2)) {
+          if (booleanOverlap(feature1, feature2)) {
             const existingFeatures = differenceMap.get(feature1) || [];
             existingFeatures.push(feature2);
             differenceMap.set(feature1, existingFeatures);
-          } else {
-            intersectedFeatures.push(feature1);
           }
         });
       });
 
       //We compute the difference between each segment of layer 1 and all the ones it intersects with
-      console.log('diffmap', differenceMap);
-      console.log('Intersected', intersectedFeatures);
       Array.from(differenceMap.entries()).forEach(([key, values]) => {
         let diff: Feature<Polygon | MultiPolygon, Properties> = key;
-        //Compute the differnce recursive for all intersecting geometries
-        for (let i = 0; i < values.length; i++) {
-          let tempDiff = difference(diff, values[i]);
-          if (tempDiff) {
-            diff = tempDiff;
+        //BoleanOverlap does not count geometries completely covered,
+        //therefore a geometry completely covered will have length 0
+        if (values.length === 0) {
+          //if geometry is disjoint from all geometries in processed2 it is an outlier and needs to be included
+          if (processed2?.features.every((feat) => booleanDisjoint(key, feat))) {
+            differenceList.features.push(key);
           }
-        }
-        differenceList.features.push(diff);
-      });
-
-      differenceList.features.forEach((feature1) => {
-        if (intersectedFeatures.includes(feature1)) {
-          differenceList.features.push(feature1);
+        } else {
+          //Compute the differnce recursive for all intersecting geometries
+          for (let i = 0; i < values.length; i++) {
+            let tempDiff = difference(diff, values[i]);
+            if (tempDiff) {
+              diff = tempDiff;
+            }
+          }
+          differenceList.features.push(diff);
         }
       });
     }
@@ -230,7 +229,7 @@ function Difference(props: {
           props.showAlert('success', '');
         } else {
           setIsLoading(false);
-          props.showAlert('error', 'Invalid Input');
+          props.showAlert('info', 'Empty result');
         }
       } catch (e) {
         console.log(e);
