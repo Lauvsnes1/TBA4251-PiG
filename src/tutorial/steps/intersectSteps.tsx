@@ -7,7 +7,7 @@ export const intersectSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p>Lets find the out where you want to navigate to catch you favorite fish.</p>
+        <p>Lets find the out where you want to go with your boat to catch your favorite fish.</p>
       </div>
     ),
     target: '#intersect-header',

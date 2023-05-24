@@ -11,7 +11,7 @@ import booleanIntersect from '@turf/boolean-intersects';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
-import { generateColor } from '../utils/genereateColor';
+import { generateColor, generateDistinctColor } from '../utils/genereateColor';
 import createUniqueName from '../utils/createUniqueName';
 import generateId from '../utils/generateId';
 import InfoIcon from '@mui/icons-material/Info';
@@ -55,7 +55,6 @@ function Intersect(props: {
       processed1.features.forEach((feature1) => {
         processed2?.features.forEach((feature2) => {
           if (booleanIntersect(feature1, feature2)) {
-            console.log('Overlap!');
             if (feature1.geometry.type === 'Polygon' && feature2.geometry.type === 'Polygon') {
               const intersection = intersect(feature1.geometry, feature2.geometry);
               // Check that there is an intersection at that its not added before
@@ -90,7 +89,7 @@ function Intersect(props: {
             id: generateId(),
             name: createUniqueName(name, geoJSONList),
             visible: true,
-            color: generateColor(),
+            color: generateDistinctColor(geoJSONList),
             opacity: 0.5,
             geoJSON: intersected as FeatureCollection,
           };

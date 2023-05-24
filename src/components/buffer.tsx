@@ -8,7 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 import buffer from '@turf/buffer';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
-import { generateColor } from '../utils/genereateColor';
+import { generateColor, generateDistinctColor } from '../utils/genereateColor';
 import createUniqueName from '../utils/createUniqueName';
 import processData from '../utils/flattenAndDissolve';
 import generateId from '../utils/generateId';
@@ -76,7 +76,7 @@ function Buffer(props: {
           id: generateId(),
           name: createUniqueName(name, geoJSONList),
           visible: true,
-          color: generateColor(),
+          color: generateDistinctColor(geoJSONList),
           opacity: 0.5,
           geoJSON: buffered as FeatureCollection,
         };

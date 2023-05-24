@@ -19,9 +19,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PaletteIcon from '@mui/icons-material/Palette';
 import booleanEqual from '@turf/boolean-equal';
 import ColorPicker from './colorPicker';
-import { generateColor } from '../utils/genereateColor';
+import { generateColor, generateDistinctColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
-import { getType } from '@turf/invariant';
 import determineOpacity from '../utils/determineOpacity';
 
 function FileInput(props: {
@@ -105,7 +104,7 @@ function FileInput(props: {
             id: generateId(),
             name: name,
             visible: true,
-            color: generateColor(),
+            color: generateDistinctColor(geoJSONList),
             opacity: determineOpacity(json as FeatureCollection),
             geoJSON: json as FeatureCollection,
           };
@@ -145,10 +144,6 @@ function FileInput(props: {
     //To check which files to display in the modal
     //A bit cheating as it only checks the first geometry to be equal
     return geoJSONs.find((geoJSON) => booleanEqual(geoJSON.features[0], layer.geoJSON.features[0]));
-  };
-
-  const determineLayerType = (layer: FeatureCollection) => {
-    return getType(layer.features[0]);
   };
 
   return (

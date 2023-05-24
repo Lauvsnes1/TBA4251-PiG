@@ -15,7 +15,7 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
-import { generateColor } from '../utils/genereateColor';
+import { generateColor, generateDistinctColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import createUniqueName from '../utils/createUniqueName';
 import flatten from '@turf/flatten';
@@ -111,7 +111,7 @@ function Dissolve(props: {
             id: generateId(),
             name: createUniqueName(name, geoJSONList),
             visible: true,
-            color: generateColor(),
+            color: generateDistinctColor(geoJSONList),
             opacity: 0.5,
             geoJSON: dissolved.processed as FeatureCollection,
           };
@@ -122,7 +122,7 @@ function Dissolve(props: {
           props.showAlert('success', '');
         } else {
           setIsLoading(false);
-          props.showAlert('warning', 'No Intersect');
+          props.showAlert('warning', 'Empty result');
         }
       } catch (error) {
         console.log(error);

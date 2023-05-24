@@ -33,7 +33,7 @@ import buffer from '@turf/buffer';
 import Loading from './loading';
 import InfoIcon from '@mui/icons-material/Info';
 import { modalStyle } from './styledComponents';
-import { generateColor } from '../utils/genereateColor';
+import { generateColor, generateDistinctColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import determineOpacity from '../utils/determineOpacity';
 import { Point } from '@turf/helpers';
@@ -338,19 +338,19 @@ function Clip(props: {
     setIsLoading(true);
     setTimeout(() => {
       const clipped = handleClip_2();
-      clipped?.forEach((value: FeatureCollection, key: string) => {
-        if (value.features.length > 0) {
+      clipped?.forEach((layer: FeatureCollection, name: string) => {
+        if (layer.features.length > 0) {
           console.log('true');
           const newObj: GeoJSONItem = {
             id: generateId(),
-            name: generateClipName(key),
+            name: generateClipName(name),
             visible: true,
-            color: generateColor(),
-            opacity: determineOpacity(value),
-            geoJSON: value as FeatureCollection,
+            color: generateDistinctColor(geoJSONList),
+            opacity: determineOpacity(layer),
+            geoJSON: layer as FeatureCollection,
           };
           setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
-          props.showAlert('success', 'clipped ' + key);
+          props.showAlert('success', 'clipped ' + name);
         } else {
           props.showAlert('warning', 'No overlap');
         }
