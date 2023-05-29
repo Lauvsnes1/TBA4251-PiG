@@ -33,10 +33,10 @@ import buffer from '@turf/buffer';
 import Loading from './loading';
 import InfoIcon from '@mui/icons-material/Info';
 import { modalStyle } from './styledComponents';
-import { generateColor, generateDistinctColor } from '../utils/genereateColor';
+import { generateDistinctColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import determineOpacity from '../utils/determineOpacity';
-import { Point } from '@turf/helpers';
+import { Point, multiPolygon } from '@turf/helpers';
 import { clipSteps } from '../tutorial/steps/clipSteps';
 import Tutorial from '../tutorial/tutorial';
 
@@ -106,7 +106,8 @@ function Clip(props: {
         selectedPolygonLayers.push(matchingLayer);
       } else if (
         matchingLayer &&
-        matchingLayer.geoJSON.features[0].geometry.type === 'LineString'
+        (matchingLayer.geoJSON.features[0].geometry.type === 'LineString' ||
+          matchingLayer.geoJSON.features[0].geometry.type === 'MultiLineString')
       ) {
         selectedLineStringLayers.push(matchingLayer);
       } else if (
@@ -196,13 +197,15 @@ function Clip(props: {
   //   return totalClippedList;
   // }
 
-  function handleClip_2() {
+  function handleClip() {
     const totalClippedList = new Map<string, FeatureCollection>();
     //Find all selectedlayers
     const [selectedPolyLayers, selectedLineLayers, selectedPointLayers] = findAllLayers();
-    console.log('SelectedLayers', selectedPolyLayers);
-    console.log('SelectedLineLayers', selectedLineLayers);
-    console.log('selectedPointLayers', selectedPointLayers);
+
+    const mainFeatures: Feature<Geometry, GeoJsonProperties>[] | undefined =
+      selectedMainLayer?.geoJSON?.features.filter(
+        (feature) => feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'
+      );
 
     selectedPolyLayers.forEach((polyLayer) => {
       const clipps: FeatureCollection = {
@@ -213,9 +216,7 @@ function Clip(props: {
       const polyFeatures = polyLayer.geoJSON.features.filter(
         (feature) => feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'
       );
-      const mainFeatures = selectedMainLayer?.geoJSON?.features.filter(
-        (feature) => feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'
-      );
+
       if (!mainFeatures || !polyFeatures) {
         return;
       }
@@ -248,10 +249,8 @@ function Clip(props: {
       };
 
       const lineFeatures = selectedLineLayer.geoJSON.features.filter(
-        (feature) => feature.geometry.type === 'LineString'
-      );
-      const mainFeatures = selectedMainLayer?.geoJSON?.features.filter(
-        (feature) => feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'
+        (feature) =>
+          feature.geometry.type === 'LineString' || feature.geometry.type === 'MultiLineString'
       );
       if (!mainFeatures || !lineFeatures) {
         return;
@@ -277,7 +276,7 @@ function Clip(props: {
               return null;
             }
 
-            const bufferedPolygon = buffer(polygon, 0.000001, { units: 'kilometers' });
+            const bufferedPolygon = buffer(polygon, 0.00001, { units: 'kilometers' });
             const insideSegments = clippedLines.features.filter((segment) =>
               booleanContains(bufferedPolygon, segment)
             );
@@ -300,9 +299,6 @@ function Clip(props: {
 
       const pointFeatures = pointLayer.geoJSON.features.filter(
         (feature) => feature.geometry.type === 'Point'
-      );
-      const mainFeatures = selectedMainLayer?.geoJSON?.features.filter(
-        (feature) => feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'
       );
       if (!mainFeatures || !pointFeatures) {
         return;
@@ -337,10 +333,9 @@ function Clip(props: {
   const handleOk = () => {
     setIsLoading(true);
     setTimeout(() => {
-      const clipped = handleClip_2();
+      const clipped = handleClip();
       clipped?.forEach((layer: FeatureCollection, name: string) => {
         if (layer.features.length > 0) {
-          console.log('true');
           const newObj: GeoJSONItem = {
             id: generateId(),
             name: generateClipName(name),

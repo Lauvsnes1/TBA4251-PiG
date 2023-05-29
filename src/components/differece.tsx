@@ -6,8 +6,6 @@ import { useGeoJSONContext, GeoJSONItem } from '../context/geoJSONContext';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import difference from '@turf/difference';
-import booleanOverlap from '@turf/boolean-overlap';
-import booleanIntersects from '@turf/boolean-intersects';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
@@ -18,9 +16,9 @@ import Tutorial from '../tutorial/tutorial';
 import { differenceSteps } from '../tutorial/steps/differenceSteps';
 import makeStyles from '@mui/styles/makeStyles';
 import InfoIcon from '@mui/icons-material/Info';
-import booleanContains from '@turf/boolean-contains';
 import { Properties } from '@turf/helpers';
 import booleanDisjoint from '@turf/boolean-disjoint';
+import booleanIntersects from '@turf/boolean-intersects';
 
 const useStyles = makeStyles({
   hovered: {
@@ -175,8 +173,8 @@ function Difference(props: {
       processed1.features.forEach((feature1) => {
         intersectionMap.set(feature1, []);
         processed2?.features.forEach((feature2) => {
-          //if overlapping we add to the list of intersecting geometries
-          if (booleanOverlap(feature1, feature2)) {
+          //if the geometries intersect we add to the list of intersecting geometries
+          if (booleanIntersects(feature1, feature2)) {
             intersectionMap.get(feature1)?.push(feature2);
           }
         });
@@ -185,22 +183,24 @@ function Difference(props: {
       //We compute the difference between each segment of layer 1 and all the ones it intersects with
       Array.from(intersectionMap.entries()).forEach(([feature, intersectingFeatures]) => {
         let diff: Feature<Polygon | MultiPolygon, Properties> = feature;
-        //BoleanOverlap does not count geometries completely covered,
-        //therefore a geometry completely covered will have length 0
         if (intersectingFeatures.length === 0) {
           //if geometry is disjoint from all geometries in processed2 it is an outlier and needs to be included
           if (processed2?.features.every((feat) => booleanDisjoint(feature, feat))) {
             differenceList.features.push(feature);
           }
         } else {
-          //Compute the differnce recursive for all intersecting geometries
+          //Compute the differnce recursive for all intersecting geometries recursicvely
           for (let i = 0; i < intersectingFeatures.length; i++) {
             const tempDiff = difference(diff, intersectingFeatures[i]);
             if (tempDiff) {
               diff = tempDiff;
             }
           }
-          differenceList.features.push(diff);
+          if (diff !== feature) {
+            //Only add if difference was found, if not
+            // => intersectingfeature completely contains feature
+            differenceList.features.push(diff);
+          }
         }
       });
     } else {
