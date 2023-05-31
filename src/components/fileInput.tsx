@@ -19,7 +19,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PaletteIcon from '@mui/icons-material/Palette';
 import booleanEqual from '@turf/boolean-equal';
 import ColorPicker from './colorPicker';
-import { generateColor, generateDistinctColor } from '../utils/genereateColor';
+import { generateDistinctColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import determineOpacity from '../utils/determineOpacity';
 
@@ -96,23 +96,24 @@ function FileInput(props: {
         const geoJSONs = files.filter((file) => file !== null);
         let nameCounter: number = 0;
         //we create one new GeoJSONItem for each uploaded file
+        const newGeoJSONItems: GeoJSONItem[] = [];
         geoJSONs.forEach((json) => {
-          setGeoJSONs((prevGeoJSONs) => [...prevGeoJSONs, json as FeatureCollection]); //Local list of geoJSONs
-          //We take the name of the file except the file type at the end
           const name: string = uploadedFiles[nameCounter].name.split('.')[0];
           const newObj: GeoJSONItem = {
             id: generateId(),
             name: name,
             visible: true,
-            color: generateDistinctColor(geoJSONList),
+            color: generateDistinctColor([...geoJSONList, ...newGeoJSONItems]),
             opacity: determineOpacity(json as FeatureCollection),
             geoJSON: json as FeatureCollection,
           };
-          //update global list
-          setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
+          newGeoJSONItems.push(newObj as GeoJSONItem);
           nameCounter++;
           props.showAlert('success', 'File(s) uploaded successfully');
         });
+
+        // Now, add all the new items to your global state at once
+        setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, ...newGeoJSONItems]);
       } catch (error) {
         console.log(error);
         props.showAlert('error', 'error uploading file');

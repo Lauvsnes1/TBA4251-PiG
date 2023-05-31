@@ -23,14 +23,10 @@ let hueIndex = 0;
 //Algorithm that aims to find a distinct color each time new layer is added
 export function generateDistinctColor(layers: GeoJSONItem[]) {
   const existingColors: [number, number, number][] = layers.map((item) => chroma(item.color).hsl());
-
   const newColor = findDistinctColor(existingColors);
   if (!newColor) {
-    console.log('Random was generated');
     return String(chroma.random());
   }
-
-  console.log('Found distinct');
   return newColor.hex();
 }
 
