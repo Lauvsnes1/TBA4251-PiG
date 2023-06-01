@@ -27,7 +27,7 @@ function FileInput(props: {
   handleCloseModal: () => void;
   showAlert: (status: AlertColor, message: string) => void;
 }) {
-  const [geoJSONs, setGeoJSONs] = useState<FeatureCollection[]>([]);
+  const [toDisplay, setToDisplay] = useState<FeatureCollection[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedLayer, setSelectedLayer] = useState<GeoJSONItem | null>(null);
@@ -98,6 +98,7 @@ function FileInput(props: {
         //we create one new GeoJSONItem for each uploaded file
         const newGeoJSONItems: GeoJSONItem[] = [];
         geoJSONs.forEach((json) => {
+          setToDisplay((prevGeoJSONs) => [...prevGeoJSONs, json as FeatureCollection]); //Local list of geoJSONs
           const name: string = uploadedFiles[nameCounter].name.split('.')[0];
           const newObj: GeoJSONItem = {
             id: generateId(),
@@ -112,7 +113,7 @@ function FileInput(props: {
           props.showAlert('success', 'File(s) uploaded successfully');
         });
 
-        // Now, add all the new items to your global state at once
+        // Now, add all the new items global state at once
         setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, ...newGeoJSONItems]);
       } catch (error) {
         console.log(error);
@@ -144,7 +145,10 @@ function FileInput(props: {
   const filesToDisplay = (layer: GeoJSONItem) => {
     //To check which files to display in the modal
     //A bit cheating as it only checks the first geometry to be equal
-    return geoJSONs.find((geoJSON) => booleanEqual(geoJSON.features[0], layer.geoJSON.features[0]));
+    //return geoJSONList.find((GeoJSON) => layer.id === GeoJSON.id);
+    return toDisplay.find((geoJSON) =>
+      booleanEqual(geoJSON.features[0], layer.geoJSON.features[0])
+    );
   };
 
   return (
