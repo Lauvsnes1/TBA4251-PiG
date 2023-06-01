@@ -34,17 +34,8 @@ import DropDown from '../components/dropDown';
 import pac from '../data/pac.jpg';
 import { getSteps } from '../tutorial/steps/mainSteps';
 import Settings from '../components/settings';
-import { makeStyles } from '@mui/styles';
 
 const drawerWidth = 240;
-
-const useStyles = makeStyles({
-  hovered: {
-    backgroundColor: '#f2f2f2',
-    boxShadow: 'inset 0px 0px 8px 0px rgba(0, 0, 0, 0.5);',
-    borderRadius: '20px',
-  },
-});
 
 export default function MainPage(props: {
   showAlert: (status: AlertColor, message: string) => void;
@@ -60,11 +51,9 @@ export default function MainPage(props: {
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
   const [allVisible, setAllVisible] = useState(true);
   const [triggerZoom, setTriggerZoom] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const [runTour, setRunTour] = useState<boolean>(false);
   const [divHelper, setDivHelper] = useState<boolean>(false);
   const joyrideHelpers = useRef<StoreHelpers | null>(null);
-  const classes = useStyles();
   const drawerRef = useRef<HTMLDivElement>(null);
 
   const handleResetTutorial = () => {
@@ -267,24 +256,18 @@ export default function MainPage(props: {
               >
                 Layers
               </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', paddingRight: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', paddingRight: 1, color: 'black' }}>
                 {allVisible ? (
-                  <Tooltip title="Hide all">
-                    <VisibilityIcon
-                      onClick={toggleOffAllVisibility}
-                      onMouseEnter={() => setIsHovered(true)}
-                      onMouseLeave={() => setIsHovered(false)}
-                      className={isHovered ? classes.hovered : ''}
-                    />
+                  <Tooltip title="Hide all" sx={{ display: 'block' }}>
+                    <IconButton onClick={toggleOffAllVisibility}>
+                      <VisibilityIcon />
+                    </IconButton>
                   </Tooltip>
                 ) : (
-                  <Tooltip title="Show all">
-                    <VisibilityOffIcon
-                      onClick={toggleOnAllVisibility}
-                      onMouseEnter={() => setIsHovered(true)}
-                      onMouseLeave={() => setIsHovered(false)}
-                      className={isHovered ? classes.hovered : ''}
-                    />
+                  <Tooltip title="Show all" sx={{ display: 'block' }}>
+                    <IconButton onClick={toggleOnAllVisibility}>
+                      <VisibilityOffIcon />
+                    </IconButton>
                   </Tooltip>
                 )}
               </Box>

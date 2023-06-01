@@ -212,7 +212,7 @@ function FileInput(props: {
                       >
                         {({ TransitionProps }) => (
                           <Fade {...TransitionProps} timeout={100}>
-                            <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }}>
+                            <Box sx={{ border: 1, p: 1, bgcolor: '#e1ecf2' }}>
                               <ColorPicker
                                 handleCloseColorPicker={handleCloseColorPicker}
                                 layer={file}
