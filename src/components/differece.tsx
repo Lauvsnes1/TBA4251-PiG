@@ -182,6 +182,7 @@ function Difference(props: {
 
       //We compute the difference between each segment of layer 1 and all the ones it intersects with
       Array.from(intersectionMap.entries()).forEach(([feature, intersectingFeatures]) => {
+        let isCovered: boolean = false;
         let diff: Feature<Polygon | MultiPolygon, Properties> = feature;
         if (intersectingFeatures.length === 0) {
           //if geometry is disjoint from all geometries in processed2 it is an outlier and needs to be included
@@ -194,11 +195,11 @@ function Difference(props: {
             const tempDiff = difference(diff, intersectingFeatures[i]);
             if (tempDiff) {
               diff = tempDiff;
+            } else {
+              isCovered = true;
             }
           }
-          if (diff !== feature) {
-            //Only add if difference was found, if not
-            // => intersectingfeature completely contains feature
+          if (!isCovered) {
             differenceList.features.push(diff);
           }
         }
