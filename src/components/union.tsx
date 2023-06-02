@@ -9,7 +9,7 @@ import union from '@turf/union';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
-import { generateColor, generateDistinctColor } from '../utils/genereateColor';
+import { generateDistinctColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import createUniqueName from '../utils/createUniqueName';
 import InfoIcon from '@mui/icons-material/Info';
@@ -40,50 +40,6 @@ function Union(props: {
 
   const { geoJSONList, setGeoJSONList } = useGeoJSONContext();
   const classes = useStyles();
-
-  // const executeUnion = () => {
-  //   const unionsLst: FeatureCollection = {
-  //     type: 'FeatureCollection',
-  //     features: [],
-  //   };
-  //   if (selectedLayer1?.geoJSON && selectedLayer2?.geoJSON) {
-  //     const layer1 = selectedLayer1.geoJSON;
-  //     const layer2 = selectedLayer2.geoJSON;
-
-  //     const { processed1, processed2 } = processData(layer1, layer2);
-
-  //     processed1.features.forEach((feature1) => {
-  //       let feature1Added: boolean = false;
-  //       processed2?.features.forEach((feature2) => {
-  //         if (booleanOverlap(feature1, feature2)) {
-  //           // Overlap
-  //           const unions = union(feature1, feature2);
-  //           // Check that it is not null and has no equal fractions
-  //           if (
-  //             unions !== null &&
-  //             unionsLst.features.every((feat) => !booleanIntersects(unions, feat))
-  //           ) {
-  //             const unionFeature: Feature<Polygon | MultiPolygon> = {
-  //               type: 'Feature',
-  //               properties: { ...feature1.properties, ...feature2.properties }, // combine properties from both input features
-  //               geometry: unions.geometry,
-  //             };
-  //             unionsLst.features.push(unionFeature);
-  //             feature1Added = true;
-  //           }
-  //         } else {
-  //           unionsLst.features.push(feature2);
-  //         }
-  //       });
-
-  //       if (!feature1Added && unionsLst.features.every((feat) => !booleanOverlap(feature1, feat))) {
-  //         unionsLst.features.push(feature1);
-  //       }
-  //     });
-  //   }
-
-  //   return unionsLst;
-  // };
 
   const executeUnion = () => {
     const unionsLst: FeatureCollection = {

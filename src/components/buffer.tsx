@@ -8,7 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 import buffer from '@turf/buffer';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
-import { generateColor, generateDistinctColor } from '../utils/genereateColor';
+import { generateDistinctColor } from '../utils/genereateColor';
 import createUniqueName from '../utils/createUniqueName';
 import processData from '../utils/flattenAndDissolve';
 import generateId from '../utils/generateId';

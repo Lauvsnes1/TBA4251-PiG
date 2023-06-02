@@ -11,7 +11,7 @@ import booleanIntersect from '@turf/boolean-intersects';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import processData from '../utils/flattenAndDissolve';
-import { generateColor, generateDistinctColor } from '../utils/genereateColor';
+import { generateDistinctColor } from '../utils/genereateColor';
 import createUniqueName from '../utils/createUniqueName';
 import generateId from '../utils/generateId';
 import InfoIcon from '@mui/icons-material/Info';

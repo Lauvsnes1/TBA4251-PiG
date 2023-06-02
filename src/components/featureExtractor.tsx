@@ -16,7 +16,7 @@ import MenuItem from '@mui/material/MenuItem';
 import InfoIcon from '@mui/icons-material/Info';
 import { modalStyle } from './styledComponents';
 import Loading from './loading';
-import { generateColor, generateDistinctColor } from '../utils/genereateColor';
+import { generateDistinctColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import determineOpacity from '../utils/determineOpacity';
 import makeStyles from '@mui/styles/makeStyles';

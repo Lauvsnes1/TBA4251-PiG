@@ -10,7 +10,7 @@ import bbox from '@turf/bbox';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
 import { BBox } from '@turf/helpers';
-import { generateColor, generateDistinctColor } from '../utils/genereateColor';
+import { generateDistinctColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import createUniqueName from '../utils/createUniqueName';
 

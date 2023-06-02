@@ -15,7 +15,7 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Loading from './loading';
 import { modalStyle } from './styledComponents';
-import { generateColor, generateDistinctColor } from '../utils/genereateColor';
+import { generateDistinctColor } from '../utils/genereateColor';
 import generateId from '../utils/generateId';
 import createUniqueName from '../utils/createUniqueName';
 import flatten from '@turf/flatten';

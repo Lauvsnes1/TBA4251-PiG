@@ -285,7 +285,6 @@ function BaseMap(props: {
 
     layersToRemove?.forEach((layer) => {
       removeLayerAndSource(layer.id);
-      console.log('removed', layer);
       props.showAlert('info', 'layer removed');
     });
   };
