@@ -19,7 +19,7 @@ export const bufferSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p> Select fiskeobservasjoner_clip_ext as input layer. </p>
+        <p> Select fisk_clip_ext as input layer. </p>
       </div>
     ),
     target: '#select-layer',

@@ -69,12 +69,19 @@ export default function MainPage(props: {
   const handleJoyrideStepChange = (data: CallBackProps) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { action, index, status, type } = data;
-    if (type === 'tour:end' || type === 'step:close' || action === 'close') {
+    console.log('type:', type);
+    if (type === 'step:close' || action === 'close') {
       joyrideHelpers.current?.close();
       //fix skip step in tutorial problem
       joyrideHelpers.current?.go(index);
       setRunTour(false);
     }
+    // if (type === 'tour:end') {
+    //   console.log(index);
+    //   joyrideHelpers.current?.close();
+    //   joyrideHelpers.current?.go(12);
+    //   setRunTour(false);
+    // }
   };
 
   const handleDrawerOpen = () => {

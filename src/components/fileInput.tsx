@@ -83,6 +83,7 @@ function FileInput(props: {
             } catch (error) {
               reject(error);
               props.showAlert('error', 'Unsupported file type');
+              return;
             }
           };
           reader.readAsText(file);

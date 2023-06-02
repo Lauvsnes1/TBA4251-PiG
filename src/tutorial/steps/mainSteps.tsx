@@ -2,6 +2,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import trondheimClip from './clip_demo.png';
 import { commonStyles } from './commonStyle';
 import polygon_button from './polygon-button.png';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 export const getSteps = [
   {
@@ -41,7 +42,7 @@ export const getSteps = [
         </ul>
       </div>
     ),
-    placement: 'center' as 'center',
+    placement: 'center' as const,
     target: 'body',
     styles: {
       options: {
@@ -60,31 +61,15 @@ export const getSteps = [
         <p>
           In this tutorial, we will try to find the best spots near Trondheim for sea fishing.{' '}
           <br />
-          <span style={{ fontWeight: 'bold' }}>Good luck!</span>
+          <br />
+          <span style={{ fontWeight: 'bold' }}>Good luck!🎣</span>
         </p>
       </div>
     ),
-    placement: 'center' as 'center',
+    placement: 'center' as const,
     target: 'body',
     styles: commonStyles,
   },
-  // {
-  //   title: 'Open the drawer',
-
-  //   disableBeacon: false,
-  //   spotlightClicks: true,
-  //   content: (
-  //     <div>
-  //       <p>'Press the menu on the left to open the drawer and discover the GIS tools.'</p>
-  //     </div>
-  //   ),
-  //   target: '#icon-button',
-  //   styles: {
-  //     options: {
-  //       zIndex: 10000,
-  //     },
-  //   },
-  // },
   {
     title: 'Load data',
     disableBeacon: true,
@@ -102,12 +87,12 @@ export const getSteps = [
           >
             this folder
           </a>
-          . Once you have downloaded the file, unpack the files on your computer and proceed to the
-          next step.
+          . The download button can be found on the right hand side of the screen. Once you have
+          downloaded the file, unpack the files on your computer and proceed to the next step.
         </p>
       </div>
     ),
-    placement: 'center' as 'center',
+    placement: 'center' as const,
     target: 'body',
     styles: commonStyles,
   },
@@ -302,14 +287,30 @@ export const getSteps = [
     content: (
       <div>
         <p>
+          Now, press the <MoreVertIcon sx={{ paddingTop: '6px', marginBottom: '-6px' }} /> - menu
+          and download your two fishing maps.
+        </p>
+      </div>
+    ),
+    target: '#layer-list',
+    offset: 0,
+    styles: commonStyles,
+  },
+  {
+    title: 'Finished!',
+    disableBeacon: true,
+    spotlightClicks: true,
+    content: (
+      <div>
+        <p>
           Congratulations! 🥳 You have completed the tutorial and found the best places to fish in
-          Trondheimsfjorden. Don't forget to download your final layers from the drop-down menu and
-          bring them with you the next time you go fishing.
+          Trondheimsfjorden. Don't forget to bring the maps with you the next time you go fishing.
         </p>
         <p style={{ fontWeight: 'bold', paddingTop: '20px' }}>Skitt fiske! 🎣</p>
       </div>
     ),
-    target: '#layer-list',
+    placement: 'center' as const,
+    target: 'body',
     offset: 0,
     styles: commonStyles,
   },
