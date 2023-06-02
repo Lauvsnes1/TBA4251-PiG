@@ -3,49 +3,46 @@ import MainPage from './pages/mainPage';
 import Alert, { AlertColor } from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import { uid } from 'uid';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
-  const [alerts, setAlerts] = useState<{ id: string; element: JSX.Element }[]>([]);
+  const showAlert = (status: string, message: string) => {
+    switch (status) {
+      case 'info':
+        toast.info(message, { pauseOnHover: true });
+        break;
 
-  const showAlert = (status: AlertColor, message: string) => {
-    const id = uid();
+      case 'success':
+        toast.success(message, { pauseOnHover: true });
+        break;
 
-    const newAlert: JSX.Element = (
-      <Alert
-        key={id}
-        severity={status}
-        variant="filled"
-        style={{
-          position: 'fixed',
-          top: 600 - alerts.length * 85, // Updated to position alerts over each other
-          left: 30,
-          right: 750,
-          zIndex: 9999,
-          transition: 'opacity 0.7s ease-in-out',
-          width: '30%',
-        }}
-      >
-        <AlertTitle>{status}</AlertTitle>
-        {message}
-      </Alert>
-    );
+      case 'warning':
+        toast.warning(message, { pauseOnHover: true });
+        break;
 
-    // Add the new alert to the array of alerts
-    setAlerts((prevAlerts) => [...prevAlerts, { id, element: newAlert }]);
-
-    // Remove the alert after 3 seconds
-    setTimeout(() => {
-      setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== id));
-    }, 3000);
+      case 'error':
+        toast.error(message, { pauseOnHover: true });
+        break;
+    }
   };
 
   return (
     <div id="root" className="App">
       <MainPage showAlert={showAlert} />
       <div>
-        {alerts.map((alert) => (
-          <React.Fragment key={alert.id}>{alert.element}</React.Fragment>
-        ))}
+        <ToastContainer
+          position="bottom-center"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover={false}
+          theme="colored"
+        />
       </div>
     </div>
   );

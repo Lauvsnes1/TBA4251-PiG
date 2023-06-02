@@ -68,7 +68,7 @@ function Voronoi(props: {
         setIsLoading(false);
         //pass state up to close modal
         props.handleCloseModal();
-        props.showAlert('success', '');
+        props.showAlert('success', 'successfully excecuted');
       } else {
         setIsLoading(false);
         props.showAlert('error', 'Please select a valid layer');

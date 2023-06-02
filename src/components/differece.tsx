@@ -227,10 +227,10 @@ function Difference(props: {
           setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
           setIsLoading(false);
           props.handleCloseModal();
-          props.showAlert('success', '');
+          props.showAlert('success', 'successfully excecuted');
         } else {
           setIsLoading(false);
-          props.showAlert('info', 'Empty result');
+          props.showAlert('error', 'Empty result');
         }
       } catch (e) {
         console.log(e);
