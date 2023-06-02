@@ -130,7 +130,8 @@ export const getSteps = [
             alt=""
           />
           button located in the bottom left corner of the map. Draw a reasonable polygon around
-          Trondheim. The size should be similar to the photo below. Name your new layer "my_clip".
+          Trondheim. The size should be similar to the photo below. Name your new layer{' '}
+          <span style={{ fontWeight: 'bold' }}>my_clip</span>.
         </p>
         <div>
           <img src={trondheimClip} width="425px" height="233px" alt="trondheim_cut" />
@@ -287,7 +288,7 @@ export const getSteps = [
     content: (
       <div>
         <p>
-          Now, press the <MoreVertIcon sx={{ paddingTop: '6px', marginBottom: '-6px' }} /> - menu
+          Now, press the <MoreVertIcon sx={{ paddingTop: '6px', marginBottom: '-4px' }} /> - menu
           and download your two fishing maps.
         </p>
       </div>

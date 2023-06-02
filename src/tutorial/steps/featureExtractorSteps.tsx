@@ -14,7 +14,12 @@ export const featureExtractorSteps = [
     disableBeacon: true,
     spotlightClicks: true,
     scrollDuration: 300,
-    content: <p> Choose the layer "fisk_clip" as input. </p>,
+    content: (
+      <p>
+        {' '}
+        Choose the layer <span style={{ fontWeight: 'bold' }}>fisk_clip</span> as input.{' '}
+      </p>
+    ),
     target: '#select-layer',
     placement: 'left' as 'left',
     styles: commonStyles,
@@ -23,7 +28,12 @@ export const featureExtractorSteps = [
     title: 'Feature extractor',
     disableBeacon: true,
     spotlightClicks: true,
-    content: <p> Choose the property "Norsk Navn". </p>,
+    content: (
+      <p>
+        {' '}
+        Choose the property <span style={{ fontWeight: 'bold' }}>Norsk Navn</span>.{' '}
+      </p>
+    ),
     target: '#select-prop',
     styles: commonStyles,
   },
@@ -31,7 +41,12 @@ export const featureExtractorSteps = [
     title: 'Feature extractor',
     disableBeacon: true,
     spotlightClicks: true,
-    content: <p> Choose the operation "=" </p>,
+    content: (
+      <p>
+        {' '}
+        Choose the operation <span style={{ fontWeight: 'bold' }}>=</span>{' '}
+      </p>
+    ),
     target: '#select-operation',
     styles: commonStyles,
   },
@@ -39,7 +54,12 @@ export const featureExtractorSteps = [
     title: 'Feature extractor',
     disableBeacon: true,
     spotlightClicks: true,
-    content: <p> Type in "kveite" in the text input. </p>,
+    content: (
+      <p>
+        {' '}
+        Type in <span style={{ fontWeight: 'bold' }}>kveite</span> in the text input.{' '}
+      </p>
+    ),
     target: '#rule-0-value',
     styles: commonStyles,
   },

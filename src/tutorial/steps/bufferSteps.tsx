@@ -19,7 +19,10 @@ export const bufferSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p> Select fisk_clip_ext as input layer. </p>
+        <p>
+          {' '}
+          Select <span style={{ fontWeight: 'bold' }}>fisk_clip_ext</span> as input layer.{' '}
+        </p>
       </div>
     ),
     target: '#select-layer',
@@ -31,7 +34,10 @@ export const bufferSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p> Select a buffer radius of 500m. </p>
+        <p>
+          {' '}
+          Select a buffer radius of <span style={{ fontWeight: 'bold' }}>500m</span>.{' '}
+        </p>
       </div>
     ),
     target: '#select-buffer-radius',
@@ -43,7 +49,10 @@ export const bufferSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p> Name the output layer "fiskeområder". </p>
+        <p>
+          {' '}
+          Name the output layer <span style={{ fontWeight: 'bold' }}>fiskeområder</span>.{' '}
+        </p>
       </div>
     ),
     target: '#custom-name',

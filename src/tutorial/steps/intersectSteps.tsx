@@ -19,7 +19,10 @@ export const intersectSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p> Select "trondheimsfjorden" as layer one. </p>
+        <p>
+          {' '}
+          Select <span style={{ fontWeight: 'bold' }}>trondheimsfjorden</span> as layer one.{' '}
+        </p>
       </div>
     ),
     target: '#select-layer-1',
@@ -31,7 +34,9 @@ export const intersectSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p>Select "fiskeområder" as layer two</p>
+        <p>
+          Select <span style={{ fontWeight: 'bold' }}>fiskeområder</span> as layer two
+        </p>
       </div>
     ),
     target: '#select-layer-2',
@@ -43,7 +48,10 @@ export const intersectSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p> Name the output layer "my_fishingmap_sea". </p>
+        <p>
+          {' '}
+          Name the output layer <span style={{ fontWeight: 'bold' }}>my_fishmap_sea</span>.{' '}
+        </p>
       </div>
     ),
     target: '#custom-name',

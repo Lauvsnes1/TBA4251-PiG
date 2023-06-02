@@ -32,7 +32,8 @@ export const clipSteps = [
     content: (
       <div>
         <p>
-          Select the "my_clip" layer that you have just created to align it with the other layers.
+          Select the <span style={{ fontWeight: 'bold' }}>my_clip</span> layer that you have just
+          created to align it with the other layers.
         </p>
       </div>
     ),

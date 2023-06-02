@@ -25,7 +25,11 @@ export const unionSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p> Select "trdfjorden_vest_clip" as the first layer. </p>
+        <p>
+          {' '}
+          Select <span style={{ fontWeight: 'bold' }}>trdfjorden_vest_clip </span>as the first
+          layer.{' '}
+        </p>
       </div>
     ),
     target: '#select-first',
@@ -37,7 +41,11 @@ export const unionSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p> Select "trdfjordern_øst_clip" as the second layer. </p>
+        <p>
+          {' '}
+          Select <span style={{ fontWeight: 'bold' }}>trdfjorden_øst_clip </span> as the second
+          layer.{' '}
+        </p>
       </div>
     ),
     target: '#select-second',
@@ -49,7 +57,10 @@ export const unionSteps = [
     spotlightClicks: true,
     content: (
       <div>
-        <p> Name the layer "trondheimsfjorden". </p>
+        <p>
+          {' '}
+          Name the layer <span style={{ fontWeight: 'bold' }}>trondheimsfjorden</span>.{' '}
+        </p>
       </div>
     ),
     target: '#costum-name',
