@@ -36,8 +36,16 @@ export const getSteps = [
             tutorial further.
           </li>
           <li>
-            If you have problems with the tutorial, a walkthrough guide can be found here:
-            "youtube".
+            If you have problems with the tutorial, a youtube walkthrough can be found{' '}
+            <a
+              href="https://youtu.be/PESW6_R1aCc"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'blue', textDecoration: 'underline' }}
+            >
+              here
+            </a>
+            .
           </li>
         </ul>
       </div>
