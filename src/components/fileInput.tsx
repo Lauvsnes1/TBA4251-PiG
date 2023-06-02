@@ -80,7 +80,6 @@ function FileInput(props: {
               const content = JSON.parse(reader.result as string);
               const isGeoJSON = content.type === 'FeatureCollection';
               resolve(isGeoJSON ? content : null);
-              props.showAlert('success', 'file read');
             } catch (error) {
               reject(error);
               props.showAlert('error', 'Unsupported file type');
@@ -110,7 +109,7 @@ function FileInput(props: {
           };
           newGeoJSONItems.push(newObj as GeoJSONItem);
           nameCounter++;
-          props.showAlert('success', 'File(s) uploaded successfully');
+          props.showAlert('success', 'File uploaded successfully');
         });
 
         // Now, add all the new items global state at once

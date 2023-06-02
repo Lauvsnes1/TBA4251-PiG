@@ -144,7 +144,7 @@ function Union(props: {
           setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
           setIsloading(false);
           props.handleCloseModal();
-          props.showAlert('success', '');
+          props.showAlert('success', 'successfully excecuted');
         } else {
           setIsloading(false);
           props.showAlert('error', 'No union');
@@ -152,7 +152,7 @@ function Union(props: {
       } catch (e) {
         setIsloading(false);
         console.log(e);
-        props.showAlert('error', 'invalid Input');
+        props.showAlert('error', 'invalid input');
       }
     }, 10);
   };

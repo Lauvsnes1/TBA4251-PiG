@@ -84,7 +84,7 @@ function Buffer(props: {
         setGeoJSONList((prevGeoJSONs: GeoJSONItem[]) => [...prevGeoJSONs, newObj as GeoJSONItem]);
         setIsLoading(false);
         props.handleCloseModal();
-        props.showAlert('success', '');
+        props.showAlert('success', 'successfully excecuted');
       } catch (e) {
         console.log(e);
         setIsLoading(false);
